@@ -116,6 +116,7 @@ def run_script(directory, simulation = True):
     script_dir = directory
 
     in_code_block = False
+    in_results_section = False
 
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
@@ -128,16 +129,21 @@ def run_script(directory, simulation = True):
         run_command("clear")
         
     for line in lines:
-        if line.startswith("```") and not in_code_block:
+        if line.startswith("Results:"):
+            in_results_section = True
+        elif line.startswith("```") and not in_code_block:
             in_code_block = True
-            print("$ ", end="", flush=True)
-            wait()
+            if not in_results_section:
+                print("$ ", end="", flush=True)
+                wait()
         elif line.startswith("```") and in_code_block:
+            if in_results_section:
+                in_results_section = False
             in_code_block = False
-        elif in_code_block:
+        elif in_code_block and not in_results_section:
             simulate_command(line, simulation)
             print("$ ", end="", flush=True)
-        elif not simulation:
+        elif not simulation and not in_results_section:
             print(line, end="", flush=True)
 
 def get_usage():

@@ -15,6 +15,12 @@ a key to run the command.
 date
 ```
 
+Results:
+
+```
+Sat Mar 12 08:59:01 UTC 2016
+```
+
 Cool huh?
 
 # A Tutorial That is Also a Demo
@@ -82,11 +88,11 @@ script you want to run. For example:
 
 Create a Dockerfile and add (at least) the following:
 
-`
-FROM rgardler/simdem
-
-COPY my_script_dir demo_scripts
-`
+   ```
+   FROM rgardler/simdem
+   
+   COPY my_script_dir demo_scripts
+   ```
 
 ## Writing Scripts
 
@@ -100,6 +106,27 @@ Ideally script directories will also contain a `setup.sh` and
 `clearup.sh` files. These are intended to be run to configure the demo
 environment and to cleanup after the demo is complete.
 
+### Including Results in the Script
+
+When using the script as a web page or printout it is likley that you
+will want to include the results. However, when you are running in a
+simulation or tutorial mode you will want to rely on the real results
+from the current run. You can include a "Results:" section after any
+code block. The first code block after this text will be ignored when
+running in an interactive mode (such as tutorial or simulation). That
+is, in the example below, the `date -u` command will be run
+interactively but the `Sat Mar 12 10:09:12 UTC 2016` will only be
+included in a static form of the script.
+
+    ```
+    date -u
+    ```
+
+    Results:
+
+    ```
+    Sat Mar 12 10:09:12 UTC 2016
+    ```
 
 # Ending the Demo Run
 
