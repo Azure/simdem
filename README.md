@@ -16,7 +16,7 @@ It's easier to explain through action, so just run the container and
 work through the interactive tutorial that we include.
 
 ```
-docker run rgardler/simdem
+docker run -it rgardler/simdem
 ```
 
 # Learn more
