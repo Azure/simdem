@@ -161,8 +161,13 @@ def get_usage():
                     "description": "Either 'tutorial' (default) or 'demo'",
                     "type": "optional",
                     "default": "tutorial"
+                },
+                {
+                    "name": "--path",
+                    "description": "Path to the directory containining the demo scripts",
+                    "type": "optional",
+                    "default": "demo_scripts"
                 }
-
             ] 
         }
     ]
@@ -197,6 +202,8 @@ def main():
     p = optparse.OptionParser(usage=get_usage(), version="%prog 0.1")
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
+    p.add_option('--path', '-p', default="demo_scripts",
+                 help="The Path to the demo scripts directory.")
     options, arguments = p.parse_args()
  
     if len(arguments) == 0:
@@ -209,7 +216,7 @@ def main():
     cmd = arguments[0]
 
     if cmd == "run":
-        script_dir = "demo_scripts/" + arguments[1]
+        script_dir = options.path + arguments[1]
         if options.style == "simulate":
             simulate = True
         elif options.style == 'tutorial':
