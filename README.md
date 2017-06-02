@@ -19,6 +19,25 @@ work through the interactive tutorial that we include.
 docker run -it rgardler/simdem
 ```
 
+## Running with your own scripts
+
+To use your own demo script mount a directory with `script.md` into
+the simdem container:
+
+```
+docker run -it -v ~/my_demo_dir:/demo_scripts rgardler/simdem
+```
+
+If you have more than one demo in your demo directory you can tell
+SimDem which to run by passing a folder name:
+
+```
+docker run -it -v ~/my_demo_dir:/demo_scripts rgardler/simdem run ademo
+```
+
+See `demo_scripts/simdem/script.md` for details on how to write a demo
+script.
+
 # Learn more
 
 If you want to learn more before running the container then why not read the interactive tutorial as a [markdown page on GitHub](https://github.com/rgardler/simdem/blob/master/demo_scripts/simdem/script.md).
