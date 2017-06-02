@@ -8,6 +8,7 @@ import random
 import time
 import shlex
 import sys
+import json
 
 def type_command(command, simulation):
     # Displays the command on the screen
@@ -29,10 +30,21 @@ def simulate_command(command, simulation = True):
     type_command(command, simulation)
     run_command(command)
 
+def environment_setup(directory):
+    # Populates each shell environment with a set of environment vars
+    # loaded via env.json file
+    global env
+    env = {}
+    if not directory.endswith('/'):
+        directory = directory + "/"
+    filename = directory + "env.json"
+    if os.path.isfile(filename):
+        with open(filename) as env_file:
+            env = json.load(env_file)
+
 def run_command(command):
     global script_dir 
 
-    env = {"TEST": "bar"}
     shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, timeout=None)
     shell.expect(pexpect.EOF)
     output = shell.before
@@ -224,6 +236,7 @@ def main():
         else:
             print("Unkown style (--style, -s): " + options.style)
             exit(1)
+        environment_setup(script_dir)
         run_script(script_dir, simulate)
     else:
         print("Unkown command: " + cmd)
