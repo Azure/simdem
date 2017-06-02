@@ -23,10 +23,6 @@ Sat Mar 12 08:59:01 UTC 2016
 
 Cool huh?
 
-```
-echo $TEST
-```
-
 # A Tutorial That is Also a Demo
 
 This text is being pulled from the `script.md` file inside the
@@ -48,6 +44,33 @@ echo "and now hit enter to run this command"
 ```
 
 As you can see we can run multiple commands, in sequence.
+
+# Environment Variables
+
+In order to use environment variables, you can define an `env.json` file.
+These variables are available in every command that is executed.
+
+```
+cat env.json
+```
+
+Results:
+
+```
+{
+    "TEST": "hello-world"
+}
+```
+
+```
+echo $TEST
+```
+
+Results:
+
+```
+hello-world
+```
 
 # Going Off-Script
 

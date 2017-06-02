@@ -22,6 +22,18 @@ Sat Mar 12 10:09:12 UTC 2016
 ```
 
 ```
+cat env.json
+```
+
+Results:
+
+```
+{
+    "TEST": "hello-world"
+}
+```
+
+```
 echo $TEST
 ```
 
