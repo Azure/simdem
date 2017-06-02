@@ -3,10 +3,11 @@
 
 import optparse
 import os
+import pexpect
 import random
 import time
 import shlex
-import subprocess
+import sys
 
 def type_command(command, simulation):
     # Displays the command on the screen
@@ -31,15 +32,13 @@ def simulate_command(command, simulation = True):
 def run_command(command):
     global script_dir 
 
-    cmd = shlex.split(command)
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=script_dir)
-    while True:
-        output = process.stdout.readline().decode("utf-8")
-        if output:
-            print(output.strip())
-        if process.poll() is not None:
-            break
-
+    env = {"TEST": "bar"}
+    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env)
+    shell.expect(pexpect.EOF)
+    output = shell.before
+    
+    print(output.decode(encoding='UTF-8'))
+    
 def wait():
     # Wait for a key to be pressed Most keys result in the script
     # progressing, but a few have special meaning. See the
@@ -112,7 +111,7 @@ def run_script(directory, simulation = True):
     # Each line in a code block will be treated as a separate command.
     #
     # All other lines will be ignored
-    global script_dir 
+    global script_dir        
     script_dir = directory
 
     in_code_block = False
@@ -156,7 +155,14 @@ def get_usage():
                     "name": "DEMO_NAME",
                     "description": "Name of the demo to be run. Demo files should be in a directory with the same name",
                     "type": "required"                    
+                },
+                {
+                    "name": "--style",
+                    "description": "Either 'tutorial' (default) or 'demo'",
+                    "type": "optional",
+                    "default": "tutorial"
                 }
+
             ] 
         }
     ]
@@ -176,8 +182,8 @@ def get_usage():
                 opt += option["name"] + "\n" + option["description"] + "\nDefault: " + option["default"]
     usage += " <options>\n"
     usage += cmd["description"] + "\n"
-    usage += "\n\nRequired Options\n"
-    usage += "----------------\n\n"
+    usage += "\n\nRequired Parameters\n"
+    usage += "-------------------\n\n"
     usage += req
     usage += "\n\nOptional Options\n"
     usage += "----------------\n\n"
