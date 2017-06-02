@@ -23,6 +23,10 @@ Sat Mar 12 08:59:01 UTC 2016
 
 Cool huh?
 
+```
+echo $TEST
+```
+
 # A Tutorial That is Also a Demo
 
 This text is being pulled from the `script.md` file inside the

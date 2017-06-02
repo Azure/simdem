@@ -21,6 +21,16 @@ Results:
 Sat Mar 12 10:09:12 UTC 2016
 ```
 
+```
+echo $TEST
+```
+
+Results:
+
+```
+hello-world
+```
+
 # Commands that do not work
 
   * ping bing.com
