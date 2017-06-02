@@ -170,7 +170,7 @@ def get_usage():
                 },
                 {
                     "name": "--style",
-                    "description": "Either 'tutorial' (default) or 'demo'",
+                    "description": "Either 'tutorial' (default) or 'simulate'",
                     "type": "optional",
                     "default": "tutorial"
                 },
