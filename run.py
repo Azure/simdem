@@ -33,7 +33,7 @@ def run_command(command):
     global script_dir 
 
     env = {"TEST": "bar"}
-    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env)
+    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, timeout=None)
     shell.expect(pexpect.EOF)
     output = shell.before
     
