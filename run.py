@@ -214,14 +214,14 @@ def main():
     p = optparse.OptionParser(usage=get_usage(), version="%prog 0.1")
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
-    p.add_option('--path', '-p', default="demo_scripts",
+    p.add_option('--path', '-p', default="demo_scripts/",
                  help="The Path to the demo scripts directory.")
     options, arguments = p.parse_args()
  
     if len(arguments) == 0:
         arguments.append("run")
         for f in os.listdir("demo_scripts"):
-            if os.path.isdir(os.path.join("demo_scripts", f)):
+            if os.path.isdir(os.path.join("demo_scripts/", f)):
                 arguments.append(f)
                 break
 
