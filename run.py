@@ -45,7 +45,7 @@ def environment_setup(directory):
 def run_command(command):
     global script_dir 
 
-    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, timeout=None)
+    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.expect(pexpect.EOF)
     output = shell.before
     
