@@ -19,6 +19,13 @@ work through the interactive tutorial that we include.
 docker run -it rgardler/simdem
 ```
 
+To run the tutorial as a demo (that is without explanatory text and
+with simulated typing) as `--style simulate` to the command:
+
+```
+docker run -it rgrdler/simdem --style simulate
+```
+
 ## Running with your own scripts
 
 To use your own demo script mount a directory with `script.md` into
