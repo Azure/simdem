@@ -19,15 +19,16 @@ def type_command(command, script_dir, simulation):
         if simulation:
             delay = random.uniform(0.02, 0.08) 
             time.sleep(delay)
-    execute_next_command_or_input_command(script_dir)
-    print()
 
-def simulate_command(command, script_dir, env = None, simulation = True):
+def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
     # Types the command on the screen, executes it and outputs the
     # results if simulation == True then system will make the "typing"
     # look real and will wait for keyboard entry before proceeding to
     # the next command
     type_command(command, script_dir, simulation)
+    check_for_interactive_command(script_dir, is_automatic)
+    print()
+    
     run_command(command, script_dir, env)
 
 def environment_setup(directory):
@@ -72,16 +73,18 @@ def run_command(command, script_dir, env=None):
     
     print(output.decode(encoding='UTF-8'))
     
-def execute_next_command_or_input_command(script_dir):
+def check_for_interactive_command(script_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
-    key = get_instruction_key()
-    if key == 'b' or key == 'B':
-        command = input()
-        run_command(command, script_dir)
-        print("$ ", end="", flush=True)
-        execute_next_command_or_input_command(script_dir)
+    if not is_automated:
+        key = get_instruction_key()
+    
+        if key == 'b' or key == 'B':
+            command = input()
+            run_command(command, script_dir)
+            print("$ ", end="", flush=True)
+            check_for_interactive_command(script_dir, is_automated)
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.
@@ -130,7 +133,7 @@ def get_instruction_key():
         fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
     return ret
 
-def run_script(script_dir, env=None, simulation = True):
+def run_script(script_dir, env=None, simulation = True, is_automated=False):
     # Reads a script.md file in the indicated directoy and runs the
     # commands contained within. If simulation == True then human
     # entry will be simulated (looks like typing and waits for
@@ -156,8 +159,10 @@ def run_script(script_dir, env=None, simulation = True):
     if simulation:
         print("You are now in demo simulation mode.")
         print("Press a key to clear the terminal and start the demo")
-        execute_next_command_or_input_command(script_dir)
+        check_for_interactive_command(script_dir, is_automated)
         run_command("clear", script_dir, env)
+
+    print("$ ", end="", flush=True)
         
     for line in lines:
         if line.startswith("Results:"):
@@ -165,17 +170,13 @@ def run_script(script_dir, env=None, simulation = True):
         elif line.startswith("```") and not in_code_block:
             in_code_block = True
             if not in_results_section:
-                print("$ ", end="", flush=True)
-                execute_next_command_or_input_command(script_dir)
+                check_for_interactive_command(script_dir, is_automated)
         elif line.startswith("```") and in_code_block:
-            if in_results_section:
-                in_results_section = False
+            in_results_section = False
             in_code_block = False
         elif in_code_block and not in_results_section:
-            simulate_command(line, script_dir, env, simulation)
+            simulate_command(line, script_dir, env, simulation, is_automated)
             print("$ ", end="", flush=True)
-        elif not simulation and not in_results_section:
-            print(line, end="", flush=True)
 
 def get_usage():
     commands = [
@@ -199,6 +200,12 @@ def get_usage():
                     "description": "Path to the directory containining the demo scripts",
                     "type": "optional",
                     "default": "demo_scripts"
+                },
+                {
+                    "name": "--auto",
+                    "description": "If set to any value the application does not wait for key presses from the user",
+                    "type": "optional",
+                    "default": "False"
                 }
             ] 
         }
@@ -215,8 +222,10 @@ def get_usage():
             if option["type"] == "required":
                 usage += " " + option["name"]
                 req += option["name"] + "\n" + option["description"]
+                req += "\n\n"
             else:
                 opt += option["name"] + "\n" + option["description"] + "\nDefault: " + option["default"]
+                opt += "\n\n"
     usage += " <options>\n"
     usage += cmd["description"] + "\n"
     usage += "\n\nRequired Parameters\n"
@@ -236,6 +245,8 @@ def main():
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
                  help="The Path to the demo scripts directory.")
+    p.add_option('--auto', '-a', default="False",
+                 help="If set to anything other than False the application will not wait for user keypresses between commands.")
     options, arguments = p.parse_args()
  
     if len(arguments) == 0:
@@ -251,6 +262,11 @@ def main():
         script_dir = options.path + arguments[1]
 
         env = environment_setup(script_dir)
+
+        if options.auto == "False":
+            is_automatic = False
+        else:
+            is_automatic = True
         
         if options.style == "simulate":
             simulate = True
@@ -260,7 +276,7 @@ def main():
             print("Unkown style (--style, -s): " + options.style)
             exit(1)
             
-        run_script(script_dir, env, simulate)
+        run_script(script_dir, env, simulate, is_automatic)
     else:
         print("Unkown command: " + cmd)
         print(get_usage())

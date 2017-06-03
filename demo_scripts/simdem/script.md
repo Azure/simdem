@@ -45,6 +45,34 @@ echo "and now hit enter to run this command"
 
 As you can see we can run multiple commands, in sequence.
 
+# Modes of Operation
+
+SimDem demos are interactive and can be run in different modes.
+
+Tutorial mode is ideal if you are using this as a learning or teaching
+tool. In this mode a description of what you are about to do is shown
+on the screen, hit a key to see the command, hit another key to
+execute the command. Tutorial mode is the default.
+
+Demo mode is ideal if you are using this to teach or demonstrate how
+to achive the goal. In this mode no descriptive text is shown, instead
+when you press a key the next command is "typed", pressing another key
+will execute the command. The idea is that you describe what is
+happening as the application "types" the command for you. To run in
+demo mode use the `--style simulate` command line switch.
+
+Both the tutorial and demo modes can be run in auto mode too. This
+means that the program does not wait for a keypress before
+proceeding. This can be useful if you want to runthe complete script
+unattended. To run in automated or unnattended mode use the `--auto
+true` command line switch.
+
+Manual mode is ideal if you would like to manually type the commands,
+many people find this helps them remember. It can be useful in the
+first few runs, but we still recommend using "demo" mode when doing
+live demo's - it's much harder to make a mistake this way.
+
+
 # Directory structure
 
 SimDem projects consist of a root directory and one or more tutorial
@@ -203,7 +231,7 @@ but you can now start typing freely.
 
 # Running SimDem
 
-SimDem is packagesd as a container, you run it with:
+SimDem is packaged as a container, you run it with:
 
 `docker run -it rgardler/simdem`
 
