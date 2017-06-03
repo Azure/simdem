@@ -35,13 +35,34 @@ def environment_setup(directory):
     # loaded via env.json file stored either in the project root
     # directory
     env = os.environ.copy()
+    
     if not directory.endswith('/'):
         directory = directory + "/"
+
+    filename = directory + "../env.json"
+    if os.path.isfile(directory + "../env.json"):
+        with open(filename) as env_file:
+            app_env = json.load(env_file)
+            env.update(app_env)
+
     filename = directory + "env.json"
     if os.path.isfile(filename):
         with open(filename) as env_file:
-            app_env = json.load(env_file)
-    env.update(app_env)
+            script_env = json.load(env_file)
+            env.update(script_env)
+
+    filename = directory + "../env.local.json"
+    if os.path.isfile(filename):
+        with open(filename) as env_file:
+            local_env = json.load(env_file)
+            env.update(local_env)
+
+    filename = directory + "env.local.json"
+    if os.path.isfile(filename):
+        with open(filename) as env_file:
+            local_env = json.load(env_file)
+            env.update(local_env)
+    
     return env
 
 def run_command(command, script_dir, env=None):

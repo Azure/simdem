@@ -45,10 +45,68 @@ echo "and now hit enter to run this command"
 
 As you can see we can run multiple commands, in sequence.
 
+# Directory structure
+
+SimDem projects consist of a root directory and one or more tutorial
+sub-directories. Project directories will contain at least a
+`script.md` file that will be used by default when SimDem is run
+against the project. Therefore the minimum directory structure for a
+simple tutorial is:
+
+`
+My_SimDem_Tutorial
+  |
+  +- script.md 
+`
+
+A more complex project will contain a number of sub-directories
+containing tutorials. Tutorial sub-directories will contain at least a
+`script.md` file, this is the main file for that tutorial. For example:
+
+`
+My_Complex_SimDem_Tutorial
+  |
+  +-script.md 
+  |
+  +-Tutotial_1
+  | |
+  | +-script.md
+  |
+  +-Tutotial_2
+  | |
+  | +-script.md
+  |
+  +-Tutotial_3
+    |
+	+-script.md
+`
+
+
 # Environment Variables
 
-In order to use environment variables, you can define an `env.json` file.
-These variables are available in every command that is executed.
+In order to use environment variables, you can define one or more
+files. These variables are available in every command that is
+executed.
+
+Tutorials can carry `env.json` files in the project directory and/or
+in tutorial sub- directories. Files in tutorial sub-directories will
+overwrite settings pulled from the project directory. 
+
+This tutorial defines an 'env.json' in the project directory:
+
+```
+cat ../env.json
+```
+
+Results:
+
+```
+{
+    "TEST": "Hello from the project"
+}
+```
+
+It also defines an 'env.json' file in the tutorial folder:
 
 ```
 cat env.json
@@ -62,6 +120,8 @@ Results:
 }
 ```
 
+The file that "wins" is the most local one, that is the one in the tutorial:
+
 ```
 echo $TEST
 ```
@@ -71,6 +131,60 @@ Results:
 ```
 hello-world
 ```
+
+## User provided environment
+
+Since it is helpful to provide configuration files in published
+scripts SimDem also provides a way for users to provide user specific
+configurations. So that users can setup their demo's to use private
+keys etc. These files are provided in the same way as `env.json` files
+(i.e. in the project and tutorial sub-directories) but are called
+`env.local.json`. These files take precedence over both project and
+tutorial provided files.
+
+For example, this project provides a local files in both the project
+and this tutorial sub-directories. Note that in this case we have
+checked them into version control as they are part of the example,
+normally they would be added to your local '.gitignore' or equivalent.
+
+```
+cat ../env.local.json
+```
+
+Results:
+
+```
+{
+    "LOCAL_TEST": "Hello from the local project config"
+}
+```
+
+It also defines an 'env.json' file in the tutorial folder:
+
+```
+cat env.local.json
+```
+
+Results:
+
+```
+{
+    "LOCAL_TEST": "A warm local hello"
+}
+```
+
+The file that "wins" is the most local one, that is the one in the tutorial:
+
+```
+echo $LOCAL_TEST
+```
+
+Results:
+
+```
+A warm local hello
+```
+
 
 # Going Off-Script
 
