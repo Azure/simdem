@@ -10,7 +10,7 @@ import shlex
 import sys
 import json
 
-def type_command(command, simulation):
+def type_command(command, script_dir, simulation):
     # Displays the command on the screen
     # If simulation == True then it will look like someone is typing the command
     for char in command:
@@ -19,7 +19,7 @@ def type_command(command, simulation):
         if simulation:
             delay = random.uniform(0.02, 0.08) 
             time.sleep(delay)
-    execute_next_command_or_input_command()
+    execute_next_command_or_input_command(script_dir)
     print()
 
 def simulate_command(command, script_dir, env = None, simulation = True):
@@ -27,7 +27,7 @@ def simulate_command(command, script_dir, env = None, simulation = True):
     # results if simulation == True then system will make the "typing"
     # look real and will wait for keyboard entry before proceeding to
     # the next command
-    type_command(command, simulation)
+    type_command(command, script_dir, simulation)
     run_command(command, script_dir, env)
 
 def environment_setup(directory):
@@ -72,16 +72,16 @@ def run_command(command, script_dir, env=None):
     
     print(output.decode(encoding='UTF-8'))
     
-def execute_next_command_or_input_command():
+def execute_next_command_or_input_command(script_dir):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
     key = get_instruction_key()
     if key == 'b' or key == 'B':
         command = input()
-        run_command(command)
+        run_command(command, script_dir)
         print("$ ", end="", flush=True)
-        execute_next_command_or_input_command()
+        execute_next_command_or_input_command(script_dir)
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.
@@ -156,7 +156,7 @@ def run_script(script_dir, env=None, simulation = True):
     if simulation:
         print("You are now in demo simulation mode.")
         print("Press a key to clear the terminal and start the demo")
-        execute_next_command_or_input_command()
+        execute_next_command_or_input_command(script_dir)
         run_command("clear", script_dir, env)
         
     for line in lines:
@@ -166,7 +166,7 @@ def run_script(script_dir, env=None, simulation = True):
             in_code_block = True
             if not in_results_section:
                 print("$ ", end="", flush=True)
-                execute_next_command_or_input_command()
+                execute_next_command_or_input_command(script_dir)
         elif line.startswith("```") and in_code_block:
             if in_results_section:
                 in_results_section = False
