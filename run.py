@@ -19,40 +19,40 @@ def type_command(command, simulation):
         if simulation:
             delay = random.uniform(0.02, 0.08) 
             time.sleep(delay)
-    wait()
+    execute_next_command_or_input_command()
     print()
 
-def simulate_command(command, simulation = True):
+def simulate_command(command, script_dir, env = None, simulation = True):
     # Types the command on the screen, executes it and outputs the
     # results if simulation == True then system will make the "typing"
     # look real and will wait for keyboard entry before proceeding to
     # the next command
     type_command(command, simulation)
-    run_command(command)
+    run_command(command, script_dir, env)
 
 def environment_setup(directory):
     # Populates each shell environment with a set of environment vars
-    # loaded via env.json file
-    global env
-    env = {}
+    # loaded via env.json file stored either in the project root
+    # directory
+    env = os.environ.copy()
     if not directory.endswith('/'):
         directory = directory + "/"
     filename = directory + "env.json"
     if os.path.isfile(filename):
         with open(filename) as env_file:
-            env = json.load(env_file)
+            app_env = json.load(env_file)
+    env.update(app_env)
+    return env
 
-def run_command(command):
-    global script_dir 
-
+def run_command(command, script_dir, env=None):
     shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.expect(pexpect.EOF)
     output = shell.before
     
     print(output.decode(encoding='UTF-8'))
     
-def wait():
-    # Wait for a key to be pressed Most keys result in the script
+def execute_next_command_or_input_command():
+    # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
     key = get_instruction_key()
@@ -60,7 +60,7 @@ def wait():
         command = input()
         run_command(command)
         print("$ ", end="", flush=True)
-        wait()
+        execute_next_command_or_input_command()
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.
@@ -109,7 +109,7 @@ def get_instruction_key():
         fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
     return ret
 
-def run_script(directory, simulation = True):
+def run_script(script_dir, env=None, simulation = True):
     # Reads a script.md file in the indicated directoy and runs the
     # commands contained within. If simulation == True then human
     # entry will be simulated (looks like typing and waits for
@@ -123,8 +123,6 @@ def run_script(directory, simulation = True):
     # Each line in a code block will be treated as a separate command.
     #
     # All other lines will be ignored
-    global script_dir        
-    script_dir = directory
 
     in_code_block = False
     in_results_section = False
@@ -132,12 +130,13 @@ def run_script(directory, simulation = True):
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
     filename = script_dir + "script.md"
+    
     lines = list(open(filename)) 
     if simulation:
         print("You are now in demo simulation mode.")
         print("Press a key to clear the terminal and start the demo")
-        wait()
-        run_command("clear")
+        execute_next_command_or_input_command()
+        run_command("clear", script_dir, env)
         
     for line in lines:
         if line.startswith("Results:"):
@@ -146,13 +145,13 @@ def run_script(directory, simulation = True):
             in_code_block = True
             if not in_results_section:
                 print("$ ", end="", flush=True)
-                wait()
+                execute_next_command_or_input_command()
         elif line.startswith("```") and in_code_block:
             if in_results_section:
                 in_results_section = False
             in_code_block = False
         elif in_code_block and not in_results_section:
-            simulate_command(line, simulation)
+            simulate_command(line, script_dir, env, simulation)
             print("$ ", end="", flush=True)
         elif not simulation and not in_results_section:
             print(line, end="", flush=True)
@@ -229,6 +228,9 @@ def main():
 
     if cmd == "run":
         script_dir = options.path + arguments[1]
+
+        env = environment_setup(script_dir)
+        
         if options.style == "simulate":
             simulate = True
         elif options.style == 'tutorial':
@@ -236,8 +238,8 @@ def main():
         else:
             print("Unkown style (--style, -s): " + options.style)
             exit(1)
-        environment_setup(script_dir)
-        run_script(script_dir, simulate)
+            
+        run_script(script_dir, env, simulate)
     else:
         print("Unkown command: " + cmd)
         print(get_usage())
