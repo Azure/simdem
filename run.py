@@ -161,22 +161,21 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False):
         print("Press a key to clear the terminal and start the demo")
         check_for_interactive_command(script_dir, is_automated)
         run_command("clear", script_dir, env)
-
-    print("$ ", end="", flush=True)
         
     for line in lines:
         if line.startswith("Results:"):
             in_results_section = True
         elif line.startswith("```") and not in_code_block:
             in_code_block = True
-            if not in_results_section:
-                check_for_interactive_command(script_dir, is_automated)
         elif line.startswith("```") and in_code_block:
             in_results_section = False
             in_code_block = False
         elif in_code_block and not in_results_section:
-            simulate_command(line, script_dir, env, simulation, is_automated)
             print("$ ", end="", flush=True)
+            check_for_interactive_command(script_dir, is_automated)
+            simulate_command(line, script_dir, env, simulation, is_automated)
+        elif not simulation and not in_results_section:
+            print(line, end="", flush=True) 
 
 def get_usage():
     commands = [
