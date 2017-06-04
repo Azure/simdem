@@ -31,16 +31,23 @@ docker run -it rgrdler/simdem --style simulate
 
 To run the same file as a series of tests us the `--test yes`
 flag. When running in test mode you will usually want to also add the
-`--auto yes` option to prevent the need for human intervention.
+`--auto yes` option to prevent the need for human intervention. 
 
 ```
 docker run -it rgrdler/simdem --test yes --auto yes
 ```
 
+For convenience you can use the command `test` to give the same
+results as above:
+
+```
+docker run -it rgrdler/simdem test
+```
+
 ## Running with your own scripts
 
 To use your own demo script mount a directory with `script.md` into
-the simdem container:
+the simdem containers `demo_scripts` directory.:
 
 ```
 docker run -it -v ~/my_demo_dir:/demo_scripts rgardler/simdem
