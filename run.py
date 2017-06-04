@@ -156,7 +156,7 @@ def test_results(expected_results, actual_results):
 
     return is_pass
 
-def run_script(script_dir, env=None, simulation = True, is_automated=False, is_testing=False):
+def run_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
     # Reads a script.md file in the indicated directoy and runs the
     # commands contained within. If simulation == True then human
     # entry will be simulated (looks like typing and waits for
@@ -213,7 +213,7 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
             # Executable line
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
-            actual_results = simulate_command(line, script_dir, env, simulation, is_automated)
+            actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
             # Heading in descriptive text
             if is_first_line:
@@ -221,10 +221,10 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
             else:
                 print("$ ", end="", flush=True)
                 check_for_interactive_command(script_dir, is_automated)
-                simulate_command("clear", script_dir, env, simulation, is_automated)
+                simulate_command("clear", script_dir, env, is_simulation, is_automated)
             print("$ ", end="", flush=True)
-            simulate_command(line, script_dir, env, simulation, is_automated)
-        elif not simulation and not in_results_section:
+            simulate_command(line, script_dir, env, is_simulation, is_automated)
+        elif not is_simulation and not in_results_section:
             # Descriptinve text
             print(line, end="", flush=True)
 
