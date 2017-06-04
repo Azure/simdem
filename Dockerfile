@@ -7,7 +7,7 @@ RUN apk add tree
 COPY demo_scripts demo_scripts
 COPY run.py run.py
 
-ENTRYPOINT [ "python", "./run.py" ]
+ENTRYPOINT [ "python", "./simdem.py" ]
 CMD ["-s", "tutorial", "run", "simdem"]
 
 
