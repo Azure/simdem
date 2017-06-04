@@ -1,3 +1,3 @@
-docker build -t rgardler/simdem .
+. build.sh
 
 docker run -it rgardler/simdem $@
