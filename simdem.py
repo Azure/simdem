@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This is a python script that emulates a terminal session and runs
 # commands from a supplied markdown file..
 
