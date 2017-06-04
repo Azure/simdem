@@ -179,21 +179,16 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
     filename = script_dir + "script.md"
     
     lines = list(open(filename)) 
-    if simulation:
-        print("You are now in demo simulation mode.")
-        print("Press a key to clear the terminal and start the demo")
-        check_for_interactive_command(script_dir, is_automated)
-        run_command("clear", script_dir, env)
-
     expected_results = ""
     actual_results = ""
     passed_tests = 0
     failed_tests = 0
-        
+    is_first_line = True
+
     for line in lines:
         if in_results_section and in_code_block and not line.startswith("```"):
             expected_results += line
-            
+
         if line.startswith("Results:"):
             # Entering results section
             in_results_section = True
@@ -219,10 +214,22 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
             actual_results = simulate_command(line, script_dir, env, simulation, is_automated)
+        elif line.startswith("#") and not in_code_block and not in_results_section:
+            # Heading in descriptive text
+            if is_first_line:
+                run_command("clear", script_dir, env)
+            else:
+                print("$ ", end="", flush=True)
+                check_for_interactive_command(script_dir, is_automated)
+                simulate_command("clear", script_dir, env)
+            print("$ ", end="", flush=True)
+            simulate_command(line, script_dir, env)
         elif not simulation and not in_results_section:
             # Descriptinve text
             print(line, end="", flush=True)
 
+        is_first_line = False
+        
     if is_testing:
         print("\n\n=============================\n\n")
         print("Test Run Complete.")
@@ -233,14 +240,10 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
             print("View failure reports in context in the above output.")
         print("\n\n=============================\n\n")
 
-def get_usage():
-    print("SimDem allows you to build documentation and demo's using Markdown.")
-    print("To learn more run with no parameters or for quick guidance use `--help`")
-
 def main():
     """SimDem CLI interpreter"""
 
-    p = optparse.OptionParser(usage=get_usage(), version="%prog 0.1")
+    p = optparse.OptionParser("%prog [options] DEMO_NAME", version="%prog 0.1")
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
@@ -289,4 +292,7 @@ def main():
         is_automatic = True and options.auto
         is_test = True and options.test
         run_script(script_dir, env, simulate, is_automatic, is_test)
+    else:
+        print("Unknown command: " + cmd)
+        print(get_usage())
 main()
