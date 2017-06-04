@@ -1,2 +1,2 @@
 ./build.sh
-docker run rgardler/simdem test test
+docker run -it rgardler/simdem test test
