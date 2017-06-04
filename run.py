@@ -217,11 +217,11 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
         elif line.startswith("#") and not in_code_block and not in_results_section:
             # Heading in descriptive text
             if is_first_line:
-                run_command("clear", script_dir, env)
+                run_command("clear", script_dir, env, simulation, is_automated)
             else:
                 print("$ ", end="", flush=True)
                 check_for_interactive_command(script_dir, is_automated)
-                simulate_command("clear", script_dir, env)
+                simulate_command("clear", script_dir, env, simulation, is_automated)
             print("$ ", end="", flush=True)
             simulate_command(line, script_dir, env)
         elif not simulation and not in_results_section:
