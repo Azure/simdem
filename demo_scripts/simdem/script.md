@@ -64,7 +64,9 @@ demo mode use the `--style simulate` command line switch.
 Test mode runs the commands and then verifies that the output is
 sufficiently similar to the expected results (recorded in the markdown
 file) to be considered correct. To run in test mode use the `--test
-yes` switch.
+yes` switch. For convenience you can use the command `test` to execute
+tests with the optimal configuration for automated testing..
+
 
 Each of these modes can be run in auto mode too. This means that the
 program does not wait for a keypress before proceeding. This can be
@@ -114,6 +116,27 @@ My_Complex_SimDem_Tutorial
 	+-script.md
 `
 
+The SimDem application has the following setup:
+
+```
+tree ..
+```
+
+Results:
+
+```
+demo_scripts/
+├── env.json
+├── env.local.json
+├── script.md
+├── simdem
+│   ├── env.json
+│   ├── env.local.json
+│   └── script.md
+└── test
+    ├── env.json
+    └── script.md						
+```
 
 # Environment Variables
 
@@ -307,6 +330,7 @@ included in a static form of the script.
 When you reach the end of the script (like now) you will return to
 your normal terminal.
 
-If you ran with the `--test yes` flag then the final output will be a
-summary of test results. This script is designed to have a failing
-test. Scroll back in the results to see why it failed.
+If you ran with the `--test yes` flag (or with the command `test`)
+then the final output will be a summary of test results. This script
+is designed to have a failing test. Scroll back in the results to see
+why it failed.

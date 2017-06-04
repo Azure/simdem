@@ -253,36 +253,39 @@ def main():
  
     if len(arguments) == 0:
         arguments.append("run")
+
+    if len(arguments) == 1:
         for f in os.listdir("demo_scripts"):
             if os.path.isdir(os.path.join("demo_scripts/", f)):
                 arguments.append(f)
                 break
 
+    if options.auto == "False":
+        is_automatic = False
+    else:
+        is_automatic = True
+        
+    if options.test == "False":
+        is_test = False
+    else:
+        is_test = True
+            
+    if options.style == "simulate":
+        simulate = True
+    elif options.style == 'tutorial':
+        simulate = False
+    else:
+        print("Unkown style (--style, -s): " + options.style)
+        exit(1)
+
+    script_dir = options.path + arguments[1]
+    env = environment_setup(script_dir)
     cmd = arguments[0]
 
     if cmd == "run":
-        script_dir = options.path + arguments[1]
-
-        env = environment_setup(script_dir)
-
-        if options.auto == "False":
-            is_automatic = False
-        else:
-            is_automatic = True
-
-        if options.test == "False":
-            is_test = False
-        else:
-            is_test = True
-            
-        if options.style == "simulate":
-            simulate = True
-        elif options.style == 'tutorial':
-            simulate = False
-        else:
-            print("Unkown style (--style, -s): " + options.style)
-            exit(1)
-            
         run_script(script_dir, env, simulate, is_automatic, is_test)
-
+    elif cmd == "test":
+        is_automatic = True and options.auto
+        is_test = True and options.test
+        run_script(script_dir, env, simulate, is_automatic, is_test)
 main()
