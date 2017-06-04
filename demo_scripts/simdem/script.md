@@ -100,20 +100,13 @@ containing tutorials. Tutorial sub-directories will contain at least a
 
 `
 My_Complex_SimDem_Tutorial
-  |
-  +-script.md 
-  |
-  +-Tutotial_1
-  | |
-  | +-script.md
-  |
-  +-Tutotial_2
-  | |
-  | +-script.md
-  |
-  +-Tutotial_3
-    |
-	+-script.md
+├── script.md 
+├── Tutotial_1
+│   └── script.md
+├── Tutotial_2
+│   └── script.md
+└── Tutotial_3
+    └── script.md
 `
 
 The SimDem application has the following setup:
@@ -130,9 +123,9 @@ demo_scripts/
 ├── env.local.json
 ├── script.md
 ├── simdem
-│   ├── env.json
-│   ├── env.local.json
-│   └── script.md
+│   ├── env.json
+│   ├── env.local.json
+│   └── script.md
 └── test
     ├── env.json
     └── script.md						
