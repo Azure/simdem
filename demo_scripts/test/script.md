@@ -43,6 +43,10 @@ Results:
 hello-world
 ```
 
+```
+for i in {0..10}; do echo "Welcome $i times"; done
+```
+
 # Commands that do not work
 
   * ping bing.com

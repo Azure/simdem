@@ -67,11 +67,10 @@ def environment_setup(directory):
     return env
 
 def run_command(command, script_dir, env=None):
-    shell = pexpect.spawn('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
+    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
+    shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
     output = shell.before
-    
-    print(output.decode(encoding='UTF-8'))
     
 def check_for_interactive_command(script_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
