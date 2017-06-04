@@ -1,15 +1,26 @@
-# Welcome to SimDem
+# Welcome to SimDem: A Tutorial That is Also a Demo (and a test script)
 
-Simdem allows you to run a simulated demo. It reads a script, written
-in the form of a human readable markdown file, and executes the
-commands on your behalf. It will even make it look like you are really
-typing the commands, which is great if you want to concentrate on
-explaining what you are doing but still run the demo live.
+Simdem allows you to wite a tutorial in markdown format and then run
+the commands within it as a simulated demo, interactive tutorial or
+even a test script.
 
-Each easier to desribe if you see it working. In fact you are already
+It reads a script, written in the form of a human readable markdown
+file, and executes the commands within this script on your behalf. It
+will even make it look like you are really typing the commands, which
+is great if you want to concentrate on explaining what you are doing
+but still run the demo live.
+
+It's easier to describe if you see it working. In fact you are already
 in a SimDem. Press a key (other than 'b', we'll look at that shortly)
-to "type" the `date` command, once the command has been "typed" hit
-a key to run the command.
+to "type" a command, once the command has been "typed" hit
+a key to execute the command.
+
+```
+echo "While it looks like this was typed into the terminal it actually comes from a markdown file."
+echo "As will all the commands you see here, not only are they 'typed' but they are executed in real time..."
+```
+
+The date command will prove this is running in real time.
 
 ```
 date
@@ -21,29 +32,12 @@ Results:
 Sat Mar 12 08:59:01 UTC 2016
 ```
 
-Cool huh?
-
-# A Tutorial That is Also a Demo
-
-This text is being pulled from the `script.md` file inside the
-`demo_scripts\simdem` folder. Since this is a markdown file this
-document can also be rendered as a web page, blog post or event a Word
-or PDF document. However, you don't have to display the text of the
-document when running the demo. If you run the demo container with
-`docker run rgardler/simdem simulate` then the text will be surpressed
-and the typing will look more realistic, as though you are typing for
-real.
-
-Lets, try something else. Hit another key (other than 'b') to run a
-different command (don't forget to hit a key to actually execute the
-command).
-
 ```
-echo "this is cool, when the output of this finishes, hit another key"
-echo "and now hit enter to run this command"
+# Let's take a look at the start of markdown file that is the script
+head -n 45 script.md 
 ```
 
-As you can see we can run multiple commands, in sequence.
+Cool, huh?
 
 # Modes of Operation
 
