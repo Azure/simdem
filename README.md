@@ -1,14 +1,17 @@
-This project provides ways to write tutorials that then become
-interactive demo's. When running in 'tutorial' mode the user is taken
-through the tutorial document one section at a time, but when code
-snippets are encountered the user interacts with the application and
-the commands are run live.
+This project provides ways to write tutorials in markdown that then
+become interactive demo's and automated tests. You can run in a number
+of different modes:
 
-When run in a 'simulation' mode the application emulates the human
-interaction parts of running the demo live so that you can concentrate
-on explaining what is happening, while still being able to go
-off-script in response to questions and the need for further
-exploration.
+  * Tutorial: Displays the descriptive text of the tutorial and pauses
+    at code blocks to allow user interaction.
+  * Simulate: Does not disply the descriptive text, but pauses at each
+    code block. When the user hits a key the command is "typed", a
+    second keypress executes the command.
+  * Test: Runs the commands and then verifies that the output is
+    sufficiently similar to the expected results (recorded in the
+    markdown file) to be considered correct.
+  * Auto: allows any of the above modes to be run but without user
+    interaction
 
 # Try it Out
 
@@ -19,11 +22,19 @@ work through the interactive tutorial that we include.
 docker run -it rgardler/simdem
 ```
 
-To run the tutorial as a demo (that is without explanatory text and
+To run the same file as a demo (that is without explanatory text and
 with simulated typing) as `--style simulate` to the command:
 
 ```
 docker run -it rgrdler/simdem --style simulate
+```
+
+To run the same file as a series of tests us the `--test yes`
+flag. When running in test mode you will usually want to also add the
+`--auto yes` option to prevent the need for human intervention.
+
+```
+docker run -it rgrdler/simdem --test yes --auto yes
 ```
 
 ## Running with your own scripts

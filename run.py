@@ -1,6 +1,7 @@
 # This is a python script that emulates a terminal session and runs
 # commands from a supplied markdown file..
 
+import difflib
 import optparse
 import os
 import pexpect
@@ -28,8 +29,9 @@ def simulate_command(command, script_dir, env = None, simulation = True, is_auto
     type_command(command, script_dir, simulation)
     check_for_interactive_command(script_dir, is_automatic)
     print()
-    
-    run_command(command, script_dir, env)
+    output = run_command(command, script_dir, env)
+
+    return output
 
 def environment_setup(directory):
     # Populates each shell environment with a set of environment vars
@@ -70,7 +72,7 @@ def run_command(command, script_dir, env=None):
     shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
-    output = shell.before
+    return shell.before
     
 def check_for_interactive_command(script_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
@@ -132,7 +134,29 @@ def get_instruction_key():
         fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
     return ret
 
-def run_script(script_dir, env=None, simulation = True, is_automated=False):
+from pprint import pprint
+def test_results(expected_results, actual_results):
+    differ = difflib.Differ()
+    comparison = differ.compare(actual_results, expected_results)
+    diff = differ.compare(actual_results, expected_results)
+    seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
+
+    is_pass = seq.ratio() > 0.66
+
+    if not is_pass:
+        print("\n\n=============================\n\n")
+        print("FAILED")
+        print("Similarity ratio: " + str(seq.ratio()))
+        print("\n\n=============================\n\n")
+        print("Expected results:")
+        print(expected_results)
+        print("Actual results:")
+        print(actual_results)
+        print("\n\n=============================\n\n")
+
+    return is_pass
+
+def run_script(script_dir, env=None, simulation = True, is_automated=False, is_testing=False):
     # Reads a script.md file in the indicated directoy and runs the
     # commands contained within. If simulation == True then human
     # entry will be simulated (looks like typing and waits for
@@ -160,80 +184,57 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False):
         print("Press a key to clear the terminal and start the demo")
         check_for_interactive_command(script_dir, is_automated)
         run_command("clear", script_dir, env)
+
+    expected_results = ""
+    actual_results = ""
+    passed_tests = 0
+    failed_tests = 0
         
     for line in lines:
+        if in_results_section and in_code_block and not line.startswith("```"):
+            expected_results += line
+            
         if line.startswith("Results:"):
+            # Entering results section
             in_results_section = True
         elif line.startswith("```") and not in_code_block:
+            # Entering a code block, if in_results_section = True then it's a results block
             in_code_block = True
-        elif line.startswith("```") and in_code_block:
+        elif line.startswith("```") and in_code_block and in_results_section:
+            # Finishing results section
+            if in_results_section and is_testing:
+                if test_results(expected_results, actual_results):
+                    passed_tests += 1
+                else:
+                    failed_tests += 1
+            expected_results = ""
+            actual_results = ""
             in_results_section = False
             in_code_block = False
+        elif line.startswith("```") and in_code_block and not in_results_section:
+            # Finishing executable code block
+            in_code_block = False
         elif in_code_block and not in_results_section:
+            # Executable line
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
-            simulate_command(line, script_dir, env, simulation, is_automated)
+            actual_results = simulate_command(line, script_dir, env, simulation, is_automated)
         elif not simulation and not in_results_section:
-            print(line, end="", flush=True) 
+            # Descriptinve text
+            print(line, end="", flush=True)
+
+    if is_testing:
+        print("\n\n=============================\n\n")
+        print("Test Run Complete.")
+        print("Failed Tests: " + str(failed_tests))
+        print("Passed Tests: " + str(passed_tests))
+        print("\n\n")
+        print("View failure reports in context in the above output.")
+        print("\n\n=============================\n\n")
 
 def get_usage():
-    commands = [
-        {
-            "name": "run",
-            "description": "Run the demo as if in a normal terminal typing the commands",
-            "options": [
-                {
-                    "name": "DEMO_NAME",
-                    "description": "Name of the demo to be run. Demo files should be in a directory with the same name",
-                    "type": "required"                    
-                },
-                {
-                    "name": "--style",
-                    "description": "Either 'tutorial' (default) or 'simulate'",
-                    "type": "optional",
-                    "default": "tutorial"
-                },
-                {
-                    "name": "--path",
-                    "description": "Path to the directory containining the demo scripts",
-                    "type": "optional",
-                    "default": "demo_scripts"
-                },
-                {
-                    "name": "--auto",
-                    "description": "If set to any value the application does not wait for key presses from the user",
-                    "type": "optional",
-                    "default": "False"
-                }
-            ] 
-        }
-    ]
-
-    req = ""
-    opt = ""
-    usage = "Usage: %prog [OPTIONS] COMMAND\n\n"
-    usage += "Commands\n"
-    usage += "========\n\n"
-    for cmd in commands:
-        usage += cmd["name"]
-        for option in cmd["options"]:
-            if option["type"] == "required":
-                usage += " " + option["name"]
-                req += option["name"] + "\n" + option["description"]
-                req += "\n\n"
-            else:
-                opt += option["name"] + "\n" + option["description"] + "\nDefault: " + option["default"]
-                opt += "\n\n"
-    usage += " <options>\n"
-    usage += cmd["description"] + "\n"
-    usage += "\n\nRequired Parameters\n"
-    usage += "-------------------\n\n"
-    usage += req
-    usage += "\n\nOptional Options\n"
-    usage += "----------------\n\n"
-    usage += opt
-    usage += "\n\n"
-    return usage
+    print("SimDem allows you to build documentation and demo's using Markdown.")
+    print("To learn more run with no parameters or for quick guidance use `--help`")
 
 def main():
     """SimDem CLI interpreter"""
@@ -245,6 +246,9 @@ def main():
                  help="The Path to the demo scripts directory.")
     p.add_option('--auto', '-a', default="False",
                  help="If set to anything other than False the application will not wait for user keypresses between commands.")
+    p.add_option('--test', '-t', default="False",
+                 help="If set to anything other than False the output of the command will be compared to the expected results in the sript. Any failures will be reported")
+    
     options, arguments = p.parse_args()
  
     if len(arguments) == 0:
@@ -265,7 +269,12 @@ def main():
             is_automatic = False
         else:
             is_automatic = True
-        
+
+        if options.test == "False":
+            is_test = False
+        else:
+            is_test = True
+            
         if options.style == "simulate":
             simulate = True
         elif options.style == 'tutorial':
@@ -274,11 +283,6 @@ def main():
             print("Unkown style (--style, -s): " + options.style)
             exit(1)
             
-        run_script(script_dir, env, simulate, is_automatic)
-    else:
-        print("Unkown command: " + cmd)
-        print(get_usage())
-
-
+        run_script(script_dir, env, simulate, is_automatic, is_test)
 
 main()

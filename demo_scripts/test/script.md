@@ -1,6 +1,8 @@
 This is a simple test script. It runs a number of commands in
 succession. This script also lists commands known not to work.
 
+# Simple Echo
+
 ```
 echo "Hello world"
 ```
@@ -11,15 +13,7 @@ Results:
 Hello world
 ```
 
-```
-date -u
-```
-
-Results:
-
-```
-Sat Mar 12 10:09:12 UTC 2016
-```
+# Cat a file
 
 ```
 cat env.json
@@ -33,18 +27,26 @@ Results:
 }
 ```
 
+# For Loop
+
 ```
-echo $TEST
+for i in {0..10}; do echo "Welcome $i times"; done
 ```
 
 Results:
 
 ```
-hello-world
-```
-
-```
-for i in {0..10}; do echo "Welcome $i times"; done
+Welcome 0 times
+Welcome 1 times
+Welcome 2 times
+Welcome 3 times
+Welcome 4 times
+Welcome 5 times
+Welcome 6 times
+Welcome 7 times
+Welcome 8 times
+Welcome 9 times
+Welcome 10 times
 ```
 
 # Commands that do not work

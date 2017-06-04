@@ -61,11 +61,16 @@ will execute the command. The idea is that you describe what is
 happening as the application "types" the command for you. To run in
 demo mode use the `--style simulate` command line switch.
 
-Both the tutorial and demo modes can be run in auto mode too. This
-means that the program does not wait for a keypress before
-proceeding. This can be useful if you want to runthe complete script
-unattended. To run in automated or unnattended mode use the `--auto
-true` command line switch.
+Test mode runs the commands and then verifies that the output is
+sufficiently similar to the expected results (recorded in the markdown
+file) to be considered correct. To run in test mode use the `--test
+yes` switch.
+
+Each of these modes can be run in auto mode too. This means that the
+program does not wait for a keypress before proceeding. This can be
+useful if you want to runthe complete script unattended. To run in
+automated or unnattended mode use the `--auto true` command line
+switch.
 
 Manual mode is ideal if you would like to manually type the commands,
 many people find this helps them remember. It can be useful in the
@@ -301,3 +306,7 @@ included in a static form of the script.
 
 When you reach the end of the script (like now) you will return to
 your normal terminal.
+
+If you ran with the `--test yes` flag then the final output will be a
+summary of test results. This script is designed to have a failing
+test. Scroll back in the results to see why it failed.
