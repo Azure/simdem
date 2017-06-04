@@ -228,8 +228,9 @@ def run_script(script_dir, env=None, simulation = True, is_automated=False, is_t
         print("Test Run Complete.")
         print("Failed Tests: " + str(failed_tests))
         print("Passed Tests: " + str(passed_tests))
-        print("\n\n")
-        print("View failure reports in context in the above output.")
+        if failed_tests > 0:
+            print("\n\n")
+            print("View failure reports in context in the above output.")
         print("\n\n=============================\n\n")
 
 def get_usage():
