@@ -16,7 +16,7 @@ to "type" a command, once the command has been "typed" hit
 a key to execute the command.
 
 ```
-echo "While it looks like this was typed into the terminal it actually comes from a markdown file."
+echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the `--style simulate` flag), it actually comes from a markdown file."
 echo "As will all the commands you see here, not only are they 'typed' but they are executed in real time..."
 ```
 
