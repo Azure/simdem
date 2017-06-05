@@ -82,15 +82,14 @@ this by comparing the output of the command with the `Results:`
 section in the script. By default a 66% or more match indicates a
 pass. However, in some cases a much lower similarity is expected, for
 example, the output of `date` will vary considerably each time it is
-run. In these situations you can provide an expected similarity in a
-comment just before the command:
+run. In these situations you can provide an expected similarity as
+part of your `Results:` section header, for example:
 
 ```
-# Expected Similarity: 0.2
 date
 ```
 
-Results:
+Results: Expected Similarity: 0.2
 
 ```
 Tue Jun  6 15:23:53 UTC 2017

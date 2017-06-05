@@ -199,12 +199,16 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
         if in_results_section and in_code_block and not line.startswith("```"):
             expected_results += line
 
-        if line.lower().startswith("# expected similarity:") and in_results_section:
-            s = line[22:]
-            expected_similarity = float(s)
         if line.startswith("Results:"):
             # Entering results section
             in_results_section = True
+            pos = line.lower().find("expected similarity: ")
+            if pos >= 0:
+                pos = pos + len("expected similarity: ")
+                s = line[pos:]
+                expected_similarity = float(s)
+            else:
+                expected_similarity = 0.66
         elif line.startswith("```") and not in_code_block:
             # Entering a code block, if in_results_section = True then it's a results block
             in_code_block = True
@@ -227,7 +231,6 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
             actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
-            expected_similarity = 0.66
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
             # Heading in descriptive text
             if is_first_line:

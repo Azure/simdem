@@ -48,10 +48,9 @@ tests we need to override the similarity expected.
 date
 ```
 
-Results:
+Results: Expected Similarity: 0.2
 
 ```
-# Expected Similarity: 0.2
 Tue Jun  6 15:23:53 UTC 2017
 ```
 
