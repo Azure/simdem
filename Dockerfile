@@ -5,7 +5,7 @@ RUN pip install pexpect
 RUN apk add tree
 
 COPY demo_scripts demo_scripts
-COPY run.py run.py
+COPY simdem.py simdem.py
 
 ENTRYPOINT [ "python", "./simdem.py" ]
 CMD ["-s", "tutorial", "run", "simdem"]
