@@ -144,19 +144,19 @@ def get_instruction_key():
         fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
     return ret
 
-from pprint import pprint
-def test_results(expected_results, actual_results):
+def test_results(expected_results, actual_results, expected_similarity = 0.66):
     differ = difflib.Differ()
     comparison = differ.compare(actual_results, expected_results)
     diff = differ.compare(actual_results, expected_results)
     seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
 
-    is_pass = seq.ratio() > 0.66
+    is_pass = seq.ratio() >= expected_similarity
 
     if not is_pass:
         print("\n\n=============================\n\n")
         print("FAILED")
-        print("Similarity ratio: " + str(seq.ratio()))
+        print("Similarity ratio:    " + str(seq.ratio()))
+        print("Expected Similarity: " + str(expected_similarity))
         print("\n\n=============================\n\n")
         print("Expected results:")
         print(expected_results)
@@ -199,6 +199,9 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
         if in_results_section and in_code_block and not line.startswith("```"):
             expected_results += line
 
+        if line.lower().startswith("# expected similarity:") and in_results_section:
+            s = line[22:]
+            expected_similarity = float(s)
         if line.startswith("Results:"):
             # Entering results section
             in_results_section = True
@@ -208,7 +211,7 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
         elif line.startswith("```") and in_code_block and in_results_section:
             # Finishing results section
             if in_results_section and is_testing:
-                if test_results(expected_results, actual_results):
+                if test_results(expected_results, actual_results, expected_similarity):
                     passed_tests += 1
                 else:
                     failed_tests += 1
@@ -224,6 +227,7 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
             actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
+            expected_similarity = 0.66
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
             # Heading in descriptive text
             if is_first_line:

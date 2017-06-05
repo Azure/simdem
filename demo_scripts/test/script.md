@@ -39,6 +39,22 @@ Results:
 }
 ```
 
+# Expected different results
+
+When we know the results will be different and we want to use them in
+tests we need to override the similarity expected.
+
+```
+date
+```
+
+Results:
+
+```
+# Expected Similarity: 0.2
+Tue Jun  6 15:23:53 UTC 2017
+```
+
 # Sudo
 
 NOTE: there is no sudo in Docker containers, so we need to strip
