@@ -71,6 +71,14 @@ def environment_setup(directory):
     return env
 
 def run_command(command, script_dir, env=None):
+    if command.startswith("sudo "):
+        is_docker_command = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
+        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker_command], env=env, cwd=script_dir, timeout=None)
+        shell.expect(pexpect.EOF)
+        is_docker = shell.before.strip() == "True"
+        if is_docker:
+            command = command[5:]
+
     shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)

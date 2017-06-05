@@ -10,7 +10,7 @@ simdem --version
 Results:
 
 ```
-simdem 0.2.1
+simdem.py 0.2.1
 ```
 
 # Simple Echo
@@ -37,6 +37,23 @@ Results:
 {
     "TEST": "hello-world"
 }
+```
+
+# Sudo
+
+NOTE: there is no sudo in Docker containers, so we need to strip
+`sudo` from commands if running in a Docker container. If we are not
+in a container we need to run SimDem as `sudo`. This test should pass
+in both scenarios.
+
+```
+sudo echo "Sudo Works"
+```
+
+Results:
+
+```
+Sudo Works 
 ```
 
 # For Loop
