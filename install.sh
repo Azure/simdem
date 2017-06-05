@@ -1,3 +1,11 @@
+INSTALL_DIR=/usr/local/bin/
+FILE=simdem.py
+SYMLINK=simdem
+
 pip3 install pexpect
-sudo cp simdem.py /usr/local/bin
-sudo ln -s /usr/local/bin/simdem.py /usr/local/bin/simdem
+
+sudo cp $FILE $INSTALL_DIR
+
+if [ ! -L $INSTALL_DIR$SYMLINK ]; then
+    sudo ln -s $INSTALL_DIR$FILE $INSTALL_DIR$SYMLINK
+fi
