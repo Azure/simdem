@@ -245,7 +245,7 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
 def main():
     """SimDem CLI interpreter"""
 
-    p = optparse.OptionParser("%prog [options] DEMO_NAME", version="%prog 0.1")
+    p = optparse.OptionParser("%prog [options] DEMO_NAME", version="%prog 0.2.1")
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
@@ -260,11 +260,8 @@ def main():
     if len(arguments) == 0:
         arguments.append("run")
 
-    if len(arguments) == 1:
-        for f in os.listdir("demo_scripts"):
-            if os.path.isdir(os.path.join("demo_scripts/", f)):
-                arguments.append(f)
-                break
+    if not options.path.endswith("/"):
+        options.path += "/"
 
     if options.auto == "False":
         is_automatic = False
@@ -284,7 +281,11 @@ def main():
         print("Unkown style (--style, -s): " + options.style)
         exit(1)
 
-    script_dir = options.path + arguments[1]
+    if len(arguments) == 2:
+        script_dir = options.path + arguments[1]
+    else:
+        script_dir = options.path
+        
     env = environment_setup(script_dir)
     cmd = arguments[0]
 
@@ -296,5 +297,5 @@ def main():
         run_script(script_dir, env, simulate, is_automatic, is_test)
     else:
         print("Unknown command: " + cmd)
-        print(get_usage())
+        print("Run with --help for guidance.")
 main()
