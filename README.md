@@ -16,33 +16,45 @@ of different modes:
 
 # Try it Out
 
+## Tutorial Mode
+
 It's easier to explain through action, so just run the container and
 work through the interactive tutorial that we include.
 
 ```
-docker run -it rgardler/simdem
+docker run -it rgardler/simdem simdem
 ```
+
+## Demo mode
 
 To run the same file as a demo (that is without explanatory text and
 with simulated typing) as `--style simulate` to the command:
 
 ```
-docker run -it rgrdler/simdem --style simulate
+docker run -it rgardler/simdem --style simulate run simdem
 ```
+
+## Test mode
 
 To run the same file as a series of tests us the `--test yes`
 flag. When running in test mode you will usually want to also add the
 `--auto yes` option to prevent the need for human intervention. 
 
 ```
-docker run -it rgrdler/simdem --test yes --auto yes
+docker run -it rgrdler/simdem --test yes --auto yes simdem
 ```
 
 For convenience you can use the command `test` to give the same
 results as above:
 
 ```
-docker run -it rgrdler/simdem test
+docker run -it rgrdler/simdem test simdem
+```
+
+## Script generation mode
+
+```
+docker run -it rgrdler/simdem script simdem
 ```
 
 ## Running with your own scripts
