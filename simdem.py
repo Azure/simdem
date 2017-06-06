@@ -35,11 +35,12 @@ def simulate_command(command, script_dir, env = None, simulation = True, is_auto
 
     return output
 
-def environment_setup(directory):
+def get_simdem_environment(directory):
     # Populates each shell environment with a set of environment vars
     # loaded via env.json file stored either in the project root
     # directory
-    env = os.environ.copy()
+
+    env = {}
     
     if not directory.endswith('/'):
         directory = directory + "/"
@@ -267,10 +268,13 @@ def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=Fal
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
     filename = script_dir + "script.md"
-    
-    lines = list(open(filename)) 
+
     script = ""
-    
+    env = get_simdem_environment(script_dir)
+    for key, value in env.items():
+        script += key + "='" + value + "'\n"
+
+    lines = list(open(filename)) 
     for line in lines:
         if line.startswith("Results:"):
             # Entering results section
@@ -336,8 +340,9 @@ def main():
         script_dir = options.path + arguments[1]
     else:
         script_dir = options.path
-        
-    env = environment_setup(script_dir)
+
+    env = os.environ.copy()
+    env.update(get_simdem_environment(script_dir))
     cmd = arguments[0]
 
     if cmd == "run":
