@@ -10,6 +10,7 @@ of different modes:
   * Test: Runs the commands and then verifies that the output is
     sufficiently similar to the expected results (recorded in the
     markdown file) to be considered correct.
+  * Script: Creates an executable bash script from the document
   * Auto: allows any of the above modes to be run but without user
     interaction
 

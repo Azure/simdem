@@ -257,10 +257,46 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
             print("View failure reports in context in the above output.")
         print("\n\n=============================\n\n")
 
+def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
+    # Reads a script.md file in the indicated directoy and builds an
+    # executable bash script from the commands contained within.
+    
+    in_code_block = False
+    in_results_section = False
+
+    if not script_dir.endswith('/'):
+        script_dir = script_dir + "/"
+    filename = script_dir + "script.md"
+    
+    lines = list(open(filename)) 
+    script = ""
+    
+    for line in lines:
+        if line.startswith("Results:"):
+            # Entering results section
+            in_results_section = True
+        elif line.startswith("```") and not in_code_block:
+            # Entering a code block, if in_results_section = True then it's a results block
+            in_code_block = True
+        elif line.startswith("```") and in_code_block and in_results_section:
+            # Finishing results section
+            in_results_section = False
+            in_code_block = False
+        elif line.startswith("```") and in_code_block and not in_results_section:
+            # Finishing executable code block
+            in_code_block = False
+        elif in_code_block and not in_results_section:
+            # Executable line
+            script += line
+        elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
+            # Heading in descriptive text
+            script +="\n"
+    return script
+        
 def main():
     """SimDem CLI interpreter"""
 
-    p = optparse.OptionParser("%prog [options] DEMO_NAME", version="%prog 0.2.3")
+    p = optparse.OptionParser("%prog [run|test|script] <options> DEMO_NAME", version="%prog 0.2.3")
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
@@ -310,6 +346,8 @@ def main():
         is_automatic = True and options.auto
         is_test = True and options.test
         run_script(script_dir, env, simulate, is_automatic, is_test)
+    elif cmd == "script":
+        print(get_bash_script(script_dir, env))
     else:
         print("Unknown command: " + cmd)
         print("Run with --help for guidance.")

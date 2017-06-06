@@ -43,6 +43,18 @@ Cool, huh?
 
 SimDem demos are interactive and can be run in different modes.
 
+  * Tutorial: Displays the descriptive text of the tutorial and pauses
+    at code blocks to allow user interaction.
+  * Simulate: Does not disply the descriptive text, but pauses at each
+    code block. When the user hits a key the command is "typed", a
+    second keypress executes the command.
+  * Test: Runs the commands and then verifies that the output is
+    sufficiently similar to the expected results (recorded in the
+    markdown file) to be considered correct.
+  * Script: Creates an executable bash script from the document
+  * Auto: allows any of the above modes to be run but without user
+    interaction
+
 Tutorial mode is ideal if you are using this as a learning or teaching
 tool. In this mode a description of what you are about to do is shown
 on the screen, hit a key to see the command, hit another key to
@@ -61,6 +73,9 @@ file) to be considered correct. To run in test mode use the `--test
 yes` switch. For convenience you can use the command `test` to execute
 tests with the optimal configuration for automated testing..
 
+Script mode does not execute any of the commands, instead is outputs
+an executable bash script that can be run without SimDem. Use the
+command `script` to generate the executable script.
 
 Each of these modes can be run in auto mode too. This means that the
 program does not wait for a keypress before proceeding. This can be
