@@ -12,16 +12,21 @@ import time
 import shlex
 import sys
 import json
+from colorama import init
+from colorama import Fore, Style
+init()
 
 def type_command(command, script_dir, simulation):
     # Displays the command on the screen
     # If simulation == True then it will look like someone is typing the command
+    print(Fore.GREEN+Style.BRIGHT)
     for char in command:
         if (char != '\n'):
             print(char, end="", flush=True)
         if simulation:
             delay = random.uniform(0.01, 0.04) 
             time.sleep(delay)
+    print(Style.RESET_ALL)
 
 def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
     # Types the command on the screen, executes it and outputs the

@@ -3,6 +3,7 @@ FILE=simdem.py
 SYMLINK=simdem
 
 pip3 install pexpect
+pip3 install colorama
 
 sudo cp $FILE $INSTALL_DIR
 sudo chmod +x $INSTALL_DIR$FILE
