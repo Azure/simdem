@@ -20,7 +20,7 @@ def type_command(command, script_dir, simulation):
         if (char != '\n'):
             print(char, end="", flush=True)
         if simulation:
-            delay = random.uniform(0.02, 0.08) 
+            delay = random.uniform(0.01, 0.04) 
             time.sleep(delay)
 
 def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
@@ -195,6 +195,7 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
     passed_tests = 0
     failed_tests = 0
     is_first_line = True
+    executed_code_in_this_section = False
 
     for line in lines:
         if in_results_section and in_code_block and not line.startswith("```"):
@@ -232,16 +233,20 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
             actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
+            executed_code_in_this_section = True
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
-            # Heading in descriptive text
+            # Heading in descriptive text, indicating a new section
             if is_first_line:
                 run_command("clear", script_dir, env)
-            else:
+            elif executed_code_in_this_section:
+                executed_code_in_this_section = False
                 print("$ ", end="", flush=True)
                 check_for_interactive_command(script_dir, is_automated)
                 simulate_command("clear", script_dir, env, is_simulation, is_automated)
-            print("$ ", end="", flush=True)
-            simulate_command(line, script_dir, env, is_simulation, is_automated)
+                if not is_simulation:
+                    print("$ ", end="", flush=True)
+                    # Since this is a heading we are not really simulating a command, it appears as a comment
+                    simulate_command(line, script_dir, env, is_simulation, is_automated)
         elif not is_simulation and not in_results_section:
             # Descriptinve text
             print(line, end="", flush=True)
