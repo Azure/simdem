@@ -161,16 +161,22 @@ def test_results(expected_results, actual_results, expected_similarity = 0.66):
 
     if not is_pass:
         print("\n\n=============================\n\n")
+        print(colorama.Fore.RED + colorama.Style.BRIGHT)
         print("FAILED")
+        print(colorama.Style.RESET_ALL)
         print("Similarity ratio:    " + str(seq.ratio()))
         print("Expected Similarity: " + str(expected_similarity))
         print("\n\n=============================\n\n")
         print("Expected results:")
+        print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
         print(expected_results)
+        print(colorama.Style.RESET_ALL)
         print("Actual results:")
+        print(colorama.Fore.RED + colorama.Style.BRIGHT)
         print(actual_results)
+        print(colorama.Style.RESET_ALL)
         print("\n\n=============================\n\n")
-
+        print(colorama.Style.RESET_ALL)
     return is_pass
 
 def run_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
@@ -262,7 +268,14 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
     if is_testing:
         print("\n\n=============================\n\n")
         print("Test Run Complete.")
-        print("Failed Tests: " + str(failed_tests))
+        if failed_tests > 0:
+            print(colorama.Fore.RED + colorama.Style.BRIGHT) 
+            print("Failed Tests: " + str(failed_tests))
+            print(colorama.Style.RESET_ALL)
+        else:
+            print(colorama.Fore.GREEN + colorama.Style.BRIGHT) 
+            print("No failed tests")
+            print(colorama.Style.RESET_ALL)
         print("Passed Tests: " + str(passed_tests))
         if failed_tests > 0:
             print("\n\n")
