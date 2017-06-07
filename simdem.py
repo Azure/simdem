@@ -12,21 +12,20 @@ import time
 import shlex
 import sys
 import json
-from colorama import init
-from colorama import Fore, Style
-init()
+import colorama
+colorama.init(strip=None)
 
 def type_command(command, script_dir, simulation):
     # Displays the command on the screen
     # If simulation == True then it will look like someone is typing the command
-    print(Fore.GREEN+Style.BRIGHT)
+    print(colorama.Fore.WHITE+colorama.Style.BRIGHT, end="")
     for char in command:
         if (char != '\n'):
             print(char, end="", flush=True)
         if simulation:
             delay = random.uniform(0.01, 0.04) 
             time.sleep(delay)
-    print(Style.RESET_ALL)
+    print(colorama.Style.RESET_ALL, end="")
 
 def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
     # Types the command on the screen, executes it and outputs the
@@ -85,9 +84,11 @@ def run_command(command, script_dir, env=None):
         if is_docker:
             command = command[5:]
 
+    print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
     shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
+    print(colorama.Style.RESET_ALL)
     return shell.before
     
 def check_for_interactive_command(script_dir, is_automated=False):
