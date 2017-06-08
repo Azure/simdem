@@ -95,14 +95,16 @@ def check_for_interactive_command(script_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
-    if not is_automated:
-        key = get_instruction_key()
+    if is_automated:
+        return
     
-        if key == 'b' or key == 'B':
-            command = input()
-            run_command(command, script_dir)
-            print("$ ", end="", flush=True)
-            check_for_interactive_command(script_dir, is_automated)
+    key = get_instruction_key()
+    
+    if key == 'b' or key == 'B':
+        command = input()
+        run_command(command, script_dir)
+        print("$ ", end="", flush=True)
+        check_for_interactive_command(script_dir, is_automated)
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.
