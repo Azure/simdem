@@ -18,7 +18,7 @@ colorama.init(strip=None)
 def type_command(command, script_dir, simulation):
     # Displays the command on the screen
     # If simulation == True then it will look like someone is typing the command
-    print(colorama.Fore.WHITE+colorama.Style.BRIGHT, end="")
+    print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     for char in command:
         if (char != '\n'):
             print(char, end="", flush=True)
@@ -261,8 +261,10 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
                     simulate_command(line, script_dir, env, is_simulation, is_automated)
         elif not is_simulation and not in_results_section:
             # Descriptinve text
+            print(colorama.Fore.CYAN, end = "") 
             print(line, end="", flush=True)
-
+            print(colorama.Style.RESET_ALL, end = "")
+            
         is_first_line = False
         
     if is_testing:
