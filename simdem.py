@@ -84,7 +84,7 @@ def run_command(command, script_dir, env=None):
         if is_docker:
             command = command[5:]
 
-    print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
+    print(colorama.Fore.GREEN+colorama.Style.BRIGHT, end="")
     shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
@@ -95,12 +95,28 @@ def check_for_interactive_command(script_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
-    if is_automated:
-        return
     
     key = get_instruction_key()
-    
-    if key == 'b' or key == 'B':
+
+    if key == 'h':
+        print("help")
+        print()
+        print("SimDem Help")
+        print("===========")
+        print()
+        print("Pressing any key other than those listed below will result in the script progressing")
+        print()
+        print("'b'           - break out of the script and accept a command from user input")
+        print("'b' -> CTRL-C - stop the script")
+        print("'h'           - displays this help message")
+        print()
+        print("Press SPACEBAR to continue")
+        while key != ' ':
+            key = get_instruction_key()
+        print()
+        print("$ ", end = "", flush = True)
+        check_for_interactive_command(script_dir, is_automated)
+    elif key == 'b':
         command = input()
         run_command(command, script_dir)
         print("$ ", end="", flush=True)
