@@ -247,9 +247,11 @@ def check_for_interactive_command(demo):
             check_for_interactive_command(demo)
         elif key =='d':
             print("")
+            print(colorama.Fore.CYAN) 
             print("FIXME: Earlier description goes here")
+            print(colorama.Style.RESET_ALL)
             print("$ ", end="", flush=True)
-            print("FIXME: current command goes here")
+            print(demo.current_command, end="", flush=True)
             check_for_interactive_command(demo)
 
 def get_instruction_key():
