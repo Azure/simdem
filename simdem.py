@@ -15,6 +15,121 @@ import json
 import colorama
 colorama.init(strip=None)
 
+class Demo(object):
+    def __init__(self, script_dir = "demo_scripts", filename = "script.md", env = None, is_simulation = True, is_automated = False, is_testing = False):
+        self.filename = filename
+        self.script_dir = script_dir
+        self.env = env
+        self.is_simulation = is_simulation
+        self.is_automated = is_automated
+        self.is_testing = is_testing
+
+    def run(self):
+        # Reads a script.md file in the indicated directoy and runs the
+        # commands contained within. If simulation == True then human
+        # entry will be simulated (looks like typing and waits for
+        # keyboard input before proceeding to the next command). This is
+        # useful if you want to run a fully automated demo.
+        # 
+        # The script.md file will be parsed as follows:
+        #
+        # ``` marks the start or end of a code block
+        #
+        # Each line in a code block will be treated as a separate command.
+        #
+        # All other lines will be ignored
+
+        in_code_block = False
+        in_results_section = False
+
+        if not self.script_dir.endswith('/'):
+            self.script_dir = script_dir + "/"
+
+        file = self.script_dir + self.filename
+
+        lines = list(open(file)) 
+        expected_results = ""
+        actual_results = ""
+        passed_tests = 0
+        failed_tests = 0
+        is_first_line = True
+        executed_code_in_this_section = False
+
+        for line in lines:
+            if in_results_section and in_code_block and not line.startswith("```"):
+                expected_results += line
+
+            if line.startswith("Results:"):
+                # Entering results section
+                in_results_section = True
+                pos = line.lower().find("expected similarity: ")
+                if pos >= 0:
+                    pos = pos + len("expected similarity: ")
+                    s = line[pos:]
+                    expected_similarity = float(s)
+                else:
+                    expected_similarity = 0.66
+            elif line.startswith("```") and not in_code_block:
+                # Entering a code block, if in_results_section = True then it's a results block
+                in_code_block = True
+            elif line.startswith("```") and in_code_block and in_results_section:
+                # Finishing results section
+                if in_results_section and is_testing:
+                    if test_results(expected_results, actual_results, expected_similarity):
+                        passed_tests += 1
+                    else:
+                        failed_tests += 1
+                        expected_results = ""
+                        actual_results = ""
+                        in_results_section = False
+                        in_code_block = False
+            elif line.startswith("```") and in_code_block and not in_results_section:
+                # Finishing executable code block
+                in_code_block = False
+            elif in_code_block and not in_results_section:
+                # Executable line
+                print("$ ", end="", flush=True)
+                check_for_interactive_command(self.script_dir, self.is_automated)
+                actual_results = simulate_command(line, self.script_dir, self.env, self.is_simulation, self.is_automated)
+                executed_code_in_this_section = True
+            elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
+                # Heading in descriptive text, indicating a new section
+                if is_first_line:
+                    run_command("clear", script_dir, env)
+                elif executed_code_in_this_section:
+                    executed_code_in_this_section = False
+                    print("$ ", end="", flush=True)
+                    check_for_interactive_command(script_dir, self.is_automated)
+                    simulate_command("clear", script_dir, env, self.is_simulation, self.is_automated)
+                    if not is_simulation:
+                        print("$ ", end="", flush=True)
+                        # Since this is a heading we are not really simulating a command, it appears as a comment
+                        simulate_command(line, script_dir, env, is_simulation, is_automated)
+            elif not self.is_simulation and not in_results_section:
+                # Descriptinve text
+                print(colorama.Fore.CYAN, end = "") 
+                print(line, end="", flush=True)
+                print(colorama.Style.RESET_ALL, end = "")
+
+            is_first_line = False
+
+        if self.is_testing:
+            print("\n\n=============================\n\n")
+            print("Test Run Complete.")
+            if failed_tests > 0:
+                print(colorama.Fore.RED + colorama.Style.BRIGHT) 
+                print("Failed Tests: " + str(failed_tests))
+                print(colorama.Style.RESET_ALL)
+            else:
+                print(colorama.Fore.GREEN + colorama.Style.BRIGHT) 
+                print("No failed tests")
+                print(colorama.Style.RESET_ALL)
+                print("Passed Tests: " + str(passed_tests))
+            if failed_tests > 0:
+                print("\n\n")
+                print("View failure reports in context in the above output.")
+                print("\n\n=============================\n\n")
+        
 def type_command(command, script_dir, simulation):
     # Displays the command on the screen
     # If simulation == True then it will look like someone is typing the command
@@ -179,111 +294,6 @@ def test_results(expected_results, actual_results, expected_similarity = 0.66):
         print(colorama.Style.RESET_ALL)
     return is_pass
 
-def run_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
-    # Reads a script.md file in the indicated directoy and runs the
-    # commands contained within. If simulation == True then human
-    # entry will be simulated (looks like typing and waits for
-    # keyboard input before proceeding to the next command). This is
-    # useful if you want to run a fully automated demo.
-    # 
-    # The script.md file will be parsed as follows:
-    #
-    # ``` marks the start or end of a code block
-    #
-    # Each line in a code block will be treated as a separate command.
-    #
-    # All other lines will be ignored
-
-    in_code_block = False
-    in_results_section = False
-
-    if not script_dir.endswith('/'):
-        script_dir = script_dir + "/"
-    filename = script_dir + "script.md"
-    
-    lines = list(open(filename)) 
-    expected_results = ""
-    actual_results = ""
-    passed_tests = 0
-    failed_tests = 0
-    is_first_line = True
-    executed_code_in_this_section = False
-
-    for line in lines:
-        if in_results_section and in_code_block and not line.startswith("```"):
-            expected_results += line
-
-        if line.startswith("Results:"):
-            # Entering results section
-            in_results_section = True
-            pos = line.lower().find("expected similarity: ")
-            if pos >= 0:
-                pos = pos + len("expected similarity: ")
-                s = line[pos:]
-                expected_similarity = float(s)
-            else:
-                expected_similarity = 0.66
-        elif line.startswith("```") and not in_code_block:
-            # Entering a code block, if in_results_section = True then it's a results block
-            in_code_block = True
-        elif line.startswith("```") and in_code_block and in_results_section:
-            # Finishing results section
-            if in_results_section and is_testing:
-                if test_results(expected_results, actual_results, expected_similarity):
-                    passed_tests += 1
-                else:
-                    failed_tests += 1
-            expected_results = ""
-            actual_results = ""
-            in_results_section = False
-            in_code_block = False
-        elif line.startswith("```") and in_code_block and not in_results_section:
-            # Finishing executable code block
-            in_code_block = False
-        elif in_code_block and not in_results_section:
-            # Executable line
-            print("$ ", end="", flush=True)
-            check_for_interactive_command(script_dir, is_automated)
-            actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
-            executed_code_in_this_section = True
-        elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
-            # Heading in descriptive text, indicating a new section
-            if is_first_line:
-                run_command("clear", script_dir, env)
-            elif executed_code_in_this_section:
-                executed_code_in_this_section = False
-                print("$ ", end="", flush=True)
-                check_for_interactive_command(script_dir, is_automated)
-                simulate_command("clear", script_dir, env, is_simulation, is_automated)
-                if not is_simulation:
-                    print("$ ", end="", flush=True)
-                    # Since this is a heading we are not really simulating a command, it appears as a comment
-                    simulate_command(line, script_dir, env, is_simulation, is_automated)
-        elif not is_simulation and not in_results_section:
-            # Descriptinve text
-            print(colorama.Fore.CYAN, end = "") 
-            print(line, end="", flush=True)
-            print(colorama.Style.RESET_ALL, end = "")
-            
-        is_first_line = False
-        
-    if is_testing:
-        print("\n\n=============================\n\n")
-        print("Test Run Complete.")
-        if failed_tests > 0:
-            print(colorama.Fore.RED + colorama.Style.BRIGHT) 
-            print("Failed Tests: " + str(failed_tests))
-            print(colorama.Style.RESET_ALL)
-        else:
-            print(colorama.Fore.GREEN + colorama.Style.BRIGHT) 
-            print("No failed tests")
-            print(colorama.Style.RESET_ALL)
-        print("Passed Tests: " + str(passed_tests))
-        if failed_tests > 0:
-            print("\n\n")
-            print("View failure reports in context in the above output.")
-        print("\n\n=============================\n\n")
-
 def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
     # Reads a script.md file in the indicated directoy and builds an
     # executable bash script from the commands contained within.
@@ -371,12 +381,15 @@ def main():
     env.update(get_simdem_environment(script_dir))
     cmd = arguments[0]
 
+    filename = "script.md"
     if cmd == "run":
-        run_script(script_dir, env, simulate, is_automatic, is_test)
+        demo = Demo(script_dir, filename, env, simulate, is_automatic, is_test);
+        demo.run()
     elif cmd == "test":
         is_automatic = True and options.auto
         is_test = True and options.test
-        run_script(script_dir, env, simulate, is_automatic, is_test)
+        demo = Demo(script_dir, filename, env, simulate, is_automatic, is_test);
+        demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir, env))
     else:
