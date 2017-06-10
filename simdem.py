@@ -96,17 +96,17 @@ class Demo(object):
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
                 if is_first_line:
-                    run_command(demo, "clear")
+                    run_command(self, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
                     print("$ ", end="", flush=True)
-                    check_for_interactive_command(script_dir, self.is_automated)
+                    check_for_interactive_command(self)
                     self.current_command = "clear"
                     simulate_command(self)
-                    if not is_simulation:
+                    if not self.is_simulation:
                         print("$ ", end="", flush=True)
                         # Since this is a heading we are not really simulating a command, it appears as a comment
-                        simulate_command(line, script_dir, env, is_simulation, is_automated)
+                        simulate_command(self)
             elif not self.is_simulation and not in_results_section:
                 # Descriptive text
                 print(colorama.Fore.CYAN, end = "") 
