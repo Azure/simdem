@@ -153,7 +153,7 @@ def simulate_command(demo):
     type_command(demo.current_command, demo.script_dir, demo.is_simulation)
     check_for_interactive_command(demo.script_dir, demo.is_automated)
     print()
-    output = run_command(demo.current_command, demo.script_dir, demo.env)
+    output = run_command(demo)
 
     return output
 
@@ -193,17 +193,17 @@ def get_simdem_environment(directory):
     
     return env
 
-def run_command(command, script_dir, env=None):
-    if command.startswith("sudo "):
-        is_docker_command = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
-        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker_command], env=env, cwd=script_dir, timeout=None)
+def run_command(demo):
+    if demo.current_comment.startswith("sudo "):
+        is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
+        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env, cwd=demo.script_dir, timeout=None)
         shell.expect(pexpect.EOF)
         is_docker = shell.before.strip() == "True"
         if is_docker:
             command = command[5:]
 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=env, cwd=script_dir, timeout=None)
+    shell = pexpect.spawnu('/bin/bash', ['-c', demo.current_command], env=demo.env, cwd=demo.script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
     print(colorama.Style.RESET_ALL)
