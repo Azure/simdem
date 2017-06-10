@@ -40,15 +40,14 @@ class Demo(object):
         #
         # All other lines will be ignored
 
-        in_code_block = False
-        in_results_section = False
-
         if not self.script_dir.endswith('/'):
-            self.script_dir = script_dir + "/"
+            self.script_dir = self.script_dir + "/"
 
         file = self.script_dir + self.filename
 
         lines = list(open(file)) 
+        in_code_block = False
+        in_results_section = False
         expected_results = ""
         actual_results = ""
         passed_tests = 0
@@ -57,9 +56,6 @@ class Demo(object):
         executed_code_in_this_section = False
 
         for line in lines:
-            if in_results_section and in_code_block and not line.startswith("```"):
-                expected_results += line
-
             if line.startswith("Results:"):
                 # Entering results section
                 in_results_section = True
@@ -75,29 +71,32 @@ class Demo(object):
                 in_code_block = True
             elif line.startswith("```") and in_code_block and in_results_section:
                 # Finishing results section
-                if in_results_section and is_testing:
+                if in_results_section and self.is_testing:
                     if test_results(expected_results, actual_results, expected_similarity):
                         passed_tests += 1
                     else:
                         failed_tests += 1
-                        expected_results = ""
-                        actual_results = ""
-                        in_results_section = False
-                        in_code_block = False
-            elif line.startswith("```") and in_code_block and not in_results_section:
-                # Finishing executable code block
+                expected_results = ""
+                actual_results = ""
+                in_results_section = False
                 in_code_block = False
+            elif line.startswith("```") and in_code_block:
+                # Finishing code block
+                in_code_block = False
+                in_results_section = False
+            elif in_results_section and in_code_block:
+                expected_results += line
             elif in_code_block and not in_results_section:
                 # Executable line
                 print("$ ", end="", flush=True)
-                check_for_interactive_command(self.script_dir, self.is_automated)
                 self.current_command = line
+                check_for_interactive_command(self)
                 actual_results = simulate_command(self)
                 executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
                 if is_first_line:
-                    run_command("clear", script_dir, env)
+                    run_command(demo, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
                     print("$ ", end="", flush=True)
@@ -109,7 +108,7 @@ class Demo(object):
                         # Since this is a heading we are not really simulating a command, it appears as a comment
                         simulate_command(line, script_dir, env, is_simulation, is_automated)
             elif not self.is_simulation and not in_results_section:
-                # Descriptinve text
+                # Descriptive text
                 print(colorama.Fore.CYAN, end = "") 
                 print(line, end="", flush=True)
                 print(colorama.Style.RESET_ALL, end = "")
@@ -151,7 +150,7 @@ def simulate_command(demo):
     # look real and will wait for keyboard entry before proceeding to
     # the next command
     type_command(demo.current_command, demo.script_dir, demo.is_simulation)
-    check_for_interactive_command(demo.script_dir, demo.is_automated)
+    check_for_interactive_command(demo)
     print()
     output = run_command(demo)
 
@@ -193,8 +192,14 @@ def get_simdem_environment(directory):
     
     return env
 
-def run_command(demo):
-    if demo.current_comment.startswith("sudo "):
+def run_command(demo, command = None):
+    # Run the demo.curent_command unless command is passed in, in
+    # which case run the supplied command in the current demo
+    # encironment.
+    if not command:
+        command = demo.current_command
+        
+    if command.startswith("sudo "):
         is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
         shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env, cwd=demo.script_dir, timeout=None)
         shell.expect(pexpect.EOF)
@@ -203,24 +208,24 @@ def run_command(demo):
             command = command[5:]
 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    shell = pexpect.spawnu('/bin/bash', ['-c', demo.current_command], env=demo.env, cwd=demo.script_dir, timeout=None)
+    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env, cwd=demo.script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
     print(colorama.Style.RESET_ALL)
     return shell.before
     
-def check_for_interactive_command(script_dir, is_automated=False):
+def check_for_interactive_command(demo):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
-    if not is_automated:
+    if not demo.is_automated:
         key = get_instruction_key()
     
         if key == 'b' or key == 'B':
             command = input()
-            run_command(command, script_dir)
+            run_command(demo, command)
             print("$ ", end="", flush=True)
-            check_for_interactive_command(script_dir, is_automated)
+            check_for_interactive_command(demo)
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.
