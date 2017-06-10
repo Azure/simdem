@@ -23,6 +23,7 @@ class Demo(object):
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
+        self.current_comment = ""
 
     def run(self):
         # Reads a script.md file in the indicated directoy and runs the
@@ -90,7 +91,8 @@ class Demo(object):
                 # Executable line
                 print("$ ", end="", flush=True)
                 check_for_interactive_command(self.script_dir, self.is_automated)
-                actual_results = simulate_command(line, self.script_dir, self.env, self.is_simulation, self.is_automated)
+                self.current_command = line
+                actual_results = simulate_command(self)
                 executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
@@ -100,7 +102,8 @@ class Demo(object):
                     executed_code_in_this_section = False
                     print("$ ", end="", flush=True)
                     check_for_interactive_command(script_dir, self.is_automated)
-                    simulate_command("clear", script_dir, env, self.is_simulation, self.is_automated)
+                    self.current_command = "clear"
+                    simulate_command(self)
                     if not is_simulation:
                         print("$ ", end="", flush=True)
                         # Since this is a heading we are not really simulating a command, it appears as a comment
@@ -142,15 +145,15 @@ def type_command(command, script_dir, simulation):
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
 
-def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
+def simulate_command(demo):
     # Types the command on the screen, executes it and outputs the
     # results if simulation == True then system will make the "typing"
     # look real and will wait for keyboard entry before proceeding to
     # the next command
-    type_command(command, script_dir, simulation)
-    check_for_interactive_command(script_dir, is_automatic)
+    type_command(demo.current_command, demo.script_dir, demo.is_simulation)
+    check_for_interactive_command(demo.script_dir, demo.is_automated)
     print()
-    output = run_command(command, script_dir, env)
+    output = run_command(demo.current_command, demo.script_dir, demo.env)
 
     return output
 
