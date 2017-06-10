@@ -27,13 +27,13 @@ def type_command(command, script_dir, simulation):
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
 
-def simulate_command(command, script_dir, env = None, simulation = True, is_automatic=False):
+def simulate_command(command, description, script_dir, env = None, simulation = True, is_automatic=False):
     # Types the command on the screen, executes it and outputs the
     # results if simulation == True then system will make the "typing"
     # look real and will wait for keyboard entry before proceeding to
     # the next command
     type_command(command, script_dir, simulation)
-    check_for_interactive_command(script_dir, is_automatic)
+    check_for_interactive_command(command, line, script_dir, is_automatic)
     print()
     output = run_command(command, script_dir, env)
 
@@ -91,7 +91,7 @@ def run_command(command, script_dir, env=None):
     print(colorama.Style.RESET_ALL)
     return shell.before
     
-def check_for_interactive_command(script_dir, is_automated=False):
+def check_for_interactive_command(ccript_dir, is_automated=False):
     # Wait for a key to be pressed. Most keys result in the script
     # progressing, but a few have special meaning. See the
     # documentation or code for a description of the special keys.
@@ -106,9 +106,10 @@ def check_for_interactive_command(script_dir, is_automated=False):
         print()
         print("Pressing any key other than those listed below will result in the script progressing")
         print()
-        print("'b'           - break out of the script and accept a command from user input")
-        print("'b' -> CTRL-C - stop the script")
-        print("'h'           - displays this help message")
+        print("b           - break out of the script and accept a command from user input")
+        print("b -> CTRL-C - stop the script")
+        print("d           - (re)display the description that precedes the current command then resume from this point")
+        print("h           - displays this help message")
         print()
         print("Press SPACEBAR to continue")
         while key != ' ':
@@ -121,7 +122,13 @@ def check_for_interactive_command(script_dir, is_automated=False):
         run_command(command, script_dir)
         print("$ ", end="", flush=True)
         check_for_interactive_command(script_dir, is_automated)
-
+    elif key =='d':
+        print("")
+        print("FIXME: Earlier description goes here")
+        print("$ ", end="", flush=True)
+        print("FIXME: current command goes here")
+        check_for_interactive_command(script_dir, is_automated)
+    
 def get_instruction_key():
     """Waits for a single keypress on stdin.
 
@@ -226,6 +233,7 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
     failed_tests = 0
     is_first_line = True
     executed_code_in_this_section = False
+    description_of_current_command = ""
 
     for line in lines:
         if in_results_section and in_code_block and not line.startswith("```"):
@@ -262,25 +270,26 @@ def run_script(script_dir, env=None, is_simulation = True, is_automated=False, i
             # Executable line
             print("$ ", end="", flush=True)
             check_for_interactive_command(script_dir, is_automated)
-            actual_results = simulate_command(line, script_dir, env, is_simulation, is_automated)
+            actual_results = simulate_command(line, description_of_current_command, script_dir, env, is_simulation, is_automated)
             executed_code_in_this_section = True
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
             # Heading in descriptive text, indicating a new section
+            description_of_current_command = ""
             if is_first_line:
                 run_command("clear", script_dir, env)
             elif executed_code_in_this_section:
                 executed_code_in_this_section = False
                 print("$ ", end="", flush=True)
                 check_for_interactive_command(script_dir, is_automated)
-                simulate_command("clear", script_dir, env, is_simulation, is_automated)
+                simulate_command("clear", "Clear the screen", script_dir, env, is_simulation, is_automated)
                 if not is_simulation:
                     print("$ ", end="", flush=True)
-                    # Since this is a heading we are not really simulating a command, it appears as a comment
-                    simulate_command(line, script_dir, env, is_simulation, is_automated)
+                    simulate_command(line, description_of_current_command, script_dir, env, is_simulation, is_automated)
         elif not is_simulation and not in_results_section:
             # Descriptinve text
             print(colorama.Fore.CYAN, end = "") 
             print(line, end="", flush=True)
+            description_of_current_command += line
             print(colorama.Style.RESET_ALL, end = "")
             
         is_first_line = False
