@@ -88,11 +88,15 @@ class Demo(object):
                 expected_results += line
             elif in_code_block and not in_results_section:
                 # Executable line
-                print("$ ", end="", flush=True)
-                self.current_command = line
-                check_for_interactive_command(self)
-                actual_results = simulate_command(self)
-                executed_code_in_this_section = True
+                if line.startswith("#"):
+                    # comment
+                    pass
+                else:
+                    print("$ ", end="", flush=True)
+                    self.current_command = line
+                    check_for_interactive_command(self)
+                    actual_results = simulate_command(self)
+                    executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
                 if is_first_line:
