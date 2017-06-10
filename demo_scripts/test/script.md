@@ -29,7 +29,7 @@ Results:
 
 # Code comments
 
-'''
+```
 # This is a comment and should be ignored
 echo "This output should be displayed"
 ```
