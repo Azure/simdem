@@ -144,7 +144,7 @@ The SimDem application has the following setup:
 tree ..
 ```
 
-Results:
+Results: Expected Similarity: 0.5
 
 ```
 demo_scripts/
