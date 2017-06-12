@@ -27,6 +27,20 @@ Results:
 }
 ```
 
+# Interactive Variables
+
+```
+echo $NEW_VARIABLE $TEST
+```
+
+```
+echo $LOCAL_TEST $TEST
+```
+
+```
+echo $NEW_VARIABLE $TEST
+```
+
 # Expected different results
 
 When we know the results will be different and we want to use them in

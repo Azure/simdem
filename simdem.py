@@ -15,12 +15,66 @@ import json
 import colorama
 colorama.init(strip=None)
 
+class Environment(object):
+    def __init__(self, directory, for_script=False):
+        """Initialize the environment"""
+        if not for_script:
+            self.env = os.environ.copy()
+        else:
+            self.env = {}
+        self.add_simdem_environment(directory)
+
+    def add_simdem_environment(self, directory):
+        """
+        Populates each shell environment with a set of environment vars
+        loaded via env.json file stored either in the project root
+        directory
+        """
+        env = {}
+
+        if not directory.endswith('/'):
+            directory = directory + "/"
+
+        filename = directory + "../env.json"
+        if os.path.isfile(directory + "../env.json"):
+            with open(filename) as env_file:
+                app_env = json.load(env_file)
+                env.update(app_env)
+
+        filename = directory + "env.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                script_env = json.load(env_file)
+                env.update(script_env)
+
+        filename = directory + "../env.local.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                local_env = json.load(env_file)
+                env.update(local_env)
+
+        filename = directory + "env.local.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                local_env = json.load(env_file)
+                env.update(local_env)
+
+        self.env.update(env)
+
+    def set(self, var, value):
+        """Adds a new variable to the environment"""
+        self.env[var] = value
+
+    def get(self):
+        """Returns a dictionary of the current environment"""
+        return self.env
+
 class Demo(object):
-    def __init__(self, script_dir = "demo_scripts", filename = "script.md", env = None, is_simulation = True, is_automated = False, is_testing = False):
+    def __init__(self, script_dir = "demo_scripts", filename = "script.md", is_simulation = True, is_automated = False, is_testing = False):
         """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
-        self.env = env
+        self.env = Environment(script_dir)
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
@@ -91,8 +145,9 @@ class Demo(object):
                 # Executable line
                 print("$ ", end="", flush=True)
                 self.current_command = line
+                var_set = [v.split("$")[1] for v in line.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in self.env.get()]
                 check_for_interactive_command(self)
-                actual_results = simulate_command(self)
+                actual_results = simulate_command(self, var_set)
                 executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
@@ -132,73 +187,63 @@ class Demo(object):
                 print("\n\n")
                 print("View failure reports in context in the above output.")
                 print("\n\n=============================\n\n")
-        
-def type_command(command, script_dir, simulation):
+
+def set_interactive_variable(name):
+    """
+    Set a new environment with name
+    from user input
+    """
+    print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+    print("\n\nSet a value for ", end="", flush=True)
+    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+    print("$" + name, end="", flush=True)
+    print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+    print(": ", end="", flush=True)
+    print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+    value = input()
+    return value
+
+def type_command(command, script_dir, simulation, var_set=[]):
     """
     Displays the command on the screen
     If simulation == True then it will look like someone is typing the command
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-    for char in command:
-        if char != '\n':
+    interactive_var = False
+    for idx, char in enumerate(command):
+        if char == "$" and var_set and idx in [command.find(i)-1 for i in var_set if command.find(i) > 0]:
+            interactive_var = True
+            print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+        if char == " " and interactive_var:
+            interactive_var = False
+            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+        if char != "\n":
             print(char, end="", flush=True)
         if simulation:
             delay = random.uniform(0.01, 0.04)
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
 
-def simulate_command(demo):
+def simulate_command(demo, var_set=[]):
     """
     Types the command on the screen, executes it and outputs the
     results if simulation == True then system will make the "typing"
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
-    type_command(demo.current_command, demo.script_dir, demo.is_simulation)
+    type_command(demo.current_command, demo.script_dir, demo.is_simulation, var_set)
+
+    for var_name in var_set:
+        var_value = set_interactive_variable(var_name)
+        demo.env.set(var_name, var_value)
+
     check_for_interactive_command(demo)
     print()
     output = run_command(demo)
 
     return output
 
-def get_simdem_environment(directory):
-    """
-    Populates each shell environment with a set of environment vars
-    loaded via env.json file stored either in the project root
-    directory
-    """
-    env = {}
-
-    if not directory.endswith('/'):
-        directory = directory + "/"
-
-    filename = directory + "../env.json"
-    if os.path.isfile(directory + "../env.json"):
-        with open(filename) as env_file:
-            app_env = json.load(env_file)
-            env.update(app_env)
-
-    filename = directory + "env.json"
-    if os.path.isfile(filename):
-        with open(filename) as env_file:
-            script_env = json.load(env_file)
-            env.update(script_env)
-
-    filename = directory + "../env.local.json"
-    if os.path.isfile(filename):
-        with open(filename) as env_file:
-            local_env = json.load(env_file)
-            env.update(local_env)
-
-    filename = directory + "env.local.json"
-    if os.path.isfile(filename):
-        with open(filename) as env_file:
-            local_env = json.load(env_file)
-            env.update(local_env)
-
-    return env
-
-def run_command(demo, command = None):
+def run_command(demo, command=None):
     """
     Run the demo.curent_command unless command is passed in, in
     which case run the supplied command in the current demo
@@ -209,14 +254,14 @@ def run_command(demo, command = None):
 
     if command.startswith("sudo "):
         is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
-        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env, cwd=demo.script_dir, timeout=None)
+        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env.get(), cwd=demo.script_dir, timeout=None)
         shell.expect(pexpect.EOF)
         is_docker = shell.before.strip() == "True"
         if is_docker:
             command = command[5:]
 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env, cwd=demo.script_dir, timeout=None)
+    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env.get(), cwd=demo.script_dir, timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
     print(colorama.Style.RESET_ALL)
@@ -318,7 +363,7 @@ def test_results(expected_results, actual_results, expected_similarity = 0.66):
         print(colorama.Style.RESET_ALL)
     return is_pass
 
-def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
+def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_testing=False):
     """
     Reads a script.md file in the indicated directoy and builds an
     executable bash script from the commands contained within.
@@ -330,8 +375,9 @@ def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=Fal
         script_dir = script_dir + "/"
     filename = script_dir + "script.md"
 
+
     script = ""
-    env = get_simdem_environment(script_dir)
+    env = Environment(script_dir, True).get()
     for key, value in env.items():
         script += key + "='" + value + "'\n"
 
@@ -402,21 +448,19 @@ def main():
     else:
         script_dir = options.path
 
-    env = os.environ.copy()
-    env.update(get_simdem_environment(script_dir))
     cmd = arguments[0]
 
     filename = "script.md"
     if cmd == "run":
-        demo = Demo(script_dir, filename, env, simulate, is_automatic, is_test);
+        demo = Demo(script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "test":
         is_automatic = True and options.auto
         is_test = True and options.test
-        demo = Demo(script_dir, filename, env, simulate, is_automatic, is_test);
+        demo = Demo(script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "script":
-        print(get_bash_script(script_dir, env))
+        print(get_bash_script(script_dir))
     else:
         print("Unknown command: " + cmd)
         print("Run with --help for guidance.")
