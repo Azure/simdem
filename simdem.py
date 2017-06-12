@@ -17,6 +17,7 @@ colorama.init(strip=None)
 
 class Demo(object):
     def __init__(self, script_dir = "demo_scripts", filename = "script.md", env = None, is_simulation = True, is_automated = False, is_testing = False):
+        """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
         self.env = env
@@ -26,26 +27,26 @@ class Demo(object):
         self.current_comment = ""
 
     def run(self):
-        # Reads a script.md file in the indicated directoy and runs the
-        # commands contained within. If simulation == True then human
-        # entry will be simulated (looks like typing and waits for
-        # keyboard input before proceeding to the next command). This is
-        # useful if you want to run a fully automated demo.
-        # 
-        # The script.md file will be parsed as follows:
-        #
-        # ``` marks the start or end of a code block
-        #
-        # Each line in a code block will be treated as a separate command.
-        #
-        # All other lines will be ignored
+        """
+        Reads a script.md file in the indicated directoy and runs the
+        commands contained within. If simulation == True then human
+        entry will be simulated (looks like typing and waits for
+        keyboard input before proceeding to the next command). This is
+        useful if you want to run a fully automated demo.
 
+        The script.md file will be parsed as follows:
+
+        ``` marks the start or end of a code block
+
+        Each line in a code block will be treated as a separate command.
+        All other lines will be ignored
+        """
         if not self.script_dir.endswith('/'):
             self.script_dir = self.script_dir + "/"
 
         file = self.script_dir + self.filename
 
-        lines = list(open(file)) 
+        lines = list(open(file))
         in_code_block = False
         in_results_section = False
         expected_results = ""
@@ -62,8 +63,8 @@ class Demo(object):
                 pos = line.lower().find("expected similarity: ")
                 if pos >= 0:
                     pos = pos + len("expected similarity: ")
-                    s = line[pos:]
-                    expected_similarity = float(s)
+                    similarity = line[pos:]
+                    expected_similarity = float(similarity)
                 else:
                     expected_similarity = 0.66
             elif line.startswith("```") and not in_code_block:
@@ -109,9 +110,9 @@ class Demo(object):
                         simulate_command(self)
             elif not self.is_simulation and not in_results_section:
                 # Descriptive text
-                print(colorama.Fore.CYAN, end = "") 
+                print(colorama.Fore.CYAN, end="")
                 print(line, end="", flush=True)
-                print(colorama.Style.RESET_ALL, end = "")
+                print(colorama.Style.RESET_ALL, end="")
 
             is_first_line = False
 
@@ -119,11 +120,11 @@ class Demo(object):
             print("\n\n=============================\n\n")
             print("Test Run Complete.")
             if failed_tests > 0:
-                print(colorama.Fore.RED + colorama.Style.BRIGHT) 
+                print(colorama.Fore.RED + colorama.Style.BRIGHT)
                 print("Failed Tests: " + str(failed_tests))
                 print(colorama.Style.RESET_ALL)
             else:
-                print(colorama.Fore.GREEN + colorama.Style.BRIGHT) 
+                print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
                 print("No failed tests")
                 print(colorama.Style.RESET_ALL)
                 print("Passed Tests: " + str(passed_tests))
@@ -133,22 +134,26 @@ class Demo(object):
                 print("\n\n=============================\n\n")
         
 def type_command(command, script_dir, simulation):
-    # Displays the command on the screen
-    # If simulation == True then it will look like someone is typing the command
+    """
+    Displays the command on the screen
+    If simulation == True then it will look like someone is typing the command
+    """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     for char in command:
-        if (char != '\n'):
+        if char != '\n':
             print(char, end="", flush=True)
         if simulation:
-            delay = random.uniform(0.01, 0.04) 
+            delay = random.uniform(0.01, 0.04)
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
 
 def simulate_command(demo):
-    # Types the command on the screen, executes it and outputs the
-    # results if simulation == True then system will make the "typing"
-    # look real and will wait for keyboard entry before proceeding to
-    # the next command
+    """
+    Types the command on the screen, executes it and outputs the
+    results if simulation == True then system will make the "typing"
+    look real and will wait for keyboard entry before proceeding to
+    the next command
+    """
     type_command(demo.current_command, demo.script_dir, demo.is_simulation)
     check_for_interactive_command(demo)
     print()
@@ -157,12 +162,13 @@ def simulate_command(demo):
     return output
 
 def get_simdem_environment(directory):
-    # Populates each shell environment with a set of environment vars
-    # loaded via env.json file stored either in the project root
-    # directory
-
+    """
+    Populates each shell environment with a set of environment vars
+    loaded via env.json file stored either in the project root
+    directory
+    """
     env = {}
-    
+
     if not directory.endswith('/'):
         directory = directory + "/"
 
@@ -189,16 +195,18 @@ def get_simdem_environment(directory):
         with open(filename) as env_file:
             local_env = json.load(env_file)
             env.update(local_env)
-    
+
     return env
 
 def run_command(demo, command = None):
-    # Run the demo.curent_command unless command is passed in, in
-    # which case run the supplied command in the current demo
-    # encironment.
+    """
+    Run the demo.curent_command unless command is passed in, in
+    which case run the supplied command in the current demo
+    encironment.
+    """
     if not command:
         command = demo.current_command
-        
+
     if command.startswith("sudo "):
         is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
         shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env, cwd=demo.script_dir, timeout=None)
@@ -213,14 +221,17 @@ def run_command(demo, command = None):
     shell.expect(pexpect.EOF)
     print(colorama.Style.RESET_ALL)
     return shell.before
-    
+
 def check_for_interactive_command(demo):
-    # Wait for a key to be pressed. Most keys result in the script
-    # progressing, but a few have special meaning. See the
-    # documentation or code for a description of the special keys.
+    """Wait for a key to be pressed.
+    
+    Most keys result in the script
+    progressing, but a few have special meaning. See the
+    documentation or code for a description of the special keys.
+    """
     if not demo.is_automated:
         key = get_instruction_key()
-    
+
         if key == 'b' or key == 'B':
             command = input()
             run_command(demo, command)
@@ -266,7 +277,7 @@ def get_instruction_key():
     # read a single keystroke
     try:
         ret = sys.stdin.read(1) # returns a single character
-    except KeyboardInterrupt: 
+    except KeyboardInterrupt:
         ret = 0
     finally:
         # restore old state
@@ -275,6 +286,11 @@ def get_instruction_key():
     return ret
 
 def test_results(expected_results, actual_results, expected_similarity = 0.66):
+    """Compares the similarity of the expected vs actual results.
+
+    Pass when the similarity ratio is greater or equal to the expected
+    similarity. Defaults to 66% similarity to pass.
+    """
     differ = difflib.Differ()
     comparison = differ.compare(actual_results, expected_results)
     diff = differ.compare(actual_results, expected_results)
@@ -303,9 +319,10 @@ def test_results(expected_results, actual_results, expected_similarity = 0.66):
     return is_pass
 
 def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=False, is_testing=False):
-    # Reads a script.md file in the indicated directoy and builds an
-    # executable bash script from the commands contained within.
-    
+    """
+    Reads a script.md file in the indicated directoy and builds an
+    executable bash script from the commands contained within.
+    """
     in_code_block = False
     in_results_section = False
 
@@ -318,7 +335,7 @@ def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=Fal
     for key, value in env.items():
         script += key + "='" + value + "'\n"
 
-    lines = list(open(filename)) 
+    lines = list(open(filename))
     for line in lines:
         if line.startswith("Results:"):
             # Entering results section
@@ -338,9 +355,9 @@ def get_bash_script(script_dir, env=None, is_simulation = True, is_automated=Fal
             script += line
         elif line.startswith("#") and not in_code_block and not in_results_section and not is_automated:
             # Heading in descriptive text
-            script +="\n"
+            script += "\n"
     return script
-        
+
 def main():
     """SimDem CLI interpreter"""
 
@@ -353,9 +370,9 @@ def main():
                  help="If set to anything other than False the application will not wait for user keypresses between commands.")
     p.add_option('--test', '-t', default="False",
                  help="If set to anything other than False the output of the command will be compared to the expected results in the sript. Any failures will be reported")
-    
+
     options, arguments = p.parse_args()
- 
+
     if len(arguments) == 0:
         arguments.append("run")
 
@@ -366,12 +383,12 @@ def main():
         is_automatic = False
     else:
         is_automatic = True
-        
+
     if options.test == "False":
         is_test = False
     else:
         is_test = True
-            
+
     if options.style == "simulate":
         simulate = True
     elif options.style == 'tutorial':
