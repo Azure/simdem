@@ -210,6 +210,23 @@ Results:
 hello-world
 ```
 
+## Interactive Variables
+
+If you include an environment variable that isn't set, SimDem will prompt 
+you to give it a value and will add it to the running environment.
+
+```
+echo $NEW_VARIABLE $TEST
+```
+
+```
+echo $LOCAL_TEST $TEST
+```
+
+```
+echo $NEW_VARIABLE $TEST
+```
+
 ## User provided environment
 
 Since it is helpful to provide configuration files in published
