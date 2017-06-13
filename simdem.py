@@ -195,11 +195,11 @@ def input_interactive_variable(name):
     from user input
     """
     print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-    print("\n\nSet a value for ", end="", flush=True)
+    print("\n\nEnter a value for ", end="")
     print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-    print("$" + name, end="", flush=True)
+    print("$" + name, end="")
     print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-    print(": ", end="", flush=True)
+    print(": ", end="")
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     value = input()
     return value
