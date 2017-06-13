@@ -71,7 +71,7 @@ class Environment(object):
         return self.env
 
 class Demo(object):
-    def __init__(self, script_dir = "demo_scripts", filename = "script.md", is_simulation = True, is_automated = False, is_testing = False):
+    def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
         """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
@@ -80,7 +80,22 @@ class Demo(object):
         self.is_automated = is_automated
         self.is_testing = is_testing
         self.current_command = ""
-        self.var_set = []
+
+    def get_current_command(self):
+        """
+        Return a tupe of the current command and a list of environment
+        variables that haven't been set.
+        """
+        all_vars = [i[1:] for i in self.current_command.rstrip().split(" ") if i.startswith("$")]
+        var_list = []
+        for var in all_vars:
+            if var.find(".") >= 0:
+                var = var.split('.')[0]
+            if var.find("{") >= 0:
+                var = var.replace("{", "").replace("}", "")
+            if var not in self.env.get():
+                var_list.append(var)
+        return self.current_command, var_list
 
     def run(self):
         """
@@ -209,20 +224,25 @@ def type_command(demo):
     """
     Displays the command on the screen
     If simulation == True then it will look like someone is typing the command
+    Highlight uninstatiated environment variables
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-    interactive_var = False
-    for idx, char in enumerate(demo.current_command):
-        # If we come across a '$', check the var_set list to see if the index
-        # of any of the undefined env vars minus one (to match '$') within
-        # the command matches the index of '$'. If true, start highlighting
-        # the undefined env var.
-        # TODO: Refactor the list comprehension
-        if char == "$" and demo.var_set and idx in [demo.current_command.find(i)-1 for i in demo.var_set if demo.current_command.find(i) > 0]:
-            interactive_var = True
-            print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-        if char == " " and interactive_var:
-            interactive_var = False
+    end_of_var = 0
+    current_command, var_list = demo.get_current_command()
+    for idx, char in enumerate(current_command):
+        if char == "$" and var_list:
+            for var in var_list:
+                var_idx = current_command.find(var)
+                if var_idx - 1 == idx:
+                    end_of_var = idx + len(var)
+                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                    break
+                elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
+                    end_of_var = idx + len(var) + 1
+                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                    break
+        if end_of_var and idx == end_of_var:
+            end_of_var = 0
             print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
         if char != "\n":
             print(char, end="", flush=True)
@@ -238,12 +258,10 @@ def simulate_command(demo):
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
-    # FIXME: Allow support for defining environment vars through
-    # ${VAR_NAME} and $VAR_NAME.testing
-    demo.var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
+    _, var_list = demo.get_current_command()
     type_command(demo)
 
-    for var_name in demo.var_set:
+    for var_name in var_list:
         var_value = input_interactive_variable(var_name)
         demo.env.set(var_name, var_value)
 
