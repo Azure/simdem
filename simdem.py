@@ -188,6 +188,7 @@ class Demo(object):
                 print("\n\n")
                 print("View failure reports in context in the above output.")
                 print("\n\n=============================\n\n")
+                sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
 def input_interactive_variable(name):
     """
