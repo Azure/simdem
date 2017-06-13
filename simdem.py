@@ -90,10 +90,8 @@ class Demo(object):
         var_list = []
         for var in all_vars:
             if var.find(".") >= 0:
-                print(var, "has a .")
                 var = var.split('.')[0]
             if var.find("{") >= 0:
-                print(var, "in in {}")
                 var = var.replace("{", "").replace("}", "")
             if var not in self.env.get():
                 var_list.append(var)
