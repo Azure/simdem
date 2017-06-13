@@ -212,6 +212,10 @@ def type_command(demo):
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     interactive_var = False
     for idx, char in enumerate(demo.current_command):
+        # If we come across a '$', check the var_set list to see if the index
+        # of any of the undefined env vars minus one (to match '$') within
+        # the command matches the index of '$'. If true, start highlighting
+        # the undefined env var.
         if char == "$" and demo.var_set and idx in [demo.current_command.find(i)-1 for i in demo.var_set if demo.current_command.find(i) > 0]:
             interactive_var = True
             print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
@@ -232,6 +236,8 @@ def simulate_command(demo):
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
+    # TODO: Allow support for defining environment vars through
+    # ${VAR_NAME} and $VAR_NAME.testing
     demo.var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
     type_command(demo)
 
