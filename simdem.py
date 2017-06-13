@@ -223,6 +223,7 @@ def type_command(demo):
     """
     Displays the command on the screen
     If simulation == True then it will look like someone is typing the command
+    Highlight uninstatiated environment variables
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     end_of_var = 0
