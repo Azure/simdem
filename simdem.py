@@ -80,6 +80,7 @@ class Demo(object):
         self.is_automated = is_automated
         self.is_testing = is_testing
         self.current_command = ""
+        self.var_set = []
 
     def run(self):
         """
@@ -203,7 +204,7 @@ def input_interactive_variable(name):
     value = input()
     return value
 
-def type_command(command, script_dir, simulation, var_set=[]):
+def type_command(command, script_dir, simulation):
     """
     Displays the command on the screen
     If simulation == True then it will look like someone is typing the command
@@ -211,7 +212,7 @@ def type_command(command, script_dir, simulation, var_set=[]):
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     interactive_var = False
     for idx, char in enumerate(command):
-        if char == "$" and var_set and idx in [command.find(i)-1 for i in var_set if command.find(i) > 0]:
+        if char == "$" and demo.var_set and idx in [command.find(i)-1 for i in demo.var_set if command.find(i) > 0]:
             interactive_var = True
             print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
         if char == " " and interactive_var:
@@ -231,10 +232,10 @@ def simulate_command(demo):
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
-    var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
-    type_command(demo.current_command, demo.script_dir, demo.is_simulation, var_set)
+    demo.var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
+    type_command(demo.current_command, demo.script_dir, demo.is_simulation)
 
-    for var_name in var_set:
+    for var_name in demo.var_set:
         var_value = input_interactive_variable(var_name)
         demo.env.set(var_name, var_value)
 
