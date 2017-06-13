@@ -204,15 +204,15 @@ def input_interactive_variable(name):
     value = input()
     return value
 
-def type_command(command, script_dir, simulation):
+def type_command(demo):
     """
     Displays the command on the screen
     If simulation == True then it will look like someone is typing the command
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     interactive_var = False
-    for idx, char in enumerate(command):
-        if char == "$" and demo.var_set and idx in [command.find(i)-1 for i in demo.var_set if command.find(i) > 0]:
+    for idx, char in enumerate(demo.current_command):
+        if char == "$" and demo.var_set and idx in [demo.current_command.find(i)-1 for i in demo.var_set if demo.current_command.find(i) > 0]:
             interactive_var = True
             print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
         if char == " " and interactive_var:
@@ -220,7 +220,7 @@ def type_command(command, script_dir, simulation):
             print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
         if char != "\n":
             print(char, end="", flush=True)
-        if simulation:
+        if demo.is_simulation:
             delay = random.uniform(0.01, 0.04)
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
@@ -233,7 +233,7 @@ def simulate_command(demo):
     the next command
     """
     demo.var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
-    type_command(demo.current_command, demo.script_dir, demo.is_simulation)
+    type_command(demo)
 
     for var_name in demo.var_set:
         var_value = input_interactive_variable(var_name)
