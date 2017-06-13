@@ -227,19 +227,22 @@ def type_command(demo):
     If simulation == True then it will look like someone is typing the command
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-    interactive_var = False
+    end_of_var = 0
     current_command, var_list = demo.get_current_command()
     for idx, char in enumerate(current_command):
-        # If we come across a '$', check the var_list list to see if the index
-        # of any of the undefined env vars minus one (to match '$') within
-        # the command matches the index of '$'. If true, start highlighting
-        # the undefined env var.
-        # TODO: Refactor the list comprehension
-        if char == "$" and var_list and idx in [current_command.find(i)-1 for i in var_list if current_command.find(i) > 0]:
-            interactive_var = True
-            print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-        if char == " " and interactive_var:
-            interactive_var = False
+        if char == "$" and var_list:
+            for var in var_list:
+                var_idx = current_command.find(var)
+                if var_idx - 1 == idx:
+                    end_of_var = idx + len(var)
+                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                    break
+                elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
+                    end_of_var = idx + len(var) + 1
+                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                    break
+        if end_of_var and idx == end_of_var:
+            end_of_var = 0
             print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
         if char != "\n":
             print(char, end="", flush=True)
