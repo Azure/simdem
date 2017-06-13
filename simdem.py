@@ -22,9 +22,9 @@ class Environment(object):
             self.env = os.environ.copy()
         else:
             self.env = {}
-        self.add_simdem_environment(directory)
+        self.read_simdem_environment(directory)
 
-    def add_simdem_environment(self, directory):
+    def read_simdem_environment(self, directory):
         """
         Populates each shell environment with a set of environment vars
         loaded via env.json and/or env.local.json files. Variables are loaded
