@@ -16,9 +16,9 @@ import colorama
 colorama.init(strip=None)
 
 class Environment(object):
-    def __init__(self, directory, for_script=False):
+    def __init__(self, directory, copy_env=True):
         """Initialize the environment"""
-        if not for_script:
+        if copy_env:
             self.env = os.environ.copy()
         else:
             self.env = {}
@@ -377,7 +377,7 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
 
 
     script = ""
-    env = Environment(script_dir, True).get()
+    env = Environment(script_dir, False).get()
     for key, value in env.items():
         script += key + "='" + value + "'\n"
 
