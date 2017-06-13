@@ -219,12 +219,33 @@ you to give it a value and will add it to the running environment.
 echo $NEW_VARIABLE $TEST
 ```
 
+Results:
+
+```
+Enter a value for $NEW_VARIABLE: SimDem
+
+SimDem hello-world
+
+```
+
 ```
 echo $LOCAL_TEST $TEST
 ```
 
+Results:
+
+```
+A warm local hello hello-world
+```
+
 ```
 echo $NEW_VARIABLE $TEST
+```
+
+Results:
+
+```
+SimDem hello-world
 ```
 
 ## User provided environment
