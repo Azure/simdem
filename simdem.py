@@ -63,7 +63,7 @@ class Environment(object):
         self.env.update(env)
 
     def set(self, var, value):
-        """Adds a new variable to the environment"""
+        """Sets a new variable to the environment"""
         self.env[var] = value
 
     def get(self):
@@ -83,7 +83,7 @@ class Demo(object):
 
     def get_current_command(self):
         """
-        Return a tupe of the current command and a list of environment
+        Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
         all_vars = [i[1:] for i in self.current_command.rstrip().split(" ") if i.startswith("$")]
@@ -207,8 +207,7 @@ class Demo(object):
 
 def input_interactive_variable(name):
     """
-    Set a new environment with name
-    from user input
+    Gets a value from stdin for a variable
     """
     print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
     print("\n\nEnter a value for ", end="")
