@@ -28,8 +28,8 @@ class Environment(object):
         """
         Populates each shell environment with a set of environment vars
         loaded via env.json and/or env.local.json files. Variables are loaded
-        from the project root down, with the most local files taking
-        precednece, and env.local.json > env.json.
+        in order first from the parent of script_dir, then script_dir itself.
+        env.local.json > env.json.
         """
         env = {}
 
