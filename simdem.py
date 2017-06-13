@@ -80,7 +80,24 @@ class Demo(object):
         self.is_automated = is_automated
         self.is_testing = is_testing
         self.current_command = ""
-        self.var_set = []
+
+    def get_current_command(self):
+        """
+        Return a tupe of the current command and a list of environment
+        variables that haven't been set.
+        """
+        all_vars = [i[1:] for i in self.current_command.rstrip().split(" ") if i.startswith("$")]
+        var_list = []
+        for var in all_vars:
+            if var.find(".") >= 0:
+                print(var, "has a .")
+                var = var.split('.')[0]
+            if var.find("{") >= 0:
+                print(var, "in in {}")
+                var = var.replace("{", "").replace("}", "")
+            if var not in self.env.get():
+                var_list.append(var)
+        return self.current_command, var_list
 
     def run(self):
         """
@@ -211,13 +228,14 @@ def type_command(demo):
     """
     print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
     interactive_var = False
-    for idx, char in enumerate(demo.current_command):
-        # If we come across a '$', check the var_set list to see if the index
+    current_command, var_list = demo.get_current_command()
+    for idx, char in enumerate(current_command):
+        # If we come across a '$', check the var_list list to see if the index
         # of any of the undefined env vars minus one (to match '$') within
         # the command matches the index of '$'. If true, start highlighting
         # the undefined env var.
         # TODO: Refactor the list comprehension
-        if char == "$" and demo.var_set and idx in [demo.current_command.find(i)-1 for i in demo.var_set if demo.current_command.find(i) > 0]:
+        if char == "$" and var_list and idx in [current_command.find(i)-1 for i in var_list if current_command.find(i) > 0]:
             interactive_var = True
             print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
         if char == " " and interactive_var:
@@ -237,12 +255,10 @@ def simulate_command(demo):
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
-    # FIXME: Allow support for defining environment vars through
-    # ${VAR_NAME} and $VAR_NAME.testing
-    demo.var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
+    _, var_list = demo.get_current_command()
     type_command(demo)
 
-    for var_name in demo.var_set:
+    for var_name in var_list:
         var_value = input_interactive_variable(var_name)
         demo.env.set(var_name, var_value)
 
