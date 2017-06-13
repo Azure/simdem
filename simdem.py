@@ -189,7 +189,7 @@ class Demo(object):
                 print("View failure reports in context in the above output.")
                 print("\n\n=============================\n\n")
 
-def set_interactive_variable(name):
+def input_interactive_variable(name):
     """
     Set a new environment with name
     from user input
@@ -235,7 +235,7 @@ def simulate_command(demo, var_set=[]):
     type_command(demo.current_command, demo.script_dir, demo.is_simulation, var_set)
 
     for var_name in var_set:
-        var_value = set_interactive_variable(var_name)
+        var_value = input_interactive_variable(var_name)
         demo.env.set(var_name, var_value)
 
     check_for_interactive_command(demo)
