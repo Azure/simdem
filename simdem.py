@@ -27,8 +27,9 @@ class Environment(object):
     def add_simdem_environment(self, directory):
         """
         Populates each shell environment with a set of environment vars
-        loaded via env.json file stored either in the project root
-        directory
+        loaded via env.json and/or env.local.json files. Variables are loaded
+        from the project root down, with the most local files taking
+        precednece, and env.local.json > env.json.
         """
         env = {}
 
