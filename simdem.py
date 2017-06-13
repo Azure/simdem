@@ -71,7 +71,7 @@ class Environment(object):
         return self.env
 
 class Demo(object):
-    def __init__(self, script_dir = "demo_scripts", filename = "script.md", is_simulation = True, is_automated = False, is_testing = False):
+    def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
         """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
