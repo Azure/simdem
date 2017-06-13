@@ -79,7 +79,7 @@ class Demo(object):
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
-        self.current_comment = ""
+        self.current_command = ""
 
     def run(self):
         """
@@ -146,9 +146,8 @@ class Demo(object):
                 # Executable line
                 print("$ ", end="", flush=True)
                 self.current_command = line
-                var_set = [v.split("$")[1] for v in line.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in self.env.get()]
                 check_for_interactive_command(self)
-                actual_results = simulate_command(self, var_set)
+                actual_results = simulate_command(self)
                 executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
@@ -225,13 +224,14 @@ def type_command(command, script_dir, simulation, var_set=[]):
             time.sleep(delay)
     print(colorama.Style.RESET_ALL, end="")
 
-def simulate_command(demo, var_set=[]):
+def simulate_command(demo):
     """
     Types the command on the screen, executes it and outputs the
     results if simulation == True then system will make the "typing"
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
+    var_set = [v.split("$")[1] for v in demo.current_command.rstrip().split(" ") if v.startswith("$") and v.split("$")[1] not in demo.env.get()]
     type_command(demo.current_command, demo.script_dir, demo.is_simulation, var_set)
 
     for var_name in var_set:
