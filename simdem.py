@@ -24,8 +24,9 @@ class Demo(object):
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
-        self.current_comment = ""
-
+        self.current_command = ""
+        self.current_description = ""
+        
     def run(self):
         """
         Reads a script.md file in the indicated directoy and runs the
@@ -94,8 +95,8 @@ class Demo(object):
                     pass
                 else:
                     print("$ ", end="", flush=True)
-                    self.current_command = line
                     check_for_interactive_command(self)
+                    self.current_command = line
                     actual_results = simulate_command(self)
                     executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
@@ -104,6 +105,7 @@ class Demo(object):
                     run_command(self, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
+                    self.current_description = ""
                     print("$ ", end="", flush=True)
                     check_for_interactive_command(self)
                     self.current_command = "clear"
@@ -112,11 +114,22 @@ class Demo(object):
                         print("$ ", end="", flush=True)
                         # Since this is a heading we are not really simulating a command, it appears as a comment
                         simulate_command(self)
-            elif not self.is_simulation and not in_results_section:
-                # Descriptive text
-                print(colorama.Fore.CYAN, end="")
+
+                print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
                 print(line, end="", flush=True)
                 print(colorama.Style.RESET_ALL, end="")
+                self.current_description += colorama.Fore.CYAN + colorama.Style.BRIGHT
+                self.current_description += line;
+                self.current_description += colorama.Style.RESET_ALL
+            else:
+                self.current_description += colorama.Fore.CYAN
+                self.current_description += line;
+                self.current_description += colorama.Style.RESET_ALL
+                if not self.is_simulation and not in_results_section:
+                    # Descriptive text
+                    print(colorama.Fore.CYAN, end="")
+                    print(line, end="", flush=True)
+                    print(colorama.Style.RESET_ALL, end="")
 
             is_first_line = False
 
@@ -162,7 +175,8 @@ def simulate_command(demo):
     check_for_interactive_command(demo)
     print()
     output = run_command(demo)
-
+    demo.current_command = ""
+    
     return output
 
 def get_simdem_environment(directory):
@@ -263,7 +277,7 @@ def check_for_interactive_command(demo):
         elif key =='d':
             print("")
             print(colorama.Fore.CYAN) 
-            print("FIXME: Earlier description goes here")
+            print(demo.current_description);
             print(colorama.Style.RESET_ALL)
             print("$ ", end="", flush=True)
             print(demo.current_command, end="", flush=True)
