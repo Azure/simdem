@@ -122,6 +122,7 @@ class Demo(object):
         in_results_section = False
         expected_results = ""
         actual_results = ""
+        current_description = ""
         passed_tests = 0
         failed_tests = 0
         is_first_line = True
