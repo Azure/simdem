@@ -80,7 +80,9 @@ class Demo(object):
         self.is_automated = is_automated
         self.is_testing = is_testing
         self.current_command = ""
+        self.current_description = ""
 
+        
     def get_current_command(self):
         """
         Return a tuple of the current command and a list of environment
@@ -122,7 +124,6 @@ class Demo(object):
         in_results_section = False
         expected_results = ""
         actual_results = ""
-        current_description = ""
         passed_tests = 0
         failed_tests = 0
         is_first_line = True
