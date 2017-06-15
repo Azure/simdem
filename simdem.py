@@ -122,6 +122,7 @@ class Demo(object):
         in_results_section = False
         expected_results = ""
         actual_results = ""
+        current_description = ""
         passed_tests = 0
         failed_tests = 0
         is_first_line = True
@@ -160,17 +161,22 @@ class Demo(object):
                 expected_results += line
             elif in_code_block and not in_results_section:
                 # Executable line
-                print("$ ", end="", flush=True)
-                self.current_command = line
-                check_for_interactive_command(self)
-                actual_results = simulate_command(self)
-                executed_code_in_this_section = True
+                if line.startswith("#"):
+                    # comment
+                    pass
+                else:
+                    print("$ ", end="", flush=True)
+                    check_for_interactive_command(self)
+                    self.current_command = line
+                    actual_results = simulate_command(self)
+                    executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
                 if is_first_line:
                     run_command(self, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
+                    self.current_description = ""
                     print("$ ", end="", flush=True)
                     check_for_interactive_command(self)
                     self.current_command = "clear"
@@ -179,11 +185,22 @@ class Demo(object):
                         print("$ ", end="", flush=True)
                         # Since this is a heading we are not really simulating a command, it appears as a comment
                         simulate_command(self)
-            elif not self.is_simulation and not in_results_section:
-                # Descriptive text
-                print(colorama.Fore.CYAN, end="")
+
+                print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
                 print(line, end="", flush=True)
                 print(colorama.Style.RESET_ALL, end="")
+                self.current_description += colorama.Fore.CYAN + colorama.Style.BRIGHT
+                self.current_description += line;
+                self.current_description += colorama.Style.RESET_ALL
+            else:
+                self.current_description += colorama.Fore.CYAN
+                self.current_description += line;
+                self.current_description += colorama.Style.RESET_ALL
+                if not self.is_simulation and not in_results_section:
+                    # Descriptive text
+                    print(colorama.Fore.CYAN, end="")
+                    print(line, end="", flush=True)
+                    print(colorama.Style.RESET_ALL, end="")
 
             is_first_line = False
 
@@ -267,7 +284,8 @@ def simulate_command(demo):
     check_for_interactive_command(demo)
     print()
     output = run_command(demo)
-
+    demo.current_command = ""
+    
     return output
 
 def run_command(demo, command=None):
@@ -304,10 +322,37 @@ def check_for_interactive_command(demo):
     if not demo.is_automated:
         key = get_instruction_key()
 
-        if key == 'b' or key == 'B':
+        if key == 'h':
+            print("help")
+            print()
+            print("SimDem Help")
+            print("===========")
+            print()
+            print("Pressing any key other than those listed below will result in the script progressing")
+            print()
+            print("b           - break out of the script and accept a command from user input")
+            print("b -> CTRL-C - stop the script")
+            print("d           - (re)display the description that precedes the current command then resume from this point")
+            print("h           - displays this help message")
+            print()
+            print("Press SPACEBAR to continue")
+            while key != ' ':
+                key = get_instruction_key()
+            print()
+            print("$ ", end = "", flush = True)
+            check_for_interactive_command(demo)
+        elif key == 'b':
             command = input()
-            run_command(demo, command)
+            run_command(command, script_dir)
             print("$ ", end="", flush=True)
+            check_for_interactive_command(demo)
+        elif key =='d':
+            print("")
+            print(colorama.Fore.CYAN) 
+            print(demo.current_description);
+            print(colorama.Style.RESET_ALL)
+            print("$ ", end="", flush=True)
+            print(demo.current_command, end="", flush=True)
             check_for_interactive_command(demo)
 
 def get_instruction_key():

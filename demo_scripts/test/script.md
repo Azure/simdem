@@ -27,6 +27,19 @@ Results:
 }
 ```
 
+# Code comments
+
+```
+# This is a comment and should be ignored
+echo "This output should be displayed, the comment before this line should be ignored"
+```
+
+Results:
+
+```
+This output should be displayed, the comment before this line should be ignored
+```
+
 # Expected different results
 
 When we know the results will be different and we want to use them in
