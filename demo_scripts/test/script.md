@@ -23,7 +23,8 @@ Results:
 
 ```
 {
-    "TEST": "hello-world"
+    "TEST": "hello-world",
+    "i": "Dummy value for variable used in for loop in tests"
 }
 ```
 
