@@ -8,6 +8,7 @@ import optparse
 import os
 import pexpect
 import random
+import re
 import time
 import shlex
 import sys
@@ -211,8 +212,9 @@ class Demo(object):
                     print(line, end="", flush=True)
                     print(colorama.Style.RESET_ALL, end="")
                 if in_next_steps:
-                    # FIXME: currently this adds all lines regardless of whether they include a next step
-                    next_steps.append(line)
+                    pattern = re.compile('.*\[.*\]\(.*\).*')
+                    if pattern.match(line):
+                        next_steps.append(line)
                     
             is_first_line = False
 
