@@ -344,7 +344,7 @@ def check_for_interactive_command(demo):
             check_for_interactive_command(demo)
         elif key == 'b':
             command = input()
-            run_command(command, script_dir)
+            run_command(demo, command)
             print("$ ", end="", flush=True)
             check_for_interactive_command(demo)
         elif key =='d':
