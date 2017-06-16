@@ -132,9 +132,10 @@ Most tutorials's will consist of at least three parts, preparation,
 main body and cleanup. Many will have multiple staged in the main part
 of the tutorial. SimDem is able to provide an interactive menu
 allowing users to select which part of the tutorial to work through
-next. This is achieved by providing a section with the title `# Next
-Steps`. This section will provide links to markdown documents that
-contain SimDem scripts that may be worked through.
+next. This is achieved by providing a final section with the title `#
+Next Steps`. This section must include a list in which each item
+provides a link to a markdown documenst that contain SimDem scripts
+that the user may want to work through next.
 
 For example, the SimDem project includes a folder called
 `demo_scripts` in which there are multiple tutorials / demo's. The

@@ -131,6 +131,8 @@ class Demo(object):
         passed_tests = 0
         failed_tests = 0
         is_first_line = True
+        in_next_steps = False
+        next_steps = []
         executed_code_in_this_section = False
 
         for line in lines:
@@ -177,6 +179,8 @@ class Demo(object):
                     executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
+                if line.startswith("# Next Steps"):
+                    in_next_steps = True
                 if is_first_line:
                     run_command(self, "clear")
                 elif executed_code_in_this_section:
@@ -206,7 +210,10 @@ class Demo(object):
                     print(colorama.Fore.CYAN, end="")
                     print(line, end="", flush=True)
                     print(colorama.Style.RESET_ALL, end="")
-
+                if in_next_steps:
+                    # FIXME: currently this adds all lines regardless of whether they include a next step
+                    next_steps.append(line)
+                    
             is_first_line = False
 
         if self.is_testing:
@@ -227,6 +234,28 @@ class Demo(object):
                 print("\n\n=============================\n\n")
                 sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
+        if len(next_steps) > 0:
+            in_string = ""
+            in_value = 0
+            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+            print("Would like to move on to one of the next steps listed above?")
+            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+
+            while in_value < 1 or in_value > len(next_steps):
+                print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+                print("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
+                print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+                in_string = input()
+                if in_string.lower() == "quit" or in_string.lower() == "q":
+                    return
+                try:
+                    in_value = int(in_string)
+                except ValueError:
+                    pass
+
+            print("FIXME: act upon the entered value: " + str(in_value))
+
+            
 def input_interactive_variable(name):
     """
     Gets a value from stdin for a variable.
