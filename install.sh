@@ -2,7 +2,13 @@ INSTALL_DIR=/usr/local/bin/
 FILE=simdem.py
 SYMLINK=simdem
 
-sudo apt-get install -y python3-pip
+if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        brew install python3
+else
+  sudo apt-get install -y python3-pip
+fi
+
 pip3 install pexpect
 pip3 install colorama
 
