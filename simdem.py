@@ -225,7 +225,7 @@ class Demo(object):
 
 def input_interactive_variable(name):
     """
-    Gets a value from stdin for a variable
+    Gets a value from stdin for a variable.
     """
     print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
     print("\n\nEnter a value for ", end="")
@@ -275,11 +275,15 @@ def simulate_command(demo):
     look real and will wait for keyboard entry before proceeding to
     the next command
     """
-    _, var_list = demo.get_current_command()
+
     type_command(demo)
 
+    _, var_list = demo.get_current_command()
     for var_name in var_list:
-        var_value = input_interactive_variable(var_name)
+        if (demo.is_testing):
+            var_value = "Dummy value for test"
+        else:
+            var_value = input_interactive_variable(var_name)
         demo.env.set(var_name, var_value)
 
     check_for_interactive_command(demo)
