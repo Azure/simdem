@@ -300,7 +300,7 @@ def run_command(demo, command=None):
 
     if command.startswith("sudo "):
         is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
-        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env.get(), cwd=demo.script_dir, timeout=None)
+        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env.get(), timeout=None)
         shell.expect(pexpect.EOF)
         is_docker = shell.before.strip() == "True"
         if is_docker:
