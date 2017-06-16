@@ -255,7 +255,10 @@ class Demo(object):
                 except ValueError:
                     pass
 
-            print("FIXME: act upon the entered value: " + str(in_value))
+            pattern = re.compile('.*\[.*\]\((.*)\).*')
+            match = pattern.match(next_steps[in_value - 1])
+            self.filename = match.groups()[0]
+            self.run()
 
             
 def input_interactive_variable(name):
