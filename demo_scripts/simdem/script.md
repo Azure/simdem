@@ -154,10 +154,10 @@ My_Complex_SimDem_Tutorial
     └── script.md
 `
 
-The SimDem application has the following setup:
+The directory structure for the SimDem demo scripts is:
 
 ```
-tree ..
+tree $SIMDEM_CWD/..
 ```
 
 Results: Expected Similarity: 0.5
@@ -189,7 +189,7 @@ overwrite settings pulled from the project directory.
 This tutorial defines an 'env.json' in the project directory:
 
 ```
-cat ../env.json
+cat $SIMDEM_CWD/../env.json
 ```
 
 Results:
@@ -203,7 +203,7 @@ Results:
 It also defines an 'env.json' file in the tutorial folder:
 
 ```
-cat env.json
+cat $SIMDEM_CWD/env.json
 ```
 
 Results:
@@ -280,7 +280,7 @@ checked them into version control as they are part of the example,
 normally they would be added to your local '.gitignore' or equivalent.
 
 ```
-cat ../env.local.json
+cat $SIMDEM_CWD/../env.local.json
 ```
 
 Results:
@@ -294,7 +294,7 @@ Results:
 It also defines an 'env.json' file in the tutorial folder:
 
 ```
-cat env.local.json
+cat $SIMDEM_CWD/env.local.json
 ```
 
 Results:
@@ -317,6 +317,15 @@ Results:
 A warm local hello
 ```
 
+## SimDem Environemnt Variables
+
+SimDem provides some information about itself in environment
+variables. These are all nameed `SIMDEM_*`. At present the available
+variables are:
+
+```
+env | grep "SIMDEM_"
+```
 
 # Going Off-Script
 

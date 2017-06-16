@@ -23,6 +23,7 @@ class Environment(object):
         else:
             self.env = {}
         self.read_simdem_environment(directory)
+        self.set("SIMDEM_CWD", directory)
 
     def read_simdem_environment(self, directory):
         """
@@ -284,7 +285,8 @@ def simulate_command(demo):
             var_value = "Dummy value for test"
         else:
             var_value = input_interactive_variable(var_name)
-        demo.env.set(var_name, var_value)
+        if not var_name.startswith("SIMDEM_"):
+            demo.env.set(var_name, var_value)
 
     check_for_interactive_command(demo)
     print()
@@ -311,7 +313,7 @@ def run_command(demo, command=None):
             command = command[5:]
 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env.get(), cwd=demo.script_dir, timeout=None)
+    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env.get(), timeout=None)
     shell.logfile = sys.stdout
     shell.expect(pexpect.EOF)
     print(colorama.Style.RESET_ALL)

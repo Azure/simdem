@@ -16,7 +16,7 @@ Hello world
 # Cat a file
 
 ```
-cat env.json
+cat $SIMDEM_CWD/env.json
 ```
 
 Results:
