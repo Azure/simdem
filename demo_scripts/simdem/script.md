@@ -26,7 +26,7 @@ The date command will prove this is running in real time.
 date
 ```
 
-Results:
+Results: Expected similarity: 0.3
 
 ```
 Sat Mar 12 08:59:01 UTC 2016
@@ -94,11 +94,27 @@ live demo's - it's much harder to make a mistake this way.
 When running with the `--test` flag or using the `test` command SimDem
 will verify that the output of each command is as expected. It does
 this by comparing the output of the command with the `Results:`
-section in the script. By default a 66% or more match indicates a
-pass. However, in some cases a much lower similarity is expected, for
-example, the output of `date` will vary considerably each time it is
-run. In these situations you can provide an expected similarity as
-part of your `Results:` section header, for example:
+section in the script. 
+
+```
+echo "This test is expected to fail"
+```
+
+Results:
+
+```
+It fails because the results we have in the script are significantly 
+different to the output of the command.
+```
+
+By default a 66% or more match indicates a pass. However, in some
+cases a much lower similarity is expected, for example, the output of
+`date` will vary considerably each time it is run. In these situations
+you can provide an expected similarity as part of your `Results:`
+section header, for example in the below section we have `Results:
+Expected similarity: 0.2` which is low enough for the test to be
+recorded as a pass.:
+
 
 ```
 date
@@ -219,7 +235,7 @@ you to give it a value and will add it to the running environment.
 echo $NEW_VARIABLE $TEST
 ```
 
-Results:
+Results: Expected similarity: 0.5
 
 ```
 Enter a value for $NEW_VARIABLE: SimDem
@@ -232,7 +248,7 @@ SimDem hello-world
 echo $LOCAL_TEST $TEST
 ```
 
-Results:
+Results: 
 
 ```
 A warm local hello hello-world
@@ -242,7 +258,7 @@ A warm local hello hello-world
 echo $NEW_VARIABLE $TEST
 ```
 
-Results:
+Results: Expected similarity: 0.5
 
 ```
 SimDem hello-world
