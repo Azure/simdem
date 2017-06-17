@@ -16,7 +16,7 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.2.5"
+SIMDEM_VERSION = "0.2.6"
 
 class Environment(object):
     def __init__(self, directory, copy_env=True):
@@ -92,17 +92,13 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        all_vars = [i[1:] for i in self.current_command.rstrip().split(" ") if i.startswith("$")]
+        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\b]?)(?!\$).*?")
+        match = pattern.match(self.current_command)
         var_list = []
-        for var in all_vars:
-            if var.find(".") >= 0:
-                var = var.split('.')[0]
-            if var.find("/") >= 0:
-                var = var.split('/')[0]
-            if var.find("{") >= 0:
-                var = var.replace("{", "").replace("}", "")
-            if var not in self.env.get():
-                var_list.append(var)
+        if match:
+            for var in match.groups():
+                if var not in self.env.get():
+                    var_list.append(var)
         return self.current_command, var_list
 
     def run(self):

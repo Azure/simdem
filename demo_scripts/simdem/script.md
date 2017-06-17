@@ -34,7 +34,7 @@ Sat Mar 12 08:59:01 UTC 2016
 
 ```
 # Let's take a look at the start of markdown file that is the script
-head -n 45 script.md 
+head -n 45 $SIMDEM_CWD/script.md 
 ```
 
 Cool, huh?
