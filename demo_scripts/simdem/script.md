@@ -133,8 +133,8 @@ main body and cleanup. Many will have multiple staged in the main part
 of the tutorial. SimDem is able to provide an interactive menu
 allowing users to select which part of the tutorial to work through
 next. This is achieved by providing a final section with the title `#
-Next Steps`. This section must include a list in which each item
-provides a link to a markdown documenst that contain SimDem scripts
+Next Steps`. This section should include a list in which each item
+provides a link to a markdown document that contain SimDem scripts
 that the user may want to work through next.
 
 For example, the SimDem project includes a folder called
