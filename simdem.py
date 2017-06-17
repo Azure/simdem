@@ -97,6 +97,8 @@ class Demo(object):
         for var in all_vars:
             if var.find(".") >= 0:
                 var = var.split('.')[0]
+            if var.find("/") >= 0:
+                var = var.split('/')[0]
             if var.find("{") >= 0:
                 var = var.replace("{", "").replace("}", "")
             if var not in self.env.get():
