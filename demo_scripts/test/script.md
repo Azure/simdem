@@ -7,10 +7,22 @@ succession. This script also lists commands known not to work.
 echo $SIMDEM_VERSION
 ```
 
-Result:
+Results:
 
 ```
-0.2.4
+0.2.5
+```
+
+# Directory Check
+
+```
+echo $SIMDEM_CWD
+```
+
+Results: Expected similarity: 0.9
+
+```
+demo_scripts/test
 ```
 
 # Simple Echo

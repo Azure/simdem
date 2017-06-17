@@ -80,7 +80,6 @@ class Demo(object):
         """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
-        self.env = Environment(script_dir)
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
@@ -121,6 +120,8 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
+        self.env = Environment(self.script_dir)
+
         if not self.script_dir.endswith('/'):
             self.script_dir = self.script_dir + "/"
 
@@ -182,7 +183,7 @@ class Demo(object):
                     executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
-                if line.startswith("# Next Steps"):
+                if line.lower().startswith("# next steps"):
                     in_next_steps = True
                 if is_first_line:
                     run_command(self, "clear")
@@ -241,7 +242,7 @@ class Demo(object):
         if len(next_steps) > 0:
             in_string = ""
             in_value = 0
-            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT)
             print("Would like to move on to one of the next steps listed above?")
             print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
 
@@ -257,9 +258,10 @@ class Demo(object):
                 except ValueError:
                     pass
 
-            pattern = re.compile('.*\[.*\]\((.*)\).*')
+            pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
             match = pattern.match(next_steps[in_value - 1])
-            self.filename = match.groups()[0]
+            self.script_dir = self.script_dir + match.groups()[0]
+            self.filename = match.groups()[1]
             self.run()
 
             
