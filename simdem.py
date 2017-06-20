@@ -71,9 +71,13 @@ class Environment(object):
         """Sets a new variable to the environment"""
         self.env[var] = value
 
-    def get(self):
-        """Returns a dictionary of the current environment"""
-        return self.env
+    def get(self, key=None):
+        """Returns a either a value for a supplied key or, if key is None, a
+           dictionary containing the current environment"""
+        if key:
+            return self.env[key]
+        else:
+            return self.env
 
 class Demo(object):
     def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
@@ -92,12 +96,12 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\b]?)(?!\$).*?")
+        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\b|\\\"]?)(?!\$).*?")
         match = pattern.match(self.current_command)
         var_list = []
         if match:
             for var in match.groups():
-                if var not in self.env.get():
+                if var not in self.env.get() or self.env.get(var) == "":
                     var_list.append(var)
         return self.current_command, var_list
 
