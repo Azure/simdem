@@ -40,7 +40,7 @@ but you can now start typing freely.
 
 # Next Steps
 
-  1. [SimDem Index](../script.md)
-  2. [Modes of operation](../modes/script.md)
-  3. [Use your documents as automated tests](../testing/script.md)
+  1. [Use your documents as automated tests](../testing/script.md)
+  2. [SimDem Index](../script.md)
+  3. [Modes of operation](../modes/script.md)
   4. [Build a SimDem container](../building/script.md)

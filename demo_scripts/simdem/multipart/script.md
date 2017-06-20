@@ -81,8 +81,8 @@ demo_scripts/
 
 # Next Steps
 
-  1. [SimDem Index](../script.md)
-  2. [Configure your scripts through variables](../variables/script.md)
+  1. [Configure your scripts through variables](../variables/script.md)
+  2. [SimDem Index](../script.md)
   3. [Use your documents as interactive tutorials or demos](../running/script.md)
   4. [Use your documents as automated tests](../testing/script.md)
   5. [Build a SimDem container](../building/script.md)

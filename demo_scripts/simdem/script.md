@@ -32,8 +32,8 @@ a key to execute the command.
 Tutorials can branch too, for example you can choose any of the
 following paths next:
 
-  1. [Hello World Demo](demo/script.md)
-  2. [Modes of operation](modes/script.md)
+  1. [Modes of operation](modes/script.md)
+  2. [Hello World Demo](demo/script.md)
   3. [Write SimDem documents](syntax/script.md)
   4. [Configure your scripts through variables](variables/script.md)
   5. [Write multi-part documents](multipart/script.md)
