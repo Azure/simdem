@@ -150,16 +150,19 @@ Results:
 ```
 # Welcome to SimDem
 
-This is the Top level SimDem project tutorial / documentation /demo /
-test script. you can find a number of tutorials within this directory:
+This is the Top level SimDem project tutorial / documentation / demo /
+test script. You can find a number of tutorials within this
+directory. If you are viewing this document in the interactive mode of
+SimDem you can choose to work through one of the sub-documents
+below. Otherwise you can simply read it like you are reading this one.
 
 # Next Steps
 
   1. Work through a [SimDem Demo](simdem/script.md)
-  2. Examine the [SimDem test document](test/script.md)
+  2. Examine the [SimDem test document](test/script.md)	
 ```
 
-When executed using SimDem this results in the user being prompte to
+When executed using SimDem this results in the user being prompted to
 select a "next step" (or hit 'q' to quit). If the user selects one of
 the scripts it will be executed.
 
