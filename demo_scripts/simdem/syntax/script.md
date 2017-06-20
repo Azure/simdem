@@ -95,7 +95,7 @@ For example, this document offers next steps options.
 
 # Next Steps
 
-  1. [SimDem Index](../script/md)
-  1. [Configure your scripts through variables](../variables/script.md)
-  1. [Write multi-part documents](../multipart/script.md)
-  1. [Use your documents as interactive tutorials or demos](../running/script.md)
+  1. [SimDem Index](../script.md)
+  2. [Configure your scripts through variables](../variables/script.md)
+  3. [Write multi-part documents](../multipart/script.md)
+  4. [Use your documents as interactive tutorials or demos](../running/script.md)

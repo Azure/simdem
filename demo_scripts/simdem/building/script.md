@@ -10,4 +10,4 @@ Create a Dockerfile and add (at least) the following:
 
 # Next Steps
 
-  1. [SimDem Index](../script/md)
+  1. [SimDem Index](../script.md)

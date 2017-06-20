@@ -33,13 +33,13 @@ Tutorials can branch too, for example you can choose any of the
 following paths next:
 
   1. [Hello World Demo](demo/script.md)
-  1. [Modes of operation](modes/script.md)
-  1. [Write SimDem documents](syntax/script.md)
-  1. [Configure your scripts through variables](variables/script.md)
-  1. [Write multi-part documents](multipart/script.md)
-  1. [Use your documents as interactive tutorials or demos](running/script.md)
-  1. [Use your documents as automated tests](testing/script.md)
-  1. [Build an SimDem container](building/script.md)
+  2. [Modes of operation](modes/script.md)
+  3. [Write SimDem documents](syntax/script.md)
+  4. [Configure your scripts through variables](variables/script.md)
+  5. [Write multi-part documents](multipart/script.md)
+  6. [Use your documents as interactive tutorials or demos](running/script.md)
+  7. [Use your documents as automated tests](testing/script.md)
+  8. [Build an SimDem container](building/script.md)
 
 
   

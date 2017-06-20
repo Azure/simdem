@@ -14,10 +14,14 @@ SimDem demos are interactive and can be run in different modes.
   * Auto: allows any of the above modes to be run but without user
     interaction
 
+## Tutorial Mode
+
 Tutorial mode is ideal if you are using this as a learning or teaching
 tool. In this mode a description of what you are about to do is shown
 on the screen, hit a key to see the command, hit another key to
 execute the command. Tutorial mode is the default.
+
+## Demo (or Simulation) mode
 
 Demo mode is ideal if you are using this to teach or demonstrate how
 to achive the goal. In this mode no descriptive text is shown, instead
@@ -26,7 +30,7 @@ will execute the command. The idea is that you describe what is
 happening as the application "types" the command for you. To run in
 demo mode use the `--style simulate` command line switch.
 
-For example, here is this docuemnt run in simulation mode:
+## Test Mode
 
 Test mode runs the commands and then verifies that the output is
 sufficiently similar to the expected results (recorded in the markdown
@@ -34,9 +38,13 @@ file) to be considered correct. To run in test mode use the `--test
 yes` switch. For convenience you can use the command `test` to execute
 tests with the optimal configuration for automated testing..
 
+## Script mode
+
 Script mode does not execute any of the commands, instead is outputs
 an executable bash script that can be run without SimDem. Use the
 command `script` to generate the executable script.
+
+# Unnattended (Auto) Mode
 
 Each of these modes can be run in auto mode too. This means that the
 program does not wait for a keypress before proceeding. This can be
@@ -51,7 +59,6 @@ live demo's - it's much harder to make a mistake this way.
 
 # Next Steps
 
-  1. [SimDem Index](../script/md)
-  1. [Modes of operation](../modes/script.md)
-  1. [Write SimDem documents](../syntax/script.md)
-  1. [Build a SimDem container](../building/script.md)
+  1. [SimDem Index](../script.md)
+  2. [Write SimDem documents](../syntax/script.md)
+  3. [Build a SimDem container](../building/script.md)

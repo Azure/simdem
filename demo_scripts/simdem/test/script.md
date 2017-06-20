@@ -48,6 +48,6 @@ Tue Jun  6 15:23:53 UTC 2017
 
 # Next Steps
 
-  1. [SimDem Index](../script/md)
-  1. [Write SimDem documents](../syntax/script.md)
-  1. [Configure your scripts through variables](../variables/script.md)
+  1. [SimDem Index](../script.md)
+  2. [Write SimDem documents](../syntax/script.md)
+  3. [Configure your scripts through variables](../variables/script.md)

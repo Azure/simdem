@@ -151,7 +151,7 @@ env | grep "SIMDEM_"
 
 # Next Steps
 
-  1. [SimDem Index](../script/md)
-  1. [Use your documents as interactive tutorials or demos](../running/script.md)
-  1. [Use your documents as automated tests](../testing/script.md)
-  1. [Build a SimDem container](../building/script.md)
+  1. [SimDem Index](../script.md)
+  2. [Use your documents as interactive tutorials or demos](../running/script.md)
+  3. [Use your documents as automated tests](../testing/script.md)
+  4. [Build a SimDem container](../building/script.md)
