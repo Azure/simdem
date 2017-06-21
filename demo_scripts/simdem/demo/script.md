@@ -1,0 +1,72 @@
+# Hello World SimDem Demo
+
+This script is intended to be used to demonstrate the key features of
+Simdem.
+
+When you hit a 'spacebar' a command will be "typed", hitting xpacebar
+again will execute the command.
+
+```
+echo "Hello World"
+```
+
+That's cool, lets try again:
+
+```
+echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the '--style simulate' flag), bit it really comes from a markdown file."
+```
+
+The date command will show that these commands are being executed.
+
+```
+date
+```
+
+Results: Expected similarity: 0.3
+
+```
+Sat Mar 12 08:59:01 UTC 2016
+```
+
+You can run almost any shell command this way.
+
+# Special keys
+
+Although we said "spacebar" above, in reality you can hit almost any
+key. There are a few exceltions though:
+
+## 'd' for description
+
+Hitting 'd' will print all the text since the last command, that is it
+will print the description of the next command to be executed.
+
+```
+echo "Hitting 'd' now will display the descriptin for this command."
+```
+
+## 'b' for break
+
+Hitting 'b' will "break" from the current script. This allows you to
+type in commands that are not part of the script. This is particularly
+useful when running in demo mode as it alllows you to respond to
+questions by entering an unscripted command.
+
+```
+echo "Give it a go, why not hit 'b' and type 'ls', or some other command"
+```
+
+NOTE: at the time of writing it is not possible to use interactive
+commands or commands.
+
+# Next Steps
+
+It's possible to provide a branching point a the end of a script. The
+user can select one of a selection of options or they can enter "quit"
+(or just "q") to exit SimDem.
+
+  1. [Write SimDem documents](../syntax/script.md)
+  2. [SimDem Index](../script.md)
+  3. [Modes of operation](../modes/script.md)
+
+
+

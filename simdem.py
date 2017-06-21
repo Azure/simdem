@@ -138,8 +138,13 @@ class Demo(object):
         in_next_steps = False
         next_steps = []
         executed_code_in_this_section = False
+        self.current_description = ""
 
         for line in lines:
+            self.current_description += colorama.Fore.CYAN + colorama.Style.BRIGHT
+            self.current_description += line;
+            self.current_description += colorama.Style.RESET_ALL
+
             if line.startswith("Results:"):
                 # Entering results section
                 in_results_section = True
@@ -187,11 +192,13 @@ class Demo(object):
                     in_next_steps = True
                 if is_first_line:
                     run_command(self, "clear")
-                elif executed_code_in_this_section:
+                else:
                     executed_code_in_this_section = False
-                    self.current_description = ""
                     print("$ ", end="", flush=True)
                     check_for_interactive_command(self)
+                    self.current_description = colorama.Fore.CYAN + colorama.Style.BRIGHT
+                    self.current_description += line;
+                    self.current_description += colorama.Style.RESET_ALL
                     self.current_command = "clear"
                     simulate_command(self)
                     if not self.is_simulation:
@@ -199,17 +206,13 @@ class Demo(object):
                         # Since this is a heading we are not really simulating a command, it appears as a comment
                         simulate_command(self)
 
-                print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
-                print(line, end="", flush=True)
-                print(colorama.Style.RESET_ALL, end="")
-                self.current_description += colorama.Fore.CYAN + colorama.Style.BRIGHT
-                self.current_description += line;
-                self.current_description += colorama.Style.RESET_ALL
+                if not self.is_simulation:
+                    print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
+                    print(line, end="", flush=True)
+                    print(colorama.Style.RESET_ALL, end="")
+
             else:
-                self.current_description += colorama.Fore.CYAN
-                self.current_description += line;
-                self.current_description += colorama.Style.RESET_ALL
-                if not self.is_simulation and not in_results_section:
+                if not self.is_simulation and not in_results_section and not in_next_steps:
                     # Descriptive text
                     print(colorama.Fore.CYAN, end="")
                     print(line, end="", flush=True)
@@ -217,6 +220,9 @@ class Demo(object):
                 if in_next_steps:
                     pattern = re.compile('.*\[.*\]\(.*\).*')
                     if pattern.match(line):
+                        print(colorama.Fore.CYAN, end="")
+                        print(line, end="", flush=True)
+                        print(colorama.Style.RESET_ALL, end="")
                         next_steps.append(line)
                     
             is_first_line = False
