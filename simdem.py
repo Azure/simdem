@@ -16,7 +16,7 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.2.6"
+SIMDEM_VERSION = "0.3.0"
 
 class Environment(object):
     def __init__(self, directory, copy_env=True):
