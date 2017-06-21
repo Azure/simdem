@@ -7,6 +7,7 @@ import difflib
 import optparse
 import os
 import pexpect
+import pexpect.replwrap
 import random
 import re
 import time
@@ -16,7 +17,10 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.2.6"
+SIMDEM_VERSION = "0.3.0"
+
+PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
+PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
 class Environment(object):
     def __init__(self, directory, copy_env=True):
@@ -201,11 +205,7 @@ class Demo(object):
                     self.current_description += colorama.Style.RESET_ALL
                     self.current_command = "clear"
                     simulate_command(self)
-                    if not self.is_simulation:
-                        print("$ ", end="", flush=True)
-                        # Since this is a heading we are not really simulating a command, it appears as a comment
-                        simulate_command(self)
-
+                        
                 if not self.is_simulation:
                     print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
                     print(line, end="", flush=True)
@@ -340,29 +340,37 @@ def simulate_command(demo):
     
     return output
 
+shell = None
 def run_command(demo, command=None):
     """
     Run the demo.curent_command unless command is passed in, in
     which case run the supplied command in the current demo
     encironment.
     """
+    global shell
+    
+    if not shell:
+        child = pexpect.spawnu('/bin/bash', env=demo.env.get(), echo=False, timeout=None)
+        ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
+        ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
+        prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+        shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
+        
     if not command:
         command = demo.current_command
 
     if command.startswith("sudo "):
         is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
-        shell = pexpect.spawnu('/bin/bash', ['-c', is_docker], env=demo.env.get(), timeout=None)
-        shell.expect(pexpect.EOF)
-        is_docker = shell.before.strip() == "True"
+        response = shell.run_command(command)
+        is_docker = response.strip() == "True"
         if is_docker:
             command = command[5:]
 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    shell = pexpect.spawnu('/bin/bash', ['-c', command], env=demo.env.get(), timeout=None)
-    shell.logfile = sys.stdout
-    shell.expect(pexpect.EOF)
+    response = shell.run_command(command)
+    print(response)
     print(colorama.Style.RESET_ALL)
-    return shell.before
+    return response
 
 def check_for_interactive_command(demo):
     """Wait for a key to be pressed.
