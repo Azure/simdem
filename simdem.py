@@ -18,7 +18,6 @@ import colorama
 colorama.init(strip=None)
 
 SIMDEM_VERSION = "0.3.0"
-
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
