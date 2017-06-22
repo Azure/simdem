@@ -334,6 +334,7 @@ def simulate_command(demo):
             var_value = input_interactive_variable(var_name)
         if not var_name.startswith("SIMDEM_"):
             demo.env.set(var_name, var_value)
+            run_command(demo, var_name + '="' + var_value + '"')
 
     output = run_command(demo)
     demo.current_command = ""
