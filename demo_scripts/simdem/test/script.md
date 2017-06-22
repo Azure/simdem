@@ -31,8 +31,8 @@ By default a 66% or more match indicates a pass. However, in some
 cases a much lower similarity is expected, for example, the output of
 `date` will vary considerably each time it is run. In these situations
 you can provide an expected similarity as part of the three backticks
-that start a code block, for example ```` Expected similarity: 0.2`
-which is low enough for the test to be recorded as a pass.:
+that start a code block, for example ``` Expected similarity: 0.2
+which is low enough for the test to be recorded as a pass:
 
 ```
 date
