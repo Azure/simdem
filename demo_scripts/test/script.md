@@ -19,9 +19,9 @@ Results:
 echo $SIMDEM_CWD
 ```
 
-Results: Expected similarity: 0.9
+Results: 
 
-```
+``` Expected similarity: 0.9
 demo_scripts/test
 ```
 
@@ -73,9 +73,9 @@ tests we need to override the similarity expected.
 date
 ```
 
-Results: Expected Similarity: 0.2
+Results: 
 
-```
+``` Expected Similarity: 0.2
 Tue Jun  6 15:23:53 UTC 2017
 ```
 

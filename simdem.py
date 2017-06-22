@@ -151,6 +151,7 @@ class Demo(object):
             if line.startswith("Results:"):
                 # Entering results section
                 in_results_section = True
+                # DEPRECATED: having the expected similarity in the results line is deprecated as of 6/22/17
                 pos = line.lower().find("expected similarity: ")
                 if pos >= 0:
                     pos = pos + len("expected similarity: ")
@@ -161,6 +162,13 @@ class Demo(object):
             elif line.startswith("```") and not in_code_block:
                 # Entering a code block, if in_results_section = True then it's a results block
                 in_code_block = True
+                pos = line.lower().find("expected similarity: ")
+                if pos >= 0:
+                    pos = pos + len("expected similarity: ")
+                    similarity = line[pos:]
+                    expected_similarity = float(similarity)
+                else:
+                    expected_similarity = 0.66
             elif line.startswith("```") and in_code_block and in_results_section:
                 # Finishing results section
                 if in_results_section and self.is_testing:
