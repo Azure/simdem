@@ -9,8 +9,7 @@ else
   sudo apt-get install -y python3-pip
 fi
 
-pip3 install pexpect
-pip3 install colorama
+pip3 install -r requirements.txt
 
 sudo cp $FILE $INSTALL_DIR
 sudo chmod +x $INSTALL_DIR$FILE
