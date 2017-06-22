@@ -59,7 +59,7 @@ live demo's - it's much harder to make a mistake this way.
 
 # Next Steps
 
-  1. [Hello World Demo](demo/script.md)
+  1. [Hello World Demo](../demo/script.md)
   2. [SimDem Index](../script.md)
   3. [Write SimDem documents](../syntax/script.md)
   4. [Build a SimDem container](../building/script.md)
