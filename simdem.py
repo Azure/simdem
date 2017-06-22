@@ -217,10 +217,11 @@ class Demo(object):
                     print(line, end="", flush=True)
                     print(colorama.Style.RESET_ALL, end="")
                 if in_next_steps:
-                    pattern = re.compile('.*\[.*\]\(.*\).*')
-                    if pattern.match(line):
+                    pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
+                    match = pattern.match(line)
+                    if match:
                         print(colorama.Fore.CYAN, end="")
-                        print(line, end="", flush=True)
+                        print('%s%s' % (match.groups()[0], match.groups()[1]), flush=True)
                         print(colorama.Style.RESET_ALL, end="")
                         next_steps.append(line)
                     
