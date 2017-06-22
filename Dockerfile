@@ -9,6 +9,8 @@ COPY simdem.py /usr/local/bin/simdem.py
 RUN chmod +x /usr/local/bin/simdem.py
 RUN ln -s /usr/local/bin/simdem.py /usr/local/bin/simdem
 
+USER 1984
+
 ENTRYPOINT [ "simdem" ]
 CMD ["-s", "tutorial", "run", "simdem"]
 
