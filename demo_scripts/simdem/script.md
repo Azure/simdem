@@ -2,7 +2,7 @@
 
 Is it:
 
-  * A tutorial documentat
+  * Documentation
   * An interactive tutorial
   * A live demo 
   * An automated test script
