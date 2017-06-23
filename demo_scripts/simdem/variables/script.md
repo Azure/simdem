@@ -37,8 +37,8 @@ Results:
 
 ```
 {
-    "TEST": "Hello from the SimDem project"
-}
+    "TEST": "A local hello from the current working directory (where the simdem command was executed)"
+}	
 ```
 
 Finally, a project may define an `env.local.json` file in the
@@ -58,40 +58,22 @@ Values are loaded in the following order, the last file to define a
 
 ## Interactive Variables
 
-If you include an environment variable that isn't set, SimDem will prompt 
-you to give it a value and will add it to the running environment.
+If you include an environment variable that isn't set, SimDem will
+prompt you to give it a value and will add it to the running
+environment. If you are running in test mode the variable will be
+given a value of 'Dummy vlaue for test'.
 
 ```
-echo $NEW_VARIABLE $TEST
-```
-
-Results: Expected similarity: 0.5
-
-```
-Enter a value for $NEW_VARIABLE: SimDem
-
-SimDem hello-world
-
-```
-
-```
-echo $LOCAL_TEST $TEST
+echo $NEW_VARIABLE
 ```
 
 Results: 
 
-```
-A warm local hello hello-world
-```
+``` Expected_Similarity=0
+Enter a value for $NEW_VARIABLE: SimDem
 
-```
-echo $NEW_VARIABLE $TEST
-```
+SimDem
 
-Results: Expected similarity: 0.5
-
-```
-SimDem hello-world
 ```
 
 ## User provided environment

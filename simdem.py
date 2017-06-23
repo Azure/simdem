@@ -187,9 +187,9 @@ class Demo(object):
             elif line.startswith("```") and not in_code_block:
                 # Entering a code block, if in_results_section = True then it's a results block
                 in_code_block = True
-                pos = line.lower().find("expected similarity: ")
+                pos = line.lower().find("expected_similarity=")
                 if pos >= 0:
-                    pos = pos + len("expected similarity: ")
+                    pos = pos + len("expected_similarity=")
                     similarity = line[pos:]
                     expected_similarity = float(similarity)
                 else:
