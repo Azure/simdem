@@ -38,7 +38,7 @@ following paths next:
   4. [Configure your scripts through variables](variables/script.md)
   5. [Write multi-part documents](multipart/script.md)
   6. [Use your documents as interactive tutorials or demos](running/script.md)
-  7. [Use your documents as automated tests](testing/script.md)
+  7. [Use your documents as automated tests](test/script.md)
   8. [Build an SimDem container](building/script.md)
 
 

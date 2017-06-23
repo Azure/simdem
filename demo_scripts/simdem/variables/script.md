@@ -144,4 +144,4 @@ env | grep "SIMDEM_"
   1. [Build a SimDem container](../building/script.md)
   2. [SimDem Index](../script.md)
   3. [Use your documents as interactive tutorials or demos](../running/script.md)
-  4. [Use your documents as automated tests](../testing/script.md)
+  4. [Use your documents as automated tests](../test/script.md)
