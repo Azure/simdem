@@ -129,7 +129,7 @@ Results:
 A warm local hello
 ```
 
-## SimDem Environemnt Variables
+## SimDem Environment Variables
 
 SimDem provides some information about itself in environment
 variables. These are all nameed `SIMDEM_*`. At present the available
