@@ -1,3 +1,6 @@
 *~
 \#*
 .#*
+env.local.json
+!demo_scripts/test/env.local.json
+!/env.local.json

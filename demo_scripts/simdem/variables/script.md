@@ -4,25 +4,14 @@ In order to use environment variables, you can define one or more
 files. These variables are available in every command that is
 executed.
 
-Tutorials can carry `env.json` files in the project directory and/or
-in tutorial sub- directories. Files in tutorial sub-directories will
-overwrite settings pulled from the project directory. 
+Tutorials can carry `env.json` files in the directory the simdem
+command was run and/or in tutorial sub-directories. Files in tutorial
+sub-directories will overwrite settings pulled from the project
+directory.
 
-This tutorial defines an 'env.json' in the project directory:
-
-```
-cat $SIMDEM_CWD/../env.json
-```
-
-Results:
-
-```
-{
-    "TEST": "Hello from the project"
-}
-```
-
-It also defines an 'env.json' file in the tutorial folder:
+For example, this tutorial defines an 'env.json' in the `simdem`
+parent folder and in the `variables` subdirectory that contains this
+script. Here is the content from the test subdirectory.
 
 ```
 cat $SIMDEM_CWD/env.json
@@ -32,21 +21,40 @@ Results:
 
 ```
 {
-    "TEST": "hello-world"
+    "NAME": "Hello from the variables subdirectory"
 }
 ```
 
-The file that "wins" is the most local one, that is the one in the tutorial:
+It also defines an 'env.json' file in the `SimDem` root
+folder. Assuming you executed the `simdem` command from within that
+folder the followin command will display it's content.
 
 ```
-echo $TEST
+cat env.json
 ```
 
 Results:
 
 ```
-hello-world
+{
+    "TEST": "Hello from the SimDem project"
+}
 ```
+
+Finally, a project may define an `env.local.json` file in the
+directory from which the `simdem` command is run. This file is the
+last to be loaded and overrides all other values.
+
+Values are loaded in the following order, the last file to define a
+        vlaue is the one that "wins".
+        
+    - PARENT_OF_SCRIPT_DIR/env.json
+    - SCRIPT_DIR/env.json
+    - PARENT_OF_SCRIPT_DIR/env.local.json
+    - SCRIPT_DIR/env.local.json
+    - CWD/env.json
+    - CWD/env.local.json
+
 
 ## Interactive Variables
 

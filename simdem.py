@@ -33,11 +33,23 @@ class Environment(object):
         self.set("SIMDEM_CWD", directory)
 
     def read_simdem_environment(self, directory):
-        """
-        Populates each shell environment with a set of environment vars
-        loaded via env.json and/or env.local.json files. Variables are loaded
-        in order first from the parent of script_dir, then script_dir itself.
-        env.local.json > env.json.
+        """Populates each shell environment with a set of environment vars
+        loaded via env.json and/or env.local.json files. Variables are
+        loaded in order first from the parent of the current script
+        directory, then the current scriptdir itself and finally from
+        the directory in which the `simdem` command was executed (the
+        CWD).
+
+        Values are loaded in the following order, the last file to
+        define a vlaue is the one that "wins".
+        
+        - PARENT_OF_SCRIPT_DIR/env.json
+        - SCRIPT_DIR/env.json
+        - PARENT_OF_SCRIPT_DIR/env.local.json
+        - SCRIPT_DIR/env.local.json
+        - CWD/env.json
+        - CWD/env.local.json
+
         """
         env = {}
 
@@ -68,6 +80,19 @@ class Environment(object):
                 local_env = json.load(env_file)
                 env.update(local_env)
 
+        filename = "/env.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                local_env = json.load(env_file)
+                env.update(local_env)
+
+        filename = "env.local.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                local_env = json.load(env_file)
+                env.update(local_env)
+
+                
         self.env.update(env)
 
     def set(self, var, value):
