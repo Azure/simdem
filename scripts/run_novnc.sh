@@ -19,6 +19,7 @@ docker stop simdem_novnc
 docker rm simdem_novnc
 
 docker run -d -p 5901:5901 -p 8080:6901 --name simdem_novnc \
+       -v ~/.azure:/headless/.azure \
        -e VNC_COL_DEPTH=$VNC_COL_DEPTH \
        -e VNC_RESOLUTION=$VNC_RESOLUTION \
        -e VNC_PW=$VNC_PW \
