@@ -23,6 +23,7 @@ RUN pip3 install -r src/requirements.txt
 # Desktop
 COPY ./novnc/ /headless/
 RUN install/set_user_permission.sh /headless
+RUN rm /headless/.config/bg_sakuli.png
 
 # SimDem
 COPY demo_scripts demo_scripts
