@@ -14,11 +14,17 @@ RUN apt-get install apt-transport-https -y
 RUN apt-get update
 RUN apt-key adv --keyserver packages.microsoft.com --recv-keys 417A0893
 RUN apt-get install azure-cli -y --allow-unauthenticated
+RUN mkdir -p .azure
 
 RUN mkdir src
 COPY . src
 RUN pip3 install -r src/requirements.txt
 
+# Desktop
+COPY ./novnc/ /headless/
+RUN install/set_user_permission.sh /headless
+
+# SimDem
 COPY demo_scripts demo_scripts
 COPY simdem.py /usr/local/bin/simdem.py
 RUN chmod +x /usr/local/bin/simdem.py
@@ -29,5 +35,4 @@ ENV VNC_COL_DEPTH 24
 ENV VNC_RESOLUTION 1024x768
 ENV VNC_PW vncpassword
 
-# USER 1984
-
+USER 1984
