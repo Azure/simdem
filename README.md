@@ -77,6 +77,22 @@ See `demo_scripts/simdem/script.md` for details on how to write a demo
 script.
 
 
+# Hacking Guide
+
+If you make changes to the code the easiest way to build and redeploy
+the container is with the scripts in `scripts` directory. These
+scripts pull the current version number from the SimDem.py (see
+`SIMDEM_VERSION=x.y.z` near the top of the file. This version number
+is used as the defaiult for the scripts in this folder.
+
+  ./scripts/build.sh Builds the noVNC (browser based) version of
+  the container with the default tag of `rgardler/simdem_novnc:x.y.z`
+  
+  ./scripts/run.sh Runs an instance of the noVNC container with
+  the name `simdem`, after stopping and deleting any existing
+  containers. This container uses a volume container called
+  `azure_data` to maintain state for the preferred Azure subscription.
+
 # Learn more
 
 If you want to learn more before running the container then why not read the interactive tutorial as a [markdown page on GitHub](https://github.com/rgardler/simdem/blob/master/demo_scripts/simdem/script.md).
