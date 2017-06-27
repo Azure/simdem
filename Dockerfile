@@ -9,6 +9,11 @@ USER 0
 
 RUN apt-get update
 
+RUN apt-get install sudo -y
+RUN apt-get install whois -y
+RUN sudo useradd default -u 1984 -p `mkpasswd vncpassword`
+RUN sudo usermod -aG sudo default
+
 # Not really needed, but used in the SimDem demo script
 RUN apt-get install tree -y
 
