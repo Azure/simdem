@@ -22,14 +22,22 @@ VNC_COL_DEPTH='24'
 VNC_RESOLUTION='1024x768'
 VNC_PW='vncpassword'
 
-SCRIPT_DIR=demo_scripts
+REPOSITORY=rgardler
+FLAVOR=novnc
+CONTAINERNAME=simdem_$FLAVOR
 
-docker stop simdem_novnc
-docker rm simdem_novnc
+VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
+
+echo Runing  $REPOSITORY/$CONTAINERNAME:$VERSION .
+
+docker stop $CONTAINERNAME
+docker rm $CONTAINERNAME
 
 docker run -d -p 5901:5901 -p 8080:6901 --name simdem_novnc \
        --volume azure_data:/headless/.azure \
        -e VNC_COL_DEPTH=$VNC_COL_DEPTH \
        -e VNC_RESOLUTION=$VNC_RESOLUTION \
        -e VNC_PW=$VNC_PW \
-       rgardler/simdem:novnc
+       $REPOSITORY/$CONTAINERNAME:$VERSION
+       
+
