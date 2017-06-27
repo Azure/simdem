@@ -124,7 +124,7 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\b|\\\"]?)(?!\$).*?")
+        pattern = re.compile(".*?(?<=\$!\(){?(\w*)(?=[\W|\$|\b|\\\"]?)(?!\$).*?")
         match = pattern.match(self.current_command)
         var_list = []
         if match:
