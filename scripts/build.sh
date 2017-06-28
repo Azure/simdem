@@ -9,11 +9,13 @@
 # TODO: build.sh cli        - builds the CLI version of the container
 
 REPOSITORY=rgardler
-FLAVOR=novnc
+FLAVOR=${1:-novnc}
 CONTAINERNAME=simdem_$FLAVOR
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
 
 echo Building $REPOSITORY/$CONTAINERNAME:$VERSION .
 
-docker build -t $REPOSITORY/$CONTAINERNAME:$VERSION .
+docker build -f Dockerfile_$FLAVOR -t $REPOSITORY/$CONTAINERNAME:$VERSION .
+
+echo Built $REPOSITORY/$CONTAINERNAME:$VERSION .
