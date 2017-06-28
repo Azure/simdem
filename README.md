@@ -88,10 +88,13 @@ is used as the defaiult for the scripts in this folder.
   ./scripts/build.sh Builds the noVNC (browser based) version of
   the container with the default tag of `rgardler/simdem_novnc:x.y.z`
   
-  ./scripts/run.sh Runs an instance of the noVNC container with
-  the name `simdem`, after stopping and deleting any existing
-  containers. This container uses a volume container called
-  `azure_data` to maintain state for the preferred Azure subscription.
+  ./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC
+  container with the name `simdem`, after stopping and deleting any
+  existing containers. This container uses a volume container called
+  `azure_data` to maintain state for the preferred Azure subscription
+  and creates another called `simdem_novnc_scripts` containing the
+  scripts in the provided `SCRIPTS_DIR` (or `./demo_scripts` if no
+  vlaue provided).
 
 # Learn more
 
