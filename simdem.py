@@ -228,7 +228,7 @@ class Demo(object):
                     in_next_steps = True
                 if is_first_line:
                     run_command(self, "clear")
-                else:
+                elif executed_code_in_this_section:
                     executed_code_in_this_section = False
                     print("$ ", end="", flush=True)
                     check_for_interactive_command(self)
