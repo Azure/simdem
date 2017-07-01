@@ -33,6 +33,11 @@ REPOSITORY=rgardler
 CONTAINER_NAME=simdem_$FLAVOR
 SCRIPTS_VOLUME=${CONTAINER_NAME}_scripts
 AZURE_VOLUME=azure_data
+if [[ $FLAVOR == "novnc" ]]; then
+    HOME="/headless"
+else
+    HOME=""
+fi
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
 
@@ -45,13 +50,13 @@ docker stop $SCRIPTS_VOLUME
 docker rm $SCRIPTS_VOLUME
 
 echo Creating scripts data container named $SCRIPTS_VOLUME containing the scripts in $SCRIPTS_DIR
-docker create -v /headless/demo_scripts --name $SCRIPTS_VOLUME ubuntu /bin/true
-docker cp $SCRIPTS_DIR/. $SCRIPTS_VOLUME:/headless/demo_scripts/
+docker create -v $HOME/demo_scripts --name $SCRIPTS_VOLUME ubuntu /bin/true
+docker cp $SCRIPTS_DIR/. $SCRIPTS_VOLUME:$HOME/demo_scripts/
 
 echo starting the $CONTAINER_NAME container
 if [[ $FLAVOR == "novnc" ]]; then
    docker run -d -p 5901:5901 -p 8080:6901 --name $CONTAINER_NAME \
-       --volume $AZURE_VOLUME:/headless/.azure \
+       --volume $AZURE_VOLUME:$HOME/.azure \
        --volumes-from $SCRIPTS_VOLUME \
        -e VNC_COL_DEPTH=$VNC_COL_DEPTH \
        -e VNC_RESOLUTION=$VNC_RESOLUTION \
@@ -59,7 +64,7 @@ if [[ $FLAVOR == "novnc" ]]; then
        $REPOSITORY/$CONTAINER_NAME:$VERSION
 else
     docker run -it \
-       --volume $AZURE_VOLUME:/headless/.azure \
+       --volume $AZURE_VOLUME:$HOME/.azure \
        --volumes-from $SCRIPTS_VOLUME \
        --name $CONTAINER_NAME $REPOSITORY/$CONTAINER_NAME:$VERSION
 fi
