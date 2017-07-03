@@ -36,7 +36,7 @@ AZURE_VOLUME=azure_data
 if [[ $FLAVOR == "novnc" ]]; then
     HOME="/headless"
 else
-    HOME=""
+    HOME="/home/simdem"
 fi
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
