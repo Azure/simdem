@@ -125,12 +125,12 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        pattern = re.compile(".*?(?<=\$!\(){?(\w*)(?=[\W|\$|\b|\\\"]?)(?!\$).*?")
+        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
         match = pattern.match(self.current_command)
         var_list = []
         if match:
             for var in match.groups():
-                if var not in self.env.get() or self.env.get(var) == "":
+                if var != "" and var not in self.env.get() or self.env.get(var) == "":
                     var_list.append(var)
         return self.current_command, var_list
 
@@ -394,9 +394,6 @@ def run_command(demo, command=None):
     if not command:
         command = demo.current_command
 
-    if command.startswith("sudo ") and demo.is_docker:
-            command = command[5:]
- 
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
     response = shell.run_command(command)
     print(response)
