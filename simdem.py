@@ -126,11 +126,11 @@ class Demo(object):
         variables that haven't been set.
         """
         pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
-        match = pattern.match(self.current_command)
+        matches = pattern.findall(self.current_command)
         var_list = []
-        if match:
-            for var in match.groups():
-                if var != "" and var not in self.env.get() or self.env.get(var) == "":
+        if matches:
+            for var in matches:
+                if var != "" and (var not in self.env.get() or self.env.get(var) == ""):
                     var_list.append(var)
         return self.current_command, var_list
 
