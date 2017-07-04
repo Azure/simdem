@@ -600,7 +600,7 @@ def main():
     elif options.style == 'tutorial':
         simulate = False
     else:
-        print("Unkown style (--style, -s): " + options.style)
+        print("Unknown style (--style, -s): " + options.style)
         exit(1)
 
     if len(arguments) == 2:
