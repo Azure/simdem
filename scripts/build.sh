@@ -14,9 +14,6 @@ CONTAINERNAME=simdem_$FLAVOR
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
 
-echo Building $REPOSITORY/$CONTAINERNAME:$VERSION .
-
-
 print_result() {
     if [ $1 -eq 0 ]; then
 	echo "Built $2"

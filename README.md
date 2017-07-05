@@ -95,16 +95,26 @@ scripts pull the current version number from the SimDem.py (see
 `SIMDEM_VERSION=x.y.z` near the top of the file. This version number
 is used as the defaiult for the scripts in this folder.
 
-  ./scripts/build.sh Builds the noVNC (browser based) version of
-  the container with the default tag of `rgardler/simdem_novnc:x.y.z`
-  
-  ./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC
-  container with the name `simdem`, after stopping and deleting any
-  existing containers. This container uses a volume container called
-  `azure_data` to maintain state for the preferred Azure subscription
-  and creates another called `simdem_novnc_scripts` containing the
-  scripts in the provided `SCRIPTS_DIR` (or `./demo_scripts` if no
-  vlaue provided).
+## Building
+
+./scripts/build.sh Builds the noVNC (browser based) version of
+the container with the default tag of `rgardler/simdem_novnc:x.y.z`
+
+## Running
+
+./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC container
+with the name `simdem`, after stopping and deleting any existing
+containers. This container uses a volume container called `azure_data`
+to maintain state for the preferred Azure subscription and creates
+another called `simdem_novnc_scripts` containing the scripts in the
+provided `SCRIPTS_DIR` (or `./demo_scripts` if no vlaue provided).
+
+## Publishing
+
+The `latest` version is built from source on each commit. To publish a
+tagged version use `./scripts/publish.sh` script.
+
+Don't forget to bump the version number after using this script.
 
 # Learn more
 
