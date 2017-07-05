@@ -50,7 +50,7 @@ Tutorial : in which full textual descriptions are provided
 Demo     : in which no textual descriptions are shown and commands are "typed"
 Test     : run the tests
 
-## Tutorial Mode
+#### Tutorial Mode
 
 It's easier to explain through action, so just run the container and
 work through the interactive tutorial that is included
@@ -68,7 +68,7 @@ provided in the SimDem GitHub repository.
 ./scripts/run.sh cli demo_scripts/simdem
 ```
 
-### Demo mode
+#### Demo mode
 
 To run the same file as a demo (that is without explanatory text and
 with simulated typing)simply add a third paramater with the value
@@ -78,13 +78,37 @@ with simulated typing)simply add a third paramater with the value
 ./scripts/run.sh cli demo_scripts/simdem demo
 ```
 
-### Test mode
+#### Test mode
 
 To run the same file as a series of tests use a third parameter value
 of `test` as follows:
 
 ```
 ./scripts/run.sh cli demo_scripts/simdem test
+```
+
+### NoVNC Container
+
+When running in NoVNC mode a lightweight Linux desktop is run inside
+the container you can then access that container using a browser. To
+run the container use:
+
+```
+./scripts/run.sh
+```
+
+Now connect using the URL http://HOSTNAME_OR_IP:8080/?password=vncpassword
+
+Open a terminal and type:
+
+```
+simdem --help
+```
+
+To load your own demo scripts into this container use:
+
+```
+./scripts/run.sh novnc /path/to/scripts
 ```
 
 # Hacking Guide
