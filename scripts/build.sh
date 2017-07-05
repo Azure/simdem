@@ -4,9 +4,9 @@
 #
 # Usage:
 #
-# build.sh                  - builds both containers (cli and novnc)
-# TODO: build.sh novnc      - builds the novnc version of the container
-# TODO: build.sh cli        - builds the CLI version of the container
+# build.sh            - builds both containers (cli and novnc)
+# build.sh novnc      - builds the novnc version of the container
+# build.sh cli        - builds the CLI version of the container
 
 REPOSITORY=rgardler
 FLAVOR=${1:-}
