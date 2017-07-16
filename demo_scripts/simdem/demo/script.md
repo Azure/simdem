@@ -22,9 +22,9 @@ The date command will show that these commands are being executed.
 date
 ```
 
-Results: Expected similarity: 0.3
+Results: 
 
-```
+```expected_similarity=0.3
 Sat Mar 12 08:59:01 UTC 2016
 ```
 
