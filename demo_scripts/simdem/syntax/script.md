@@ -33,6 +33,12 @@ For example:
 echo "This command will be 'typed' and executed."
 ```
 
+### Command Limitations
+
+At the time of writing it is not possible to have interactive
+commands. If you try to include such a command SimDem will "hang" as
+it waits, silently, for input.
+
 ## Result Blocks
 
 ### Including Results in the Script
