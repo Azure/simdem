@@ -108,13 +108,14 @@ class Environment(object):
             return self.env
 
 class Demo(object):
-    def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
+    def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_learning=False):
         """Initialize variables"""
         self.filename = filename
         self.script_dir = script_dir
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
+        self.is_learning = is_learning
         self.current_command = ""
         self.current_description = ""
 
@@ -217,8 +218,10 @@ class Demo(object):
                     # comment
                     pass
                 else:
-                    print("$ ", end="", flush=True)
-                    check_for_interactive_command(self)
+                    if not self.is_learning:
+                        print("$ ", end="", flush=True)
+                        check_for_interactive_command(self)
+                        
                     self.current_command = line
                     actual_results = simulate_command(self)
                     executed_code_in_this_section = True
@@ -357,21 +360,46 @@ def simulate_command(demo):
     the next command
     """
 
-    type_command(demo)
+    if not demo.is_learning:
+        type_command(demo)
+        _, var_list = demo.get_current_command()
 
-    _, var_list = demo.get_current_command()
-    for var_name in var_list:
-        if (demo.is_testing):
-            var_value = "Dummy value for test"
-        else:
-            var_value = input_interactive_variable(var_name)
-        if not var_name.startswith("SIMDEM_"):
-            demo.env.set(var_name, var_value)
-            run_command(demo, var_name + '="' + var_value + '"')
+        # Get values for unknown variables
+        for var_name in var_list:
+            if (demo.is_testing):
+                var_value = "Dummy value for test"
+            else:
+                var_value = input_interactive_variable(var_name)
+            if not var_name.startswith("SIMDEM_"):
+                demo.env.set(var_name, var_value)
+                run_command(demo, var_name + '="' + var_value + '"')
+                
+        output = run_command(demo)
+        demo.current_command = ""
 
-    output = run_command(demo)
-    demo.current_command = ""
-    
+    else:
+        done = False
+        while not done:
+            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+            print("\nType the command '" + demo.current_command.strip() + "'")
+            print("\t- type 'auto' (or 'a') to automatically type the command")
+            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+            print("\n$ ", end = "", flush = True)
+            typed_command = input()
+            if typed_command.lower() == "a" or typed_command.lower() == "auto":
+                demo.is_learning = False
+                output = simulate_command(demo)
+                demo.is_learning = True
+                done = True
+            elif typed_command == demo.current_command.strip():
+                demo.is_learning = False
+                output = simulate_command(demo)
+                demo.is_learning = True
+                done = True
+            else:
+                print(colorama.Fore.RED, end="")
+                print("You have a typo there")
+        
     return output
 
 shell = None
@@ -627,6 +655,9 @@ def main():
         demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir))
+    elif cmd == "learn":
+        demo = Demo(script_dir, filename, simulate, is_automatic, is_test, True);
+        demo.run()
     else:
         print("Unknown command: " + cmd)
         print("Run with --help for guidance.")
