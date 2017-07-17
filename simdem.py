@@ -108,8 +108,9 @@ class Environment(object):
             return self.env
 
 class Demo(object):
-    def __init__(self, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
         """Initialize variables"""
+        self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
         self.is_simulation = is_simulation
@@ -124,12 +125,12 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        pattern = re.compile(".*?(?<=\$!\(){?(\w*)(?=[\W|\$|\b|\\\"]?)(?!\$).*?")
-        match = pattern.match(self.current_command)
+        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
+        matches = pattern.findall(self.current_command)
         var_list = []
-        if match:
-            for var in match.groups():
-                if var not in self.env.get() or self.env.get(var) == "":
+        if matches:
+            for var in matches:
+                if var != "" and (var not in self.env.get() or self.env.get(var) == ""):
                     var_list.append(var)
         return self.current_command, var_list
 
@@ -393,13 +394,6 @@ def run_command(demo, command=None):
     if not command:
         command = demo.current_command
 
-    if command.startswith("sudo "):
-        is_docker = 'if [ -f /.dockerenv ]; then echo "True"; else echo "False"; fi'
-        response = shell.run_command(command)
-        is_docker = response.strip() == "True"
-        if is_docker:
-            command = command[5:]
-
     print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
     response = shell.run_command(command)
     print(response)
@@ -606,7 +600,7 @@ def main():
     elif options.style == 'tutorial':
         simulate = False
     else:
-        print("Unkown style (--style, -s): " + options.style)
+        print("Unknown style (--style, -s): " + options.style)
         exit(1)
 
     if len(arguments) == 2:
@@ -617,17 +611,19 @@ def main():
     cmd = arguments[0]
 
     filename = "script.md"
+    is_docker = os.path.isfile('/.dockerenv')
     if cmd == "run":
-        demo = Demo(script_dir, filename, simulate, is_automatic, is_test);
+        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "test":
         is_automatic = True and options.auto
         is_test = True and options.test
-        demo = Demo(script_dir, filename, simulate, is_automatic, is_test);
+        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir))
     else:
         print("Unknown command: " + cmd)
         print("Run with --help for guidance.")
+
 main()

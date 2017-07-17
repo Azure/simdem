@@ -16,66 +16,100 @@ of different modes:
 
 # Try it Out
 
-## Tutorial Mode
+The easiest way to try SimDem out is with a Docker container, this
+approach is fully documented below. he most flexible way to run SimDem
+is to use the Python code directly. This is generally best for
+deelopers so we provide minimal documentation here.
+
+## Python
+
+To learn more install Python 3 and pip, then type the following
+commands:
+
+```
+sudo pip3 install -r requirements.txt
+python3 simdem.py --help
+```
+
+## Docker Containers
+
+There are two containers available, the 'cli' version and the 'novnc'
+version. The first is command line only, the latter provides a browser
+based Linux desktop envirnment in which the CLI is availale. The NoVNC
+version makes it easy to do demo's with browser based steps without
+having to install any softare (other than Docker) on your client.
+
+We provide scripts that make it easy to run the container and to load
+custom scripts into it.
+
+### CLI Container
+
+The CLI container can be run in three modes:
+
+Tutorial : in which full textual descriptions are provided
+Demo     : in which no textual descriptions are shown and commands are "typed"
+Test     : run the tests
+
+#### Tutorial Mode
 
 It's easier to explain through action, so just run the container and
-work through the interactive tutorial that we include.
+work through the interactive tutorial that is included
 
 ```
-docker run -it rgardler/simdem simdem
+./scripts/run.sh cli
 ```
 
-## Demo mode
+If you want to start execution in a different place, or load in your
+own scripts provide the path as the second parameter. For example, the
+following example skips the introductory text and runs the demo script
+provided in the SimDem GitHub repository.
+
+```
+./scripts/run.sh cli demo_scripts/simdem
+```
+
+#### Demo mode
 
 To run the same file as a demo (that is without explanatory text and
-with simulated typing) as `--style simulate` to the command:
+with simulated typing)simply add a third paramater with the value
+`demo` as folows:
 
 ```
-docker run -it rgardler/simdem --style simulate run simdem
+./scripts/run.sh cli demo_scripts/simdem demo
 ```
 
-## Test mode
+#### Test mode
 
-To run the same file as a series of tests us the `--test yes`
-flag. When running in test mode you will usually want to also add the
-`--auto yes` option to prevent the need for human intervention. 
-
-```
-docker run -it rgrdler/simdem --test yes --auto yes simdem
-```
-
-For convenience you can use the command `test` to give the same
-results as above:
+To run the same file as a series of tests use a third parameter value
+of `test` as follows:
 
 ```
-docker run -it rgrdler/simdem test simdem
+./scripts/run.sh cli demo_scripts/simdem test
 ```
 
-## Script generation mode
+### NoVNC Container
+
+When running in NoVNC mode a lightweight Linux desktop is run inside
+the container you can then access that container using a browser. To
+run the container use:
 
 ```
-docker run -it rgrdler/simdem script simdem
+./scripts/run.sh
 ```
 
-## Running with your own scripts
+Now connect using the URL http://HOSTNAME_OR_IP:8080/?password=vncpassword
 
-To use your own demo script mount a directory with `script.md` into
-the simdem containers `demo_scripts` directory.:
-
-```
-docker run -it -v ~/my_demo_dir:/demo_scripts rgardler/simdem
-```
-
-If you have more than one demo in your demo directory you can tell
-SimDem which to run by passing a folder name:
+Open a terminal and type:
 
 ```
-docker run -it -v ~/my_demo_dir:/demo_scripts rgardler/simdem run ademo
+simdem --help
 ```
 
-See `demo_scripts/simdem/script.md` for details on how to write a demo
-script.
+To load your own demo scripts into this container use:
 
+```
+./scripts/run.sh novnc /path/to/scripts
+```
 
 # Hacking Guide
 
@@ -85,16 +119,26 @@ scripts pull the current version number from the SimDem.py (see
 `SIMDEM_VERSION=x.y.z` near the top of the file. This version number
 is used as the defaiult for the scripts in this folder.
 
-  ./scripts/build.sh Builds the noVNC (browser based) version of
-  the container with the default tag of `rgardler/simdem_novnc:x.y.z`
-  
-  ./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC
-  container with the name `simdem`, after stopping and deleting any
-  existing containers. This container uses a volume container called
-  `azure_data` to maintain state for the preferred Azure subscription
-  and creates another called `simdem_novnc_scripts` containing the
-  scripts in the provided `SCRIPTS_DIR` (or `./demo_scripts` if no
-  vlaue provided).
+## Building
+
+./scripts/build.sh Builds the noVNC (browser based) version of
+the container with the default tag of `rgardler/simdem_novnc:x.y.z`
+
+## Running
+
+./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC container
+with the name `simdem`, after stopping and deleting any existing
+containers. This container uses a volume container called `azure_data`
+to maintain state for the preferred Azure subscription and creates
+another called `simdem_novnc_scripts` containing the scripts in the
+provided `SCRIPTS_DIR` (or `./demo_scripts` if no vlaue provided).
+
+## Publishing
+
+The `latest` version is built from source on each commit. To publish a
+tagged version use `./scripts/publish.sh` script.
+
+Don't forget to bump the version number after using this script.
 
 # Learn more
 
