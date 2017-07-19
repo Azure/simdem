@@ -40,9 +40,16 @@ class Environment(object):
         the directory in which the `simdem` command was executed (the
         CWD).
 
+        Note that it is possible to supply test values in an
+        `env.test.json` file stored in the SCRIPT_DIR. In most cases
+        these values will be overridden by values in an `env.json` or
+        `env.local.json` file.
+
         Values are loaded in the following order, the last file to
         define a vlaue is the one that "wins".
         
+        - PARENT_OF_SCRIPT_DIR/env.test.json
+        - SCRIPT_DIR/env.test.json
         - PARENT_OF_SCRIPT_DIR/env.json
         - SCRIPT_DIR/env.json
         - PARENT_OF_SCRIPT_DIR/env.local.json
@@ -55,6 +62,18 @@ class Environment(object):
 
         if not directory.endswith('/'):
             directory = directory + "/"
+
+        filename = directory + "../env.test.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                script_env = json.load(env_file)
+                env.update(script_env)
+
+        filename = directory + "env.test.json"
+        if os.path.isfile(filename):
+            with open(filename) as env_file:
+                script_env = json.load(env_file)
+                env.update(script_env)
 
         filename = directory + "../env.json"
         if os.path.isfile(directory + "../env.json"):
