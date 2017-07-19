@@ -147,10 +147,11 @@ in the container, that is the contents in `SCRIPTS_DIR` (or `./demo_scripts` if 
 `./scripts/run.sh novnc <SCRIPTS_DIR>` runs an instance of the noVNC
 container
 
-### Running the NoVNC container
+Once the container is running you can connect to it at `http://HOST:8080?password=vncpassword`. Open a terminal and run:
 
-`./scripts/run.sh novnc <SCRIPTS_DIR>` runs an instance of the noVNC
-container
+`simdem` to run the default script
+
+Use `simdem --help` for more information.
 
 ### Running the CLI container
 
