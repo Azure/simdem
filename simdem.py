@@ -604,7 +604,7 @@ def main():
     p.add_option('--path', '-p', default="demo_scripts/",
                  help="The Path to the demo scripts directory.")
     p.add_option('--auto', '-a', default="False",
-                 help="If set to anything other than False the application will not wait for user keypresses between commands.")
+                 help="If set to anything other than 'False' (or 'no') the application will not wait for user keypresses between commands.")
     p.add_option('--test', '-t', default="False",
                  help="If set to anything other than False the output of the command will be compared to the expected results in the sript. Any failures will be reported")
 
@@ -647,7 +647,7 @@ def main():
         demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "test":
-        is_automatic = True and options.auto
+        is_automatic = True and (options.auto.lower == "false" and options.auto.lower == "no")
         is_test = True and options.test
         demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
