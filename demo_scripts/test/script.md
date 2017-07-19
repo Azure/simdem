@@ -178,7 +178,8 @@ This output should be displayed, the comment before this line should be ignored
 # Expected different results
 
 When we know the results will be different and we want to use them in
-tests we need to override the similarity expected.
+tests we need to override the similarity expected by adding
+`expected_similarity=x.y` in the start line of the results block:
 
 ```
 date
