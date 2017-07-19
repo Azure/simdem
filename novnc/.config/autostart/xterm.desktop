@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Terminal
+Comment=Use the command line
+Exec=xterm
+Icon=xterm-color
+Path=
+Terminal=false
+StartupNotify=false
