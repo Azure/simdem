@@ -22,12 +22,13 @@ PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
 class Environment(object):
-    def __init__(self, directory, copy_env=True):
+    def __init__(self, directory, copy_env=True, is_test=False):
         """Initialize the environment"""
         if copy_env:
             self.env = os.environ.copy()
         else:
             self.env = {}
+        self.is_test = is_test
         self.read_simdem_environment(directory)
         self.set("SIMDEM_VERSION", SIMDEM_VERSION)
         self.set("SIMDEM_CWD", directory)
@@ -40,16 +41,9 @@ class Environment(object):
         the directory in which the `simdem` command was executed (the
         CWD).
 
-        Note that it is possible to supply test values in an
-        `env.test.json` file stored in the SCRIPT_DIR. In most cases
-        these values will be overridden by values in an `env.json` or
-        `env.local.json` file.
-
         Values are loaded in the following order, the last file to
         define a vlaue is the one that "wins".
         
-        - PARENT_OF_SCRIPT_DIR/env.test.json
-        - SCRIPT_DIR/env.test.json
         - PARENT_OF_SCRIPT_DIR/env.json
         - SCRIPT_DIR/env.json
         - PARENT_OF_SCRIPT_DIR/env.local.json
@@ -57,23 +51,23 @@ class Environment(object):
         - CWD/env.json
         - CWD/env.local.json
 
+        Note that it is possible to supply test values in an
+        `env.test.json` file stored in the SCRIPT_DIR, its parent or
+        the current working directory. If we are running in test mode
+        then the following three files will be loaded, if they exist,
+        in the following order at the end of the initialization
+        procedure. This means they will take precedence over
+        everything else.
+
+        - PARENT_OF_SCRIPT_DIR/env.test.json
+        - SCRIPT_DIR/env.test.json
+        - CWD/env.json
+
         """
         env = {}
 
         if not directory.endswith('/'):
             directory = directory + "/"
-
-        filename = directory + "../env.test.json"
-        if os.path.isfile(filename):
-            with open(filename) as env_file:
-                script_env = json.load(env_file)
-                env.update(script_env)
-
-        filename = directory + "env.test.json"
-        if os.path.isfile(filename):
-            with open(filename) as env_file:
-                script_env = json.load(env_file)
-                env.update(script_env)
 
         filename = directory + "../env.json"
         if os.path.isfile(directory + "../env.json"):
@@ -111,6 +105,24 @@ class Environment(object):
                 local_env = json.load(env_file)
                 env.update(local_env)
 
+        if self.is_test:
+            filename = directory + "../env.test.json"
+            if os.path.isfile(filename):
+                with open(filename) as env_file:
+                    script_env = json.load(env_file)
+                    env.update(script_env)
+
+            filename = directory + "env.test.json"
+            if os.path.isfile(filename):
+                with open(filename) as env_file:
+                    script_env = json.load(env_file)
+                    env.update(script_env)
+
+            filename = "env.test.json"
+            if os.path.isfile(filename):
+                with open(filename) as env_file:
+                    local_env = json.load(env_file)
+                    env.update(local_env)
                 
         self.env.update(env)
 
@@ -168,7 +180,7 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
-        self.env = Environment(self.script_dir)
+        self.env = Environment(self.script_dir, is_test = self.is_testing)
 
         if not self.script_dir.endswith('/'):
             self.script_dir = self.script_dir + "/"
