@@ -14,22 +14,17 @@ of different modes:
   * Auto: allows any of the above modes to be run but without user
     interaction
 
+The application can be run in either a CLI mode, which is ideal for
+console based demo's and tutorials, or it can be run using NoVNC for a
+browser based desktop experience - that is, using only a browser you
+can have a full desktop experience.
+
 # Try it Out
 
 The easiest way to try SimDem out is with a Docker container, this
 approach is fully documented below. he most flexible way to run SimDem
 is to use the Python code directly. This is generally best for
 deelopers so we provide minimal documentation here.
-
-## Python
-
-To learn more install Python 3 and pip, then type the following
-commands:
-
-```
-sudo pip3 install -r requirements.txt
-python3 simdem.py --help
-```
 
 ## Docker Containers
 
@@ -130,6 +125,16 @@ To load your own demo scripts into this container use:
 ./scripts/run.sh novnc /path/to/scripts
 ```
 
+## Python
+
+You can run the Python source without a Docker container. To learn
+more install Python 3 and pip, then type the following commands:
+
+```
+sudo pip3 install -r requirements.txt
+python3 simdem.py --help
+```
+
 # Hacking Guide
 
 If you make changes to the code the easiest way to build and redeploy
@@ -145,19 +150,45 @@ the container with the default tag of `rgardler/simdem_novnc:x.y.z`
 
 ## Running
 
-./scripts/run.sh <SCRIPTS_DIR> Runs an instance of the noVNC container
-with the name `simdem`, after stopping and deleting any existing
-containers. This container uses a volume container called `azure_data`
-to maintain state for the preferred Azure subscription and creates
-another called `simdem_novnc_scripts` containing the scripts in the
-provided `SCRIPTS_DIR` (or `./demo_scripts` if no vlaue provided).
+Use `./script/run.sh <FLAVOR> <SCRIPT_DIR>` to execture the container
+using two volume containers (see below). The `FLAVOR` is either
+`novnc` (for the browser based version) or `cli` fo rthe command line
+version..
+
+`azure_data` volume container is used to maintain details of your
+Azure Subscription (including login details).
+
+`simdem_VERSION_scripts` volume container has the scripts to execute
+in the container, that is the contents in `SCRIPTS_DIR` (or `./demo_scripts` if no value provided).
+
+### Running the NoVNC container
+
+`./scripts/run.sh novnc <SCRIPTS_DIR>` runs an instance of the noVNC
+container
+
+Once the container is running you can connect to it at `http://HOST:8080?password=vncpassword`. Open a terminal and run:
+
+`simdem` to run the default script
+
+Use `simdem --help` for more information.
+
+### Running the CLI container
+
+`./scripts/run.sh cli <SCRIPTS_DIR>` runs an instance of the CLI
+container
 
 ## Publishing
 
 The `latest` version is built from source on each commit. To publish a
-tagged version use `./scripts/publish.sh` script.
+version tagged image use `./scripts/publish.sh <FLAVOR>` script. This
+will publish both the CLI and NoVNC containers if no `FLAVOR` is
+provided.
 
-Don't forget to bump the version number after using this script.
+Don't forget to bump the version number after using this script. To do
+this open simdem.py and find and edit the following line (somewhere
+near the top of the file):
+
+`SIMDEM_VERSION = "0.4.1"`
 
 # Learn more
 

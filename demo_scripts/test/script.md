@@ -1,3 +1,5 @@
+# SimDem Test Script
+
 This is a simple test script. It runs a number of commands in
 succession. This script also lists commands known not to work.
 
@@ -10,7 +12,7 @@ echo $SIMDEM_VERSION
 Results:
 
 ```
-0.4.0
+0.4.2
 ```
 
 # Directory Check
@@ -22,7 +24,7 @@ echo $SIMDEM_CWD
 Results: 
 
 ``` Expected_Similarity=0.9 
-demo_scripts/test
+demo_scripts/test/
 ```
 
 # Configuraiton Check
@@ -101,7 +103,7 @@ Results:
 A local hello from the current working directory (where the simdem command was executed)
 ```
 
-And finally there should be variable definitions in the parent of the
+There should be variable definitions in the parent of the
 current script directory:
 
 ```
@@ -129,10 +131,31 @@ Results:
 Hello from the parent
 ```
 
-# Simple Echo
+## Test Environment
+
+We can also provide values in `env.test.json` in either the script
+directory or the parent of the script directory. If available these
+will be loaded first and overwritten by subsequent `env.json` and
+`env.local.json` files. For this reason if you want to dorce the user
+to provide a value for an environment variable it is important that
+you define it as an empty string in `env.json` if a value has been
+provided in `env.test.json`.
+
 
 ```
-echo "Hello world"
+echo $TEST_VALUE
+```
+
+Results:
+
+```
+Test value for the test script
+```
+
+# Simple Echo
+
+``` 
+echo "Hello world" 
 ```
 
 Results: 
@@ -157,7 +180,8 @@ This output should be displayed, the comment before this line should be ignored
 # Expected different results
 
 When we know the results will be different and we want to use them in
-tests we need to override the similarity expected.
+tests we need to override the similarity expected by adding
+`expected_similarity=x.y` in the start line of the results block:
 
 ```
 date
@@ -165,7 +189,7 @@ date
 
 Results: 
 
-``` Expected Similarity: 0.2
+```expected_Similarity=0.2
 Tue Jun  6 15:23:53 UTC 2017
 ```
 

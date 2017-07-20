@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Runs a headless VNC Docker container with Simdem installed.
+# Runs either a command line or headless VNC Docker container with
+# Simdem installed.
 #
 # Usage: run.sh [FLAVOR] [SCRIPT_DIR] [MODE]
 #
