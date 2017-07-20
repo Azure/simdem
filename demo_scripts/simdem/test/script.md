@@ -45,6 +45,24 @@ Results:
 Tue Jun  6 15:23:53 UTC 2017
 ```
 
+# Test Plans
+
+It is often a good idea to split tests into separate files. SimDem
+will allow you to do this by providing a `test_plan.txt` file. Each
+line in this file is either a comment (lines starting with '#') or a
+filename for a SimDem script to be used in testing. Each of these
+files will be concatenated together to create a complete test plan.
+
+For example, the following example `test_plan.txt` will run all the
+code and tests in `preparation/script.md` followed by those in
+`main/script.md` and finally those in `cleanup/script.md`.
+
+`
+preparation/script.md
+main/script.md
+cleanup/script.md
+`
+
 # Next Steps
 
   1. [SimDem Index](../script.md)
