@@ -177,6 +177,19 @@ Use `simdem --help` for more information.
 `./scripts/run.sh cli <SCRIPTS_DIR>` runs an instance of the CLI
 container
 
+## Contributing
+
+This is an open source project. Don't keep your code improvements,
+features and cool ideas to yourself. Please issue pull requests
+against our [GitHub repo](http://github.com/rgardler/simdem).
+
+Be sure to use our Git pre-commit script to test your contributions
+before committing, simply run the following command:
+
+```
+ln -s pre-commit.sh .git/hooks/pre-commit
+```
+
 ## Publishing
 
 The `latest` version is built from source on each commit. To publish a
