@@ -187,7 +187,7 @@ Be sure to use our Git pre-commit script to test your contributions
 before committing, simply run the following command:
 
 ```
-ln -s pre-commit.sh .git/hooks/pre-commit
+ln -s ../../pre-commit.sh .git/hooks/pre-commit
 ```
 
 ## Publishing

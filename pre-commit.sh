@@ -13,10 +13,6 @@ if [[ $STASHES == "$STASH_NAME" ]]; then
     git stash pop -q
 fi
 
-if [ $RESULT -ne 0 ]; then
-    echo "$RESULT"
-    exit 1
-else
-    echo "Tests passed"
-    exit 0
-fi
+[ $RESULT -ne 0 ] && exit 1
+exit 0
+
