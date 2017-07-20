@@ -1,9 +1,12 @@
 # Modes of Operation
 
-SimDem demos are interactive and can be run in different modes.
+SimDem demos are interactive and can be run in a number of different
+modes:
 
   * Tutorial: Displays the descriptive text of the tutorial and pauses
     at code blocks to allow user interaction.
+  * Learn: similar to Tutorial mode, but users are expected to type
+    the commands themselves.
   * Simulate: Does not disply the descriptive text, but pauses at each
     code block. When the user hits a key the command is "typed", a
     second keypress executes the command.
@@ -17,9 +20,16 @@ SimDem demos are interactive and can be run in different modes.
 ## Tutorial Mode
 
 Tutorial mode is ideal if you are using this as a learning or teaching
-tool. In this mode a description of what you are about to do is shown
-on the screen, hit a key to see the command, hit another key to
+tool (see also learn mode below, which suits some learning styles
+better. In this mode a description of what you are about to do is
+shown on the screen, hit a key to see the command, hit another key to
 execute the command. Tutorial mode is the default.
+
+## Learn mode
+
+Learn mode is similar to tutorial mode above, however, in learn mode
+the user is expected to type each command themselves. Some people find
+that this aids recall.
 
 ## Demo (or Simulation) mode
 
