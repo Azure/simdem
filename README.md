@@ -39,9 +39,10 @@ custom scripts into it.
 
 ### CLI Container
 
-The CLI container can be run in three modes:
+The CLI container can be run in four modes:
 
 Tutorial : in which full textual descriptions are provided
+Learn    : similar to Tutorial mode, but users are expected to type the commands
 Demo     : in which no textual descriptions are shown and commands are "typed"
 Test     : run the tests
 
@@ -61,6 +62,24 @@ provided in the SimDem GitHub repository.
 
 ```
 ./scripts/run.sh cli demo_scripts/simdem
+```
+
+#### Learn mode
+
+Learn mode is similar to tutorial mode, but the user is expected to
+type the commands after being provided instructions.
+
+```
+./scripts/run.sh cli learn
+```
+
+If you want to start execution in a different place, or load in your
+own scripts provide the path as the second parameter. For example, the
+following example skips the introductory text and runs the demo script
+provided in the SimDem GitHub repository.
+
+```
+./scripts/run.sh cli demo_scripts/simdem learn
 ```
 
 #### Demo mode
