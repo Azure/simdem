@@ -667,7 +667,7 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
 def main():
     """SimDem CLI interpreter"""
 
-    p = optparse.OptionParser("%prog [run|test|script] <options> DEMO_NAME", version= SIMDEM_VERSION)
+    p = optparse.OptionParser("%prog [run|learn|test|script] <options> DEMO_NAME", version= SIMDEM_VERSION)
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
