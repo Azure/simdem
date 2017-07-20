@@ -17,7 +17,7 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.4.3"
+SIMDEM_VERSION = "0.4.4"
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
@@ -349,6 +349,8 @@ class Demo(object):
                 print("View failure reports in context in the above output.")
                 print("\n\n=============================\n\n")
                 sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+            else:
+                sys.exit(0)
 
         if len(next_steps) > 0:
             in_string = ""
