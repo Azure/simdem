@@ -641,9 +641,6 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
     Reads a script.md file in the indicated directoy and builds an
     executable bash script from the commands contained within.
     """
-    in_code_block = False
-    in_results_section = False
-
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
     filename = script_dir + "script.md"
@@ -654,6 +651,8 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
     for key, value in env.items():
         script += key + "='" + value + "'\n"
 
+    in_code_block = False
+    in_results_section = False
     lines = list(open(filename))
     for line in lines:
         if line.startswith("Results:"):
@@ -662,12 +661,9 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
         elif line.startswith("```") and not in_code_block:
             # Entering a code block, if in_results_section = True then it's a results block
             in_code_block = True
-        elif line.startswith("```") and in_code_block and in_results_section:
-            # Finishing results section
+        elif line.startswith("```") and in_code_block:
+            # Finishing code block
             in_results_section = False
-            in_code_block = False
-        elif line.startswith("```") and in_code_block and not in_results_section:
-            # Finishing executable code block
             in_code_block = False
         elif in_code_block and not in_results_section:
             # Executable line
