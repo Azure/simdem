@@ -139,7 +139,7 @@ class Environment(object):
             return self.env
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_learning = False):
         """Initialize variables"""
         self.is_docker = is_running_in_docker
         self.filename = filename
@@ -429,7 +429,7 @@ def simulate_command(demo):
     the next command
     """
 
-    if not demo.is_learning:
+    if not demo.is_learning or demo.current_command.strip() == "clear":
         type_command(demo)
         _, var_list = demo.get_current_command()
 
@@ -450,7 +450,11 @@ def simulate_command(demo):
         done = False
         while not done:
             print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-            print("\nType the command '" + demo.current_command.strip() + "'")
+            print("\nType the command '", end = "")
+            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+            print(demo.current_command.strip(), end = "")
+            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+            print("'")
             print("\t- type 'auto' (or 'a') to automatically type the command")
             print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
             print("\n$ ", end = "", flush = True)
@@ -719,7 +723,7 @@ def main():
     elif cmd == "script":
         print(get_bash_script(script_dir))
     elif cmd == "learn":
-        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, True);
+        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_learning=True);
         demo.run()
     else:
         print("Unknown command: " + cmd)
