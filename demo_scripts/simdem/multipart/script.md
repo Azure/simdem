@@ -49,11 +49,21 @@ My_Complex_SimDem_Tutorial
     └── script.md
 `
 
+## Auto Table of Contents
+
+If the root of the demo scripts directory does not contain a
+`script.md` file then SimDem will create a Table of Contents from all
+sub-directories that contain a `script.md` file. This ToC will use the
+first line (which should be a heading marked with '# ' at the start)
+as the text for the link to the script. This ToC will be displayed as
+a 'Next Steps' section, thus users will be able to step into any area
+of the available demo's.
+
 # Other files
 
 Tutorials may also provide an `env.json` and/or an `env.local.json`
-file to define environment variables to use when executing in demo or
-test mode.
+and/or an `env.test.json` file to define environment variables to use
+when executing in demo or test mode.
 
 # Demo Scripts example
 

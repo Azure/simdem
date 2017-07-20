@@ -1,3 +1,5 @@
+# SimDem Test Script
+
 This is a simple test script. It runs a number of commands in
 succession. This script also lists commands known not to work.
 
