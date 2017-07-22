@@ -17,7 +17,7 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.5.1"
+SIMDEM_VERSION = "0.6.0"
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
