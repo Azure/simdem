@@ -35,7 +35,17 @@ Note that when you hit 'b' you will not see any change in the output,
 but you can now start typing freely.
 
 ```
-# This is a dummy code block to ensure SimDem pauses in interactive mode
+echo "This is a dummy code block to ensure SimDem pauses in interactive mode"
+```
+
+# Repeating Commands
+
+Sometimes a command will need to be run a number of times, for example
+it might be monitoring the state of an operation. The easiest way to
+repeat a command is simply to press 'r'.
+
+```
+echo "This is a dummy code block to ensure SimDem pauses in interactive mode"
 ```
 
 # Next Steps

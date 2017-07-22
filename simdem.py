@@ -17,7 +17,7 @@ import json
 import colorama
 colorama.init(strip=None)
 
-SIMDEM_VERSION = "0.5.0"
+SIMDEM_VERSION = "0.5.1"
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
@@ -150,6 +150,7 @@ class Demo(object):
         self.is_learning = is_learning
         self.current_command = ""
         self.current_description = ""
+        self.last_command = ""
 
         
     def get_current_command(self):
@@ -475,6 +476,7 @@ def simulate_command(demo):
                 run_command(demo, var_name + '="' + var_value + '"')
                 
         output = run_command(demo)
+        demo.last_command = demo.current_command
         demo.current_command = ""
 
     else:
@@ -552,6 +554,7 @@ def check_for_interactive_command(demo):
             print("b           - break out of the script and accept a command from user input")
             print("b -> CTRL-C - stop the script")
             print("d           - (re)display the description that precedes the current command then resume from this point")
+            print("r           - repeat the previous command")
             print("h           - displays this help message")
             print()
             print("Press SPACEBAR to continue")
@@ -565,7 +568,7 @@ def check_for_interactive_command(demo):
             run_command(demo, command)
             print("$ ", end="", flush=True)
             check_for_interactive_command(demo)
-        elif key =='d':
+        elif key == 'd':
             print("")
             print(colorama.Fore.CYAN) 
             print(demo.current_description);
@@ -573,6 +576,12 @@ def check_for_interactive_command(demo):
             print("$ ", end="", flush=True)
             print(demo.current_command, end="", flush=True)
             check_for_interactive_command(demo)
+        elif key == 'r':
+            if not demo.last_command == "":
+                demo.current_command = demo.last_command
+                simulate_command(demo)
+                print("$ ", end="", flush=True)
+                check_for_interactive_command(demo)
 
 def get_instruction_key():
     """Waits for a single keypress on stdin.

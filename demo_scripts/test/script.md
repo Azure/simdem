@@ -12,7 +12,7 @@ echo $SIMDEM_VERSION
 Results:
 
 ```
-0.5.0
+0.5.1
 ```
 
 # Directory Check
