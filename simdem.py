@@ -345,16 +345,12 @@ class Demo(object):
                     self.ui.simulate_command(self)
                         
                 if not self.is_simulation:
-                    print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
-                    print(line, end="", flush=True)
-                    print(colorama.Style.RESET_ALL, end="")
+                    self.ui.heading(line)
 
             else:
                 if not self.is_simulation and not in_results_section and not in_next_steps:
                     # Descriptive text
-                    print(colorama.Fore.CYAN, end="")
-                    print(line, end="", flush=True)
-                    print(colorama.Style.RESET_ALL, end="")
+                    self.ui.description(line)
                 if in_next_steps:
                     pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
                     match = pattern.match(line)
@@ -420,9 +416,27 @@ class Ui(object):
         """Display the prompt for the user. This is intended to indicate that
         the user is expected to take an action at this point.
         """
-        print("$ ", end="", flush=True)
-    
+        self.display("$ ", colorama.Fore.WHITE)
+
+    def heading(self, text):
+        """Display a heading"""
+        self.display(text, colorama.Fore.CYAN + colorama.Style.BRIGHT)
+        print()
+
+    def description(self, text):
+        """Display some descriptove text.
+        """
+        self.display(text, colorama.Fore.CYAN)
+
+    def display(self, text, color):
+        """Display some text in a given color. Do not print a new line.
+        """
+        print(color, end="")
+        print(text, end="", flush=True)
+        print(colorama.Style.RESET_ALL, end="")
+        
     def input_interactive_variable(self, name):
+
         """
         Gets a value from stdin for a variable.
         """
