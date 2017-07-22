@@ -165,7 +165,6 @@ class Demo(object):
         var_list = []
         if matches:
             for var in matches:
-                print("Var: " + var)
                 if var != "" and (var not in self.env.get() or self.env.get(var) == ""):
                     var_list.append(var)
         return self.current_command, var_list
@@ -323,7 +322,7 @@ class Demo(object):
                     pass
                 else:
                     if not self.is_learning:
-                        print("$ ", end="", flush=True)
+                        self.ui.prompt()
                         self.ui.check_for_interactive_command(self)
                         
                     self.current_command = line
@@ -337,7 +336,7 @@ class Demo(object):
                     self.ui.run_command(self, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
-                    print("$ ", end="", flush=True)
+                    self.ui.prompt()
                     self.ui.check_for_interactive_command(self)
                     self.current_description = colorama.Fore.CYAN + colorama.Style.BRIGHT
                     self.current_description += line;
@@ -417,6 +416,12 @@ class Ui(object):
     def __init__(self):
         pass
 
+    def prompt(self):
+        """Display the prompt for the user. This is intended to indicate that
+        the user is expected to take an action at this point.
+        """
+        print("$ ", end="", flush=True)
+    
     def input_interactive_variable(self, name):
         """
         Gets a value from stdin for a variable.
@@ -568,26 +573,26 @@ class Ui(object):
                 while key != ' ':
                     key = self.ui.get_instruction_key()
                     print()
-                    print("$ ", end = "", flush = True)
+                    self.prompt()
                     self.check_for_interactive_command(demo)
             elif key == 'b':
                 command = input()
                 self.run_command(demo, command)
-                print("$ ", end="", flush=True)
+                self.prompt()
                 self.check_for_interactive_command(demo)
             elif key == 'd':
                 print("")
                 print(colorama.Fore.CYAN) 
                 print(demo.current_description);
                 print(colorama.Style.RESET_ALL)
-                print("$ ", end="", flush=True)
+                self.prompt()
                 print(demo.current_command, end="", flush=True)
                 self.check_for_interactive_command(demo)
             elif key == 'r':
                 if not demo.last_command == "":
                     demo.current_command = demo.last_command
                     self.simulate_command(demo)
-                    print("$ ", end="", flush=True)
+                    self.prompt()
                     self.check_for_interactive_command(demo)
 
     def get_instruction_key(self):
