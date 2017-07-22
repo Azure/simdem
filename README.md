@@ -135,6 +135,17 @@ sudo pip3 install -r requirements.txt
 python3 simdem.py --help
 ```
 
+## Azure Cloud Shell
+
+The CLI version of SimDem works fine in Azure Cloud Shell, but you
+need to install it manually at this time. Here's how..
+
+```
+git clone git@github.com:rgardler/simdem.git
+cd simdem
+./install.sh
+```
+
 # Hacking Guide
 
 If you make changes to the code the easiest way to build and redeploy

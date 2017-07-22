@@ -1,4 +1,4 @@
-if [ ! -f /.dockerenv ]; then
+if [ -f /.dockerenv ]; then
     echo "Running in a Docker container"
     IS_DOCKER=true
     INSTALL_DIR=~/bin/
@@ -14,7 +14,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
         brew install python3
 else
-  sudo apt-get install -y python3-pip
+    if [ "$IS_DOCKER" = false ]; then
+	# If running in Docker assume python3 is already installed
+	sudo apt-get install -y python3-pip
+    fi
 fi
 
 pip3 install -r requirements.txt
