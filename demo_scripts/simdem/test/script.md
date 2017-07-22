@@ -45,6 +45,12 @@ Results:
 Tue Jun  6 15:23:53 UTC 2017
 ```
 
+# Fast Fail
+
+The default setting is for SimDem to stop the test run on the first
+test failure. This can be overridden by setting the command line flag
+`--fastfail` to any value other than `True`.
+
 # Test Plans
 
 It is often a good idea to split tests into separate files. SimDem

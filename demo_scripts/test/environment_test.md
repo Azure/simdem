@@ -123,3 +123,20 @@ Results:
 Test value for the test script
 ```
 
+# Capturing the output of commands
+
+```
+CAPTURED_OUTPUT=$(uname)
+```
+
+Captured value is:
+
+```
+echo $CAPTURED_OUTPUT
+```
+
+Results:
+
+```
+Linux
+```

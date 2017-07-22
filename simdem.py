@@ -139,7 +139,7 @@ class Environment(object):
             return self.env
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_learning = False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False):
         """Initialize variables"""
         self.is_docker = is_running_in_docker
         self.filename = filename
@@ -147,6 +147,7 @@ class Demo(object):
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
+        self.is_fast_fail = is_fast_fail
         self.is_learning = is_learning
         self.current_command = ""
         self.current_description = ""
@@ -158,11 +159,12 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        pattern = re.compile(".*?(?<=\$){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
-        matches = pattern.findall(self.current_command)
+        var_pattern = re.compile(".*?(?<=\$)(?<=\(){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
+        matches = var_pattern.findall(self.current_command)
         var_list = []
         if matches:
             for var in matches:
+                print("Var: " + var)
                 if var != "" and (var not in self.env.get() or self.env.get(var) == ""):
                     var_list.append(var)
         return self.current_command, var_list
@@ -301,6 +303,8 @@ class Demo(object):
                         passed_tests += 1
                     else:
                         failed_tests += 1
+                        if (self.is_fast_fail):
+                            break
                 expected_results = ""
                 actual_results = ""
                 in_results_section = False
@@ -364,7 +368,7 @@ class Demo(object):
 
         if self.is_testing:
             print("\n\n=============================\n\n")
-            print("Test Run Complete.")
+            print("Test Results")
             if failed_tests > 0:
                 print(colorama.Fore.RED + colorama.Style.BRIGHT)
                 print("Failed Tests: " + str(failed_tests))
@@ -712,6 +716,8 @@ def main():
                  help="Set to 'true' (or 'yes') to prevent the application waiting for user keypresses between commands. Set to 'no' when running in test mode to allow users to step through each test.")
     p.add_option('--test', '-t', default="False",
                  help="If set to anything other than False the output of the command will be compared to the expected results in the sript. Any failures will be reported")
+    p.add_option('--fastfail', default="True",
+                 help="If set to anything other than True test execution has will stop on the first failure. This has no affect if running in any mode other than 'test'.")
 
     options, arguments = p.parse_args()
 
@@ -757,7 +763,7 @@ def main():
     elif cmd == "test":
         is_automatic = not options.auto.lower() == "no"
         is_test = True and options.test
-        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
+        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=options.fastfail);
         demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir))
