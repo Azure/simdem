@@ -139,8 +139,9 @@ class Environment(object):
             return self.env
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False):
+    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False):
         """Initialize variables"""
+        self.ui = ui
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
@@ -299,7 +300,7 @@ class Demo(object):
             elif line.startswith("```") and in_code_block and in_results_section:
                 # Finishing results section
                 if in_results_section and self.is_testing:
-                    if test_results(expected_results, actual_results, expected_similarity):
+                    if self.ui.test_results(expected_results, actual_results, expected_similarity):
                         passed_tests += 1
                     else:
                         failed_tests += 1
@@ -323,26 +324,26 @@ class Demo(object):
                 else:
                     if not self.is_learning:
                         print("$ ", end="", flush=True)
-                        check_for_interactive_command(self)
+                        self.ui.check_for_interactive_command(self)
                         
                     self.current_command = line
-                    actual_results = simulate_command(self)
+                    actual_results = self.ui.simulate_command(self)
                     executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
                 if line.lower().startswith("# next steps"):
                     in_next_steps = True
                 if is_first_line:
-                    run_command(self, "clear")
+                    self.ui.run_command(self, "clear")
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
                     print("$ ", end="", flush=True)
-                    check_for_interactive_command(self)
+                    self.ui.check_for_interactive_command(self)
                     self.current_description = colorama.Fore.CYAN + colorama.Style.BRIGHT
                     self.current_description += line;
                     self.current_description += colorama.Style.RESET_ALL
                     self.current_command = "clear"
-                    simulate_command(self)
+                    self.ui.simulate_command(self)
                         
                 if not self.is_simulation:
                     print(colorama.Fore.CYAN + colorama.Style.BRIGHT, end="")
@@ -411,261 +412,263 @@ class Demo(object):
             self.filename = match.groups()[1]
             self.run()
 
-            
-def input_interactive_variable(name):
-    """
-    Gets a value from stdin for a variable.
-    """
-    print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-    print("\n\nEnter a value for ", end="")
-    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-    print("$" + name, end="")
-    print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-    print(": ", end="")
-    print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-    value = input()
-    return value
 
-def type_command(demo):
-    """
-    Displays the command on the screen
-    If simulation == True then it will look like someone is typing the command
-    Highlight uninstatiated environment variables
-    """
-    print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-    end_of_var = 0
-    current_command, var_list = demo.get_current_command()
-    for idx, char in enumerate(current_command):
-        if char == "$" and var_list:
-            for var in var_list:
-                var_idx = current_command.find(var)
-                if var_idx - 1 == idx:
-                    end_of_var = idx + len(var)
-                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                    break
-                elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
-                    end_of_var = idx + len(var) + 1
-                    print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                    break
-        if end_of_var and idx == end_of_var:
-            end_of_var = 0
-            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-        if char != "\n":
-            print(char, end="", flush=True)
-        if demo.is_simulation:
-            delay = random.uniform(0.01, 0.04)
-            time.sleep(delay)
-    print(colorama.Style.RESET_ALL, end="")
+class Ui(object):
+    def __init__(self):
+        pass
 
-def simulate_command(demo):
-    """
-    Types the command on the screen, executes it and outputs the
-    results if simulation == True then system will make the "typing"
-    look real and will wait for keyboard entry before proceeding to
-    the next command
-    """
+    def input_interactive_variable(self, name):
+        """
+        Gets a value from stdin for a variable.
+        """
+        print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+        print("\n\nEnter a value for ", end="")
+        print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+        print("$" + name, end="")
+        print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+        print(": ", end="")
+        print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+        value = input()
+        return value
 
-    if not demo.is_learning or demo.current_command.strip() == "clear":
-        type_command(demo)
-        _, var_list = demo.get_current_command()
+    def type_command(self, demo):
+        """
+        Displays the command on the screen
+        If simulation == True then it will look like someone is typing the command
+        Highlight uninstatiated environment variables
+        """
+        print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+        end_of_var = 0
+        current_command, var_list = demo.get_current_command()
+        for idx, char in enumerate(current_command):
+            if char == "$" and var_list:
+                for var in var_list:
+                    var_idx = current_command.find(var)
+                    if var_idx - 1 == idx:
+                        end_of_var = idx + len(var)
+                        print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                        break
+                    elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
+                        end_of_var = idx + len(var) + 1
+                        print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
+                        break
+            if end_of_var and idx == end_of_var:
+                end_of_var = 0
+                print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+            if char != "\n":
+                print(char, end="", flush=True)
+            if demo.is_simulation:
+                delay = random.uniform(0.01, 0.04)
+                time.sleep(delay)
+        print(colorama.Style.RESET_ALL, end="")
 
-        # Get values for unknown variables
-        for var_name in var_list:
-            if (demo.is_testing):
-                var_value = "Dummy value for test"
-            else:
-                var_value = input_interactive_variable(var_name)
-            if not var_name.startswith("SIMDEM_"):
-                demo.env.set(var_name, var_value)
-                run_command(demo, var_name + '="' + var_value + '"')
-                
-        output = run_command(demo)
-        demo.last_command = demo.current_command
-        demo.current_command = ""
+    def simulate_command(self, demo):
+        """
+        Types the command on the screen, executes it and outputs the
+        results if simulation == True then system will make the "typing"
+        look real and will wait for keyboard entry before proceeding to
+        the next command
+        """
 
-    else:
-        done = False
-        while not done:
-            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-            print("\nType the command '", end = "")
-            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-            print(demo.current_command.strip(), end = "")
-            print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
-            print("'")
-            print("\t- type 'auto' (or 'a') to automatically type the command")
-            print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-            print("\n$ ", end = "", flush = True)
-            typed_command = input()
-            if typed_command.lower() == "a" or typed_command.lower() == "auto":
-                demo.is_learning = False
-                output = simulate_command(demo)
-                demo.is_learning = True
-                done = True
-            elif typed_command == demo.current_command.strip():
-                demo.is_learning = False
-                output = simulate_command(demo)
-                demo.is_learning = True
-                done = True
-            else:
-                print(colorama.Fore.RED, end="")
-                print("You have a typo there")
-        
-    return output
+        if not demo.is_learning or demo.current_command.strip() == "clear":
+            self.type_command(demo)
+            _, var_list = demo.get_current_command()
 
-shell = None
-def run_command(demo, command=None):
-    """
-    Run the demo.curent_command unless command is passed in, in
-    which case run the supplied command in the current demo
-    encironment.
-    """
-    global shell
-    
-    if not shell:
-        child = pexpect.spawnu('/bin/bash', env=demo.env.get(), echo=False, timeout=None)
-        ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
-        ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
-        prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
-        shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
-        
-    if not command:
-        command = demo.current_command
+            # Get values for unknown variables
+            for var_name in var_list:
+                if (demo.is_testing):
+                    var_value = "Dummy value for test"
+                else:
+                    var_value = self.input_interactive_variable(var_name)
+                if not var_name.startswith("SIMDEM_"):
+                    demo.env.set(var_name, var_value)
+                    self.ui.run_command(demo, var_name + '="' + var_value + '"')
 
-    print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
-    response = shell.run_command(command)
-    print(response)
-    print(colorama.Style.RESET_ALL)
-    return response
+            output = self.run_command(demo)
+            demo.last_command = demo.current_command
+            demo.current_command = ""
 
-def check_for_interactive_command(demo):
-    """Wait for a key to be pressed.
-    
-    Most keys result in the script
-    progressing, but a few have special meaning. See the
-    documentation or code for a description of the special keys.
-    """
-    if not demo.is_automated:
-        key = get_instruction_key()
+        else:
+            done = False
+            while not done:
+                print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+                print("\nType the command '", end = "")
+                print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+                print(demo.current_command.strip(), end = "")
+                print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+                print("'")
+                print("\t- type 'auto' (or 'a') to automatically type the command")
+                print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+                print("\n$ ", end = "", flush = True)
+                typed_command = input()
+                if typed_command.lower() == "a" or typed_command.lower() == "auto":
+                    demo.is_learning = False
+                    output = self.simulate_command(demo)
+                    demo.is_learning = True
+                    done = True
+                elif typed_command == demo.current_command.strip():
+                    demo.is_learning = False
+                    output = self.simulate_command(demo)
+                    demo.is_learning = True
+                    done = True
+                else:
+                    print(colorama.Fore.RED, end="")
+                    print("You have a typo there")
 
-        if key == 'h':
-            print("help")
-            print()
-            print("SimDem Help")
-            print("===========")
-            print()
-            print("Pressing any key other than those listed below will result in the script progressing")
-            print()
-            print("b           - break out of the script and accept a command from user input")
-            print("b -> CTRL-C - stop the script")
-            print("d           - (re)display the description that precedes the current command then resume from this point")
-            print("r           - repeat the previous command")
-            print("h           - displays this help message")
-            print()
-            print("Press SPACEBAR to continue")
-            while key != ' ':
-                key = get_instruction_key()
-            print()
-            print("$ ", end = "", flush = True)
-            check_for_interactive_command(demo)
-        elif key == 'b':
-            command = input()
-            run_command(demo, command)
-            print("$ ", end="", flush=True)
-            check_for_interactive_command(demo)
-        elif key == 'd':
-            print("")
-            print(colorama.Fore.CYAN) 
-            print(demo.current_description);
-            print(colorama.Style.RESET_ALL)
-            print("$ ", end="", flush=True)
-            print(demo.current_command, end="", flush=True)
-            check_for_interactive_command(demo)
-        elif key == 'r':
-            if not demo.last_command == "":
-                demo.current_command = demo.last_command
-                simulate_command(demo)
+        return output
+
+    shell = None
+    def run_command(self, demo, command=None):
+        """
+        Run the demo.curent_command unless command is passed in, in
+        which case run the supplied command in the current demo
+        encironment.
+        """
+        if not self.shell:
+            child = pexpect.spawnu('/bin/bash', env=demo.env.get(), echo=False, timeout=None)
+            ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
+            ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
+            prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+            self.shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
+
+        if not command:
+            command = demo.current_command
+
+        print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
+        response = self.shell.run_command(command)
+        print(response)
+        print(colorama.Style.RESET_ALL)
+        return response
+
+    def check_for_interactive_command(self, demo):
+        """Wait for a key to be pressed.
+
+        Most keys result in the script
+        progressing, but a few have special meaning. See the
+        documentation or code for a description of the special keys.
+        """
+        if not demo.is_automated:
+            key = self.get_instruction_key()
+
+            if key == 'h':
+                print("help")
+                print()
+                print("SimDem Help")
+                print("===========")
+                print()
+                print("Pressing any key other than those listed below will result in the script progressing")
+                print()
+                print("b           - break out of the script and accept a command from user input")
+                print("b -> CTRL-C - stop the script")
+                print("d           - (re)display the description that precedes the current command then resume from this point")
+                print("r           - repeat the previous command")
+                print("h           - displays this help message")
+                print()
+                print("Press SPACEBAR to continue")
+                while key != ' ':
+                    key = self.ui.get_instruction_key()
+                    print()
+                    print("$ ", end = "", flush = True)
+                    self.check_for_interactive_command(demo)
+            elif key == 'b':
+                command = input()
+                self.run_command(demo, command)
                 print("$ ", end="", flush=True)
-                check_for_interactive_command(demo)
+                self.check_for_interactive_command(demo)
+            elif key == 'd':
+                print("")
+                print(colorama.Fore.CYAN) 
+                print(demo.current_description);
+                print(colorama.Style.RESET_ALL)
+                print("$ ", end="", flush=True)
+                print(demo.current_command, end="", flush=True)
+                self.check_for_interactive_command(demo)
+            elif key == 'r':
+                if not demo.last_command == "":
+                    demo.current_command = demo.last_command
+                    self.simulate_command(demo)
+                    print("$ ", end="", flush=True)
+                    self.check_for_interactive_command(demo)
 
-def get_instruction_key():
-    """Waits for a single keypress on stdin.
+    def get_instruction_key(self):
+        """Waits for a single keypress on stdin.
 
-    This is a silly function to call if you need to do it a lot because it has
-    to store stdin's current setup, setup stdin for reading single keystrokes
-    then read the single keystroke then revert stdin back after reading the
-    keystroke.
+        This is a silly function to call if you need to do it a lot because it has
+        to store stdin's current setup, setup stdin for reading single keystrokes
+        then read the single keystroke then revert stdin back after reading the
+        keystroke.
 
-    Returns the character of the key that was pressed (zero on
-    KeyboardInterrupt which can happen when a signal gets handled)
+        Returns the character of the key that was pressed (zero on
+        KeyboardInterrupt which can happen when a signal gets handled)
 
-    This method is licensed under cc by-sa 3.0 
-    Thanks to mheyman http://stackoverflow.com/questions/983354/how-do-i-make-python-to-wait-for-a-pressed-key\
-    """
-    import termios, fcntl, sys, os
-    fd = sys.stdin.fileno()
-    # save old state
-    flags_save = fcntl.fcntl(fd, fcntl.F_GETFL)
-    attrs_save = termios.tcgetattr(fd)
-    # make raw - the way to do this comes from the termios(3) man page.
-    attrs = list(attrs_save) # copy the stored version to update
-    # iflag
-    attrs[0] &= ~(termios.IGNBRK | termios.BRKINT | termios.PARMRK 
-                  | termios.ISTRIP | termios.INLCR | termios. IGNCR 
-                  | termios.ICRNL | termios.IXON )
-    # oflag
-    attrs[1] &= ~termios.OPOST
-    # cflag
-    attrs[2] &= ~(termios.CSIZE | termios. PARENB)
-    attrs[2] |= termios.CS8
-    # lflag
-    attrs[3] &= ~(termios.ECHONL | termios.ECHO | termios.ICANON
-                  | termios.ISIG | termios.IEXTEN)
-    termios.tcsetattr(fd, termios.TCSANOW, attrs)
-    # turn off non-blocking
-    fcntl.fcntl(fd, fcntl.F_SETFL, flags_save & ~os.O_NONBLOCK)
-    # read a single keystroke
-    try:
-        ret = sys.stdin.read(1) # returns a single character
-    except KeyboardInterrupt:
-        ret = 0
-    finally:
-        # restore old state
-        termios.tcsetattr(fd, termios.TCSAFLUSH, attrs_save)
-        fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
-    return ret
+        This method is licensed under cc by-sa 3.0 
+        Thanks to mheyman http://stackoverflow.com/questions/983354/how-do-i-make-python-to-wait-for-a-pressed-key\
+        """
+        import termios, fcntl, sys, os
+        fd = sys.stdin.fileno()
+        # save old state
+        flags_save = fcntl.fcntl(fd, fcntl.F_GETFL)
+        attrs_save = termios.tcgetattr(fd)
+        # make raw - the way to do this comes from the termios(3) man page.
+        attrs = list(attrs_save) # copy the stored version to update
+        # iflag
+        attrs[0] &= ~(termios.IGNBRK | termios.BRKINT | termios.PARMRK 
+                      | termios.ISTRIP | termios.INLCR | termios. IGNCR 
+                      | termios.ICRNL | termios.IXON )
+        # oflag
+        attrs[1] &= ~termios.OPOST
+        # cflag
+        attrs[2] &= ~(termios.CSIZE | termios. PARENB)
+        attrs[2] |= termios.CS8
+        # lflag
+        attrs[3] &= ~(termios.ECHONL | termios.ECHO | termios.ICANON
+                      | termios.ISIG | termios.IEXTEN)
+        termios.tcsetattr(fd, termios.TCSANOW, attrs)
+        # turn off non-blocking
+        fcntl.fcntl(fd, fcntl.F_SETFL, flags_save & ~os.O_NONBLOCK)
+        # read a single keystroke
+        try:
+            ret = sys.stdin.read(1) # returns a single character
+        except KeyboardInterrupt:
+            ret = 0
+        finally:
+            # restore old state
+            termios.tcsetattr(fd, termios.TCSAFLUSH, attrs_save)
+            fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
+        return ret
 
-def test_results(expected_results, actual_results, expected_similarity = 0.66):
-    """Compares the similarity of the expected vs actual results.
+    def test_results(self, expected_results, actual_results, expected_similarity = 0.66):
+        """Compares the similarity of the expected vs actual results.
 
-    Pass when the similarity ratio is greater or equal to the expected
-    similarity. Defaults to 66% similarity to pass.
-    """
-    differ = difflib.Differ()
-    comparison = differ.compare(actual_results, expected_results)
-    diff = differ.compare(actual_results, expected_results)
-    seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
+        Pass when the similarity ratio is greater or equal to the expected
+        similarity. Defaults to 66% similarity to pass.
+        """
+        differ = difflib.Differ()
+        comparison = differ.compare(actual_results, expected_results)
+        diff = differ.compare(actual_results, expected_results)
+        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
 
-    is_pass = seq.ratio() >= expected_similarity
+        is_pass = seq.ratio() >= expected_similarity
 
-    if not is_pass:
-        print("\n\n=============================\n\n")
-        print(colorama.Fore.RED + colorama.Style.BRIGHT)
-        print("FAILED")
-        print(colorama.Style.RESET_ALL)
-        print("Similarity ratio:    " + str(seq.ratio()))
-        print("Expected Similarity: " + str(expected_similarity))
-        print("\n\n=============================\n\n")
-        print("Expected results:")
-        print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
-        print(expected_results)
-        print(colorama.Style.RESET_ALL)
-        print("Actual results:")
-        print(colorama.Fore.RED + colorama.Style.BRIGHT)
-        print(actual_results)
-        print(colorama.Style.RESET_ALL)
-        print("\n\n=============================\n\n")
-        print(colorama.Style.RESET_ALL)
-    return is_pass
+        if not is_pass:
+            print("\n\n=============================\n\n")
+            print(colorama.Fore.RED + colorama.Style.BRIGHT)
+            print("FAILED")
+            print(colorama.Style.RESET_ALL)
+            print("Similarity ratio:    " + str(seq.ratio()))
+            print("Expected Similarity: " + str(expected_similarity))
+            print("\n\n=============================\n\n")
+            print("Expected results:")
+            print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
+            print(expected_results)
+            print(colorama.Style.RESET_ALL)
+            print("Actual results:")
+            print(colorama.Fore.RED + colorama.Style.BRIGHT)
+            print(actual_results)
+            print(colorama.Style.RESET_ALL)
+            print("\n\n=============================\n\n")
+            print(colorama.Style.RESET_ALL)
+        return is_pass
 
 def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_testing=False):
     """
@@ -750,25 +753,27 @@ def main():
     else:
         script_dir = options.path
 
+    ui = Ui()
+    
     cmd = arguments[0]
 
     filename = "script.md"
     is_docker = os.path.isfile('/.dockerenv')
     if cmd == "run":
-        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
+        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test);
         demo.run()
     elif cmd == "demo":
-        demo = Demo(is_docker, script_dir, filename, True, is_automatic, is_test);
+        demo = Demo(ui, is_docker, script_dir, filename, True, is_automatic, is_test);
         demo.run()
     elif cmd == "test":
         is_automatic = not options.auto.lower() == "no"
         is_test = True and options.test
-        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=options.fastfail);
+        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=options.fastfail);
         demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir))
     elif cmd == "learn":
-        demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_learning=True);
+        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_learning=True);
         demo.run()
     else:
         print("Unknown command: " + cmd)
