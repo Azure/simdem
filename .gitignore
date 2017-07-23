@@ -5,3 +5,6 @@ env.local.json
 !demo_scripts/simdem/variables/env.local.json
 !demo_scripts/test/env.local.json
 !/env.local.json
+
+# Python
+__pycache__

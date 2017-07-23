@@ -150,9 +150,9 @@ cd simdem
 
 If you make changes to the code the easiest way to build and redeploy
 the container is with the scripts in `scripts` directory. These
-scripts pull the current version number from the SimDem.py (see
-`SIMDEM_VERSION=x.y.z` near the top of the file. This version number
-is used as the defaiult for the scripts in this folder.
+scripts pull the current version number from the config.py (see
+`SIMDEM_VERSION=x.y.z`). This version number is used as the defaiult
+for the scripts in this folder.
 
 ## Building
 
