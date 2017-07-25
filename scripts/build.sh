@@ -12,7 +12,7 @@ REPOSITORY=rgardler
 FLAVOR=${1:-}
 CONTAINERNAME=simdem_$FLAVOR
 
-VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
+VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' config.py`
 
 print_result() {
     if [ $1 -eq 0 ]; then
