@@ -237,8 +237,8 @@ class Demo(object):
                 self.ui.new_para()
             if failed_tests > 0:
                 self.ui.instruction("View failure reports in context in the above output.")
-                
-                sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+                if self.is_fast_fail:
+                    sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
             else:
                 sys.exit(0)
 

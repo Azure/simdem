@@ -110,7 +110,8 @@ def main():
     elif cmd == "test":
         is_automatic = not options.auto.lower() == "no"
         is_test = True and options.test
-        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=options.fastfail);
+        is_fast_fail = options.fastfail == "True"
+        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=is_fast_fail);
         demo.run()
     elif cmd == "script":
         print(get_bash_script(script_dir))
