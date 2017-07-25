@@ -50,6 +50,7 @@ class Ui(object):
 
         """
         self.display(text, colorama.Fore.WHITE, new_line)
+        self.new_para()
 
     def next_step(self, index, title):
         """Displays a next step item with an index (the number to be entered
