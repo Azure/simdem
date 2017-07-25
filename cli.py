@@ -23,6 +23,15 @@ class Ui(object):
         """
         self.display("$ ", colorama.Fore.WHITE)
 
+    def command(self, text):
+        """Display a command, or a part of a command tp be executed."""
+        self.display(text, colorama.Fore.WHITE + colorama.Style.BRIGHT)
+        
+    def results(self, text):
+        """Display the results of a command execution"""
+        self.new_para()
+        self.display(text, colorama.Fore.GREEN + colorama.Style.BRIGHT)
+        
     def heading(self, text):
         """Display a heading"""
         self.display(text, colorama.Fore.CYAN + colorama.Style.BRIGHT, True)
@@ -99,7 +108,7 @@ to select it) and a title (to be displayed).
         If simulation == True then it will look like someone is typing the command
         Highlight uninstatiated environment variables
         """
-        print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+
         end_of_var = 0
         current_command, var_list = demo.get_current_command()
         for idx, char in enumerate(current_command):
@@ -118,11 +127,10 @@ to select it) and a title (to be displayed).
                 end_of_var = 0
                 print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
             if char != "\n":
-                print(char, end="", flush=True)
+                self.command(char)
             if demo.is_simulation:
                 delay = random.uniform(0.01, 0.04)
                 time.sleep(delay)
-        print(colorama.Style.RESET_ALL, end="")
 
     def simulate_command(self, demo):
         """
@@ -196,10 +204,15 @@ to select it) and a title (to be displayed).
         if not command:
             command = demo.current_command
 
-        print(colorama.Fore.GREEN+colorama.Style.BRIGHT)
+        start_time = time.time()
         response = self.shell.run_command(command)
-        print(response)
-        print(colorama.Style.RESET_ALL)
+        end_time = time.time()
+
+        self.results(response)
+
+        if demo.is_testing:
+            self.information("--- %s seconds execution time ---" % (end_time - start_time))
+
         return response
 
     def check_for_interactive_command(self, demo):
