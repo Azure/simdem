@@ -71,7 +71,12 @@ to select it) and a title (to be displayed).
 
     def new_para(self):
         """Starts a new paragraph."""
-        print("\n\n")
+        self.new_line()
+        self.new_line()
+
+    def new_line(self):
+        """Move to the next line"""
+        print()
         
     def horizontal_rule(self):
         print("\n\n============================================\n\n")
@@ -205,6 +210,8 @@ to select it) and a title (to be displayed).
         if not command:
             command = demo.current_command
 
+        self.new_para();
+        
         start_time = time.time()
         response = self.shell.run_command(command)
         end_time = time.time()
