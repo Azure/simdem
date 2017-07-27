@@ -42,7 +42,8 @@ Results:
 
 ```
 {
-    "TEST": "Hello from the test script"
+    "TEST": "Hello from the test script",
+    "DIR_IN_HOME": "~/should/be/expanded"
 }
 ```
 
@@ -139,4 +140,12 @@ Results:
 
 ```
 Linux
+```
+
+# Processing of Environment Variables
+
+'~' should be expanded to a home directory (no way to test this).
+
+```
+echo $DIR_IN_HOME
 ```

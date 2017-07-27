@@ -57,60 +57,71 @@ class Environment(object):
         filename = directory + "../env.json"
         if os.path.isfile(directory + "../env.json"):
             with open(filename) as env_file:
-                app_env = json.load(env_file)
+                app_env = self.process_env(json.load(env_file))
                 env.update(app_env)
 
         filename = directory + "env.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
-                script_env = json.load(env_file)
+                script_env = self.process_env(json.load(env_file))
                 env.update(script_env)
 
         filename = directory + "../env.local.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
-                local_env = json.load(env_file)
+                local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
         filename = directory + "env.local.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
-                local_env = json.load(env_file)
+                local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
         filename = "/env.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
-                local_env = json.load(env_file)
+                local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
         filename = "env.local.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
-                local_env = json.load(env_file)
+                local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
         if self.is_test:
             filename = directory + "../env.test.json"
             if os.path.isfile(filename):
                 with open(filename) as env_file:
-                    script_env = json.load(env_file)
+                    script_env = self.process_env(json.load(env_file))
                     env.update(script_env)
 
             filename = directory + "env.test.json"
             if os.path.isfile(filename):
                 with open(filename) as env_file:
-                    script_env = json.load(env_file)
+                    script_env = self.process_env(json.load(env_file))
                     env.update(script_env)
 
             filename = "env.test.json"
             if os.path.isfile(filename):
                 with open(filename) as env_file:
-                    local_env = json.load(env_file)
+                    local_env = self.process_env(json.load(env_file))
                     env.update(local_env)
                 
         self.env.update(env)
 
+    def process_env(self, new_env):
+        """
+        Takes an environmetn definition and processes it for use.
+        For example, expand '~' to home directory.
+        """
+        for key in new_env:
+            val = new_env[key]
+            if val.startswith('~'):
+                new_env[key] = os.path.expanduser(val)
+        return new_env
+        
     def set(self, var, value):
         """Sets a new variable to the environment"""
         self.env[var] = value
