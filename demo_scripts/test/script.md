@@ -90,6 +90,21 @@ Welcome 9 times
 Welcome 10 times
 ```
 
+# Stripping ANSI escape sequances
+
+To make it easier to write scripts we don't want to include ANSI
+escape sequences, such as colors.
+
+```
+ls $SIMDEM_CWD/..
+```
+
+Results:
+
+```expected_similarity=0.9
+env.json  simdem  test
+```
+
 # Commands that do not work
 
   * ping bing.com

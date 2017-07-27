@@ -166,7 +166,8 @@ class Demo(object):
             elif line.startswith("```") and in_code_block and in_results_section:
                 # Finishing results section
                 if in_results_section and self.is_testing:
-                    if self.ui.test_results(expected_results, actual_results, expected_similarity):
+                    ansi_escape = re.compile(r'\x1b[^m]*m')
+                    if self.ui.test_results(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
                         passed_tests += 1
                     else:
                         failed_tests += 1
