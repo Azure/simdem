@@ -210,7 +210,7 @@ to select it) and a title (to be displayed).
         if not command:
             command = demo.current_command
 
-        self.new_para();
+        self.new_line();
         
         start_time = time.time()
         response = self.shell.run_command(command)
