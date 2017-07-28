@@ -8,6 +8,7 @@ import random
 import time
 import sys
 import colorama
+import config
 colorama.init(strip=None)
 
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
@@ -135,7 +136,7 @@ to select it) and a title (to be displayed).
             if char != "\n":
                 self.command(char)
             if demo.is_simulation:
-                delay = random.uniform(0.01, 0.04)
+                delay = random.uniform(0.01, config.TYPING_DELAY)
                 time.sleep(delay)
 
     def simulate_command(self, demo):
