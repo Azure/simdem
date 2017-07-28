@@ -241,7 +241,7 @@ class Demo(object):
                         self.ui.next_step(match.groups()[0], match.groups()[1])
                         next_steps.append(line) 
                 if in_prerequisites:
-                    self.ui.description("prereq" + line)
+                    self.ui.description(line)
                     pattern = re.compile('.*\[(.*)\]\((.*)\).*')
                     match = pattern.match(line)
                     if match:
