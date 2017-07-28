@@ -213,9 +213,9 @@ class Demo(object):
                     self.check_prerequisites()
                     in_prerequisites = False
 
-                if line.lower().startswith("# next steps"):
+                if line.lower().strip().endswith("# next steps"):
                     in_next_steps = True
-                if line.lower().startswith("# prerequisites"):
+                if line.lower().strip().endswith("# prerequisites"):
                     in_prerequisites = True
                 if is_first_line:
                     self.ui.run_command(self, "clear")
@@ -241,7 +241,7 @@ class Demo(object):
                         self.ui.next_step(match.groups()[0], match.groups()[1])
                         next_steps.append(line) 
                 if in_prerequisites:
-                    self.ui.description(line)
+                    self.ui.description("prereq" + line)
                     pattern = re.compile('.*\[(.*)\]\((.*)\).*')
                     match = pattern.match(line)
                     if match:
