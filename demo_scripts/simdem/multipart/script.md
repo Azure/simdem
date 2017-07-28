@@ -19,6 +19,12 @@ When executed using SimDem this results in the user being prompted to
 select a "next step" (or hit 'q' to quit). If the user selects one of
 the scripts it will be executed.
 
+# Prerequisites
+
+It is assumed that you have a basic understanding of the various
+SimDem execution [modes](../modes/script.md). You should also ensure
+you understand the SimDem [document syntax](../syntax).
+
 # Directory structure
 
 SimDem projects consist of a root directory and one or more

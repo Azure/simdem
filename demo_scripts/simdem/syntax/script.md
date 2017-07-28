@@ -14,6 +14,13 @@ For example, lets take a look at the start of this file this file:
 head -n 25 $SIMDEM_CWD/script.md 
 ```
 
+# Prerequisites
+
+It is common for a tutorial or demo to have a number of
+prerequisites. For example, it's a good idea to understand how these
+work, so take a look at our [prerequisites](./prerequisites/script.md)
+before proceeding.
+
 # SimDem Syntax
 
 There are a small number of SimDem specific items that you should be

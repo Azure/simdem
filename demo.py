@@ -9,7 +9,7 @@ from environment import Environment
 from cli import Ui
 
 class Demo(object):
-    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False):
+    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
         """Initialize variables"""
         self.ui = ui
         self.is_docker = is_running_in_docker
@@ -23,6 +23,8 @@ class Demo(object):
         self.current_command = ""
         self.current_description = ""
         self.last_command = ""
+        self.prep_steps = []
+        self.is_prerequisite = is_prerequisite
         
     def get_current_command(self):
         """
@@ -122,6 +124,7 @@ class Demo(object):
                         lines = lines + list(open(file))
 
         file = self.script_dir + self.filename
+            
         if not lines and os.path.isfile(file):
             lines = list(open(file))
         elif not lines:
@@ -135,6 +138,7 @@ class Demo(object):
         failed_tests = 0
         is_first_line = True
         in_next_steps = False
+        in_prerequisites = False
         next_steps = []
         executed_code_in_this_section = False
         self.current_description = ""
@@ -198,8 +202,21 @@ class Demo(object):
                     executed_code_in_this_section = True
             elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
                 # Heading in descriptive text, indicating a new section
+
+                if in_next_steps:
+                    # This should never happen as next steps should always be last in doc
+                    if is_testing:
+                        failed_tests += 1
+                        actual_results = "Next Steps has a sub heading, or following section. This is not allowed"
+                    in_next_steps = False
+                if in_prerequisites:
+                    self.check_prerequisites()
+                    in_prerequisites = False
+
                 if line.lower().startswith("# next steps"):
                     in_next_steps = True
+                if line.lower().startswith("# prerequisites"):
+                    in_prerequisites = True
                 if is_first_line:
                     self.ui.run_command(self, "clear")
                 elif executed_code_in_this_section:
@@ -214,7 +231,7 @@ class Demo(object):
                     self.ui.heading(line)
 
             else:
-                if not self.is_simulation and not in_results_section and not in_next_steps:
+                if not self.is_simulation and not in_results_section and not in_next_steps and not in_prerequisites:
                     # Descriptive text
                     self.ui.description(line)
                 if in_next_steps:
@@ -222,8 +239,22 @@ class Demo(object):
                     match = pattern.match(line)
                     if match:
                         self.ui.next_step(match.groups()[0], match.groups()[1])
-                        next_steps.append(line)
-                    
+                        next_steps.append(line) 
+                if in_prerequisites:
+                    self.ui.description(line)
+                    pattern = re.compile('.*\[(.*)\]\((.*)\).*')
+                    match = pattern.match(line)
+                    if match:
+                        prep_step = {}
+                        prep_step["title"] = match.groups()[0].strip()
+                        href = match.groups()[1]
+                        if not href.endswith(".md"):
+                            if not href.endswith("/"):
+                                href = href + "/"
+                            href = href + "script.md"
+                        prep_step["href"] = href
+                        self.prep_steps.append(prep_step)
+                   
             is_first_line = False
 
         if self.is_testing:
@@ -244,9 +275,11 @@ class Demo(object):
                 sys.exit(0)
 
         if len(next_steps) > 0:
+            if self.is_prerequisite:
+                return
             in_string = ""
             in_value = 0
-            self.ui.instruction("Would like to move on to one of the next steps listed above?")
+            self.ui.instruction("Would you like to move on to one of the next steps listed above?")
 
             while in_value < 1 or in_value > len(next_steps):
                 self.ui.instruction("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
@@ -264,4 +297,37 @@ class Demo(object):
             self.filename = match.groups()[1]
             self.run()
 
+    def check_prerequisites(self):
+        """Check with the user that all prerequisites have been run
+        satisfied. If running in test mode assume that this is the
+        case (pre-requisites should be handled in the test_plan"""
+        if self.is_testing or self.is_automated:
+            return
 
+        for step in self.prep_steps:
+            self.ui.new_para()
+            self.ui.instruction("Have you satisfied the '" + step["title"] + "' prerequisite? (y/N)")
+            
+            selection = None
+            while not selection:
+                in_string = input()
+                if in_string.lower() == "y" or in_string.lower() == "yes":
+                    selection = "yes"
+                elif in_string == "" or in_string.lower() =="n" or in_string.lower() == "no":
+                    selection = "no"
+
+            if selection == "no":
+                path, filename = os.path.split(step["href"])
+                if (step["href"].startswith(".")):
+                    new_dir = self.script_dir + path
+                else:
+                    new_dir = path
+                    
+                self.ui.horizontal_rule()
+                demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
+                demo.run()
+                self.ui.horizontal_rule()
+                self.ui.information("'" + step["title"] + "' prerequisite completed.", True)
+                self.ui.new_para
+                
+                
