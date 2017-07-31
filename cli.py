@@ -98,9 +98,14 @@ to select it) and a title (to be displayed).
             print(colorama.Style.RESET_ALL)
         else:
             print(colorama.Style.RESET_ALL, end="")
+
+    def request_input(self, text):
+        """ Displays text that is intended to propmt the user for input. """
+        print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
+        print(text)
+        print(colorama.Style.RESET_ALL, end="")
         
     def input_interactive_variable(self, name):
-
         """
         Gets a value from stdin for a variable.
         """
@@ -358,3 +363,10 @@ to select it) and a title (to be displayed).
             print("\n\n=============================\n\n")
             print(colorama.Style.RESET_ALL)
         return is_pass
+
+    def get_command(self):
+        self.request_input("What mode do you want to run in? (default 'tutorial')")
+        mode = input()
+        if mode == "":
+            mode = "tutorial"
+        return mode

@@ -52,7 +52,13 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
 def main():
     """SimDem CLI interpreter"""
 
-    p = optparse.OptionParser("%prog [run|demo|learn|test|script] <options> DEMO_NAME", version=config.SIMDEM_VERSION)
+    commands = [ "tutorial", "demo", "learn", "test", "script"]
+    command_string = ""
+    for command in commands:
+        command_string = command_string + command + "|"
+    command_string = command_string[0:len(command_string)-1]
+    
+    p = optparse.OptionParser("%prog [" + command_string + "] <options> DEMO_NAME", version=config.SIMDEM_VERSION)
     p.add_option('--style', '-s', default="tutorial",
                  help="The style of simulation you want to run. 'tutorial' (the default) will print out all text and pause for user input before running commands. 'simulate' will not print out the text but will still pause for input.")
     p.add_option('--path', '-p', default="demo_scripts/",
@@ -65,9 +71,6 @@ def main():
                  help="If set to anything other than True test execution has will stop on the first failure. This has no affect if running in any mode other than 'test'.")
 
     options, arguments = p.parse_args()
-
-    if len(arguments) == 0:
-        arguments.append("run")
 
     if not options.path.endswith("/"):
         options.path += "/"
@@ -97,8 +100,16 @@ def main():
 
     ui = Ui()
     
-    cmd = arguments[0]
+    if len(arguments) == 0:
+        cmd = "unkown"
+        while not cmd in commands:
+            cmd = ui.get_command()
+    else:
+        cmd = arguments[0]
 
+    if cmd == "tutorial":
+        cmd = "run"
+        
     filename = "script.md"
     is_docker = os.path.isfile('/.dockerenv')
     if cmd == "run":
