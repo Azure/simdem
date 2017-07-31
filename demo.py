@@ -262,6 +262,7 @@ class Demo(object):
             self.ui.heading("Test Results")
             if failed_tests > 0:
                 self.ui.warning("Failed Tests: " + str(failed_tests))
+                self.ui.information("Passed Tests: " + str(passed_tests))
                 self.ui.new_para()
             else:
                 self.ui.information("No failed tests.", True)
