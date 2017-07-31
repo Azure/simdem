@@ -29,10 +29,10 @@ RUN apt-get install azure-cli -y --allow-unauthenticated
 # Python
 RUN apt-get install python3-pip -y
 
-USER 1984
-
 # Desktop
+USER 1984
 COPY ./novnc/ /headless/
+USER 0
 RUN rm .config/bg_sakuli.png
 RUN rm Desktop/chromium-browser.desktop
 
