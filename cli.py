@@ -73,7 +73,7 @@ to select it) and a title (to be displayed).
     def warning(self, text):
         """Display a warning to the user.
         """
-        self.display(text, colorama.Fore.RED + colorama.Style.BRIGHT)
+        self.display(text, colorama.Fore.RED + colorama.Style.BRIGHT, True)
 
     def new_para(self):
         """Starts a new paragraph."""
