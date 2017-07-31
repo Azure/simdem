@@ -28,6 +28,12 @@ git stash save -q --keep-index $STASH_NAME
 python3 main.py -p demo_scripts/test test
 RESULT=$?
 
+# Check Dockerfles build
+if [ $RESULT -eq 0 ]; then
+    ./scripts/build.sh
+    RESTUL=$?
+fi
+
 # Restore uncommitted Git changes
 git reset --hard -q && git stash apply --index -q && git stash drop -q
 
