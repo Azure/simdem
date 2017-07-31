@@ -54,7 +54,7 @@ RUN pip3 install -r requirements.txt
 RUN mkdir /usr/local/bin/simdem_cli
 COPY *.py /usr/local/bin/simdem_cli/
 RUN chmod +x /usr/local/bin/simdem_cli/main.py
-RUN ln -s /usr/local/bin/simdem_cli/main.py /usr/local/bin/simdem 
+RUN ln -s /usr/local/bin/simdem_cli/main.py /usr/local/bin/simdem
 
 # Demo Scripts
 COPY demo_scripts demo_scripts
