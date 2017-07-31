@@ -35,6 +35,8 @@ VNC_COL_DEPTH='24'
 VNC_RESOLUTION='1024x768'
 VNC_PW='vncpassword'
 
+NO_VNC_PORT=8080
+
 FLAVOR=${1:-novnc}
 SCRIPTS_DIR=${2:-`pwd`/demo_scripts}
 MODE=${3:-tutorial}
@@ -50,9 +52,9 @@ else
     HOME="/home/simdem"
 fi
 
-VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' simdem.py`
+VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' config.py`
 
-echo Runing $REPOSITORY/$CONTAINER_NAME:$VERSION
+echo Running $REPOSITORY/$CONTAINER_NAME:$VERSION
 
 echo Stopping and removing pre-existing containers
 docker stop $CONTAINER_NAME
@@ -67,7 +69,7 @@ docker cp $SCRIPTS_DIR/. $SCRIPTS_VOLUME:$HOME/demo_scripts/
 echo starting the $CONTAINER_NAME container in mode $MODE
 
 if [[ $MODE == "tutorial" ]]; then
-    COMMAND="run"
+    COMMAND="tutorial"
 elif [[ $MODE == "demo" ]]; then
     COMMAND="run --style simulate"
 elif [[ $MODE == "test" ]]; then
@@ -75,7 +77,7 @@ elif [[ $MODE == "test" ]]; then
 fi
 
 if [[ $FLAVOR == "novnc" ]]; then
-   docker run -d -p 5901:5901 -p 8080:6901 --name $CONTAINER_NAME \
+   docker run -d -p 5901:5901 -p 8080:$NO_VNC_PORT --name $CONTAINER_NAME \
        --volume $AZURE_VOLUME:$HOME/.azure \
        --volume $SSH_VOLUME:$HOME/.ssh \
        --volumes-from $SCRIPTS_VOLUME \
