@@ -86,6 +86,14 @@ to select it) and a title (to be displayed).
         
     def horizontal_rule(self):
         print("\n\n============================================\n\n")
+
+    def clear(self, demo):
+        """Clears the screen ready for  anew section of the script."""
+        if demo.is_simulation:
+            demo.current_command = "clear"
+            self.simulate_command()
+        else:        
+            self.run_command(demo, "clear")
         
     def display(self, text, color, new_line=False):
         """Display some text in a given color. Do not print a new line unless

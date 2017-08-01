@@ -118,10 +118,12 @@ class Demo(object):
                 plan_lines = list(open(test_file))
                 lines = []
                 for line in plan_lines:
+                    line = line.strip()
                     if not line.startswith("#"):
                         # not a comment so should be a path to a script with tests
-                        file = self.script_dir + line.strip()
-                        lines = lines + list(open(file))
+                        if not line == "":
+                            file = self.script_dir + line
+                            lines = lines + list(open(file))
 
         file = self.script_dir + self.filename
             
@@ -218,14 +220,13 @@ class Demo(object):
                 if line.lower().strip().endswith("# prerequisites"):
                     in_prerequisites = True
                 if is_first_line:
-                    self.ui.run_command(self, "clear")
+                    self.ui.clear(self)
                 elif executed_code_in_this_section:
                     executed_code_in_this_section = False
                     self.ui.prompt()
                     self.ui.check_for_interactive_command(self)
                     self.current_description += line;
-                    self.current_command = "clear"
-                    self.ui.simulate_command(self)
+                    self.ui.clear(self)
                         
                 if not self.is_simulation:
                     self.ui.heading(line)
@@ -327,7 +328,7 @@ class Demo(object):
                 self.ui.horizontal_rule()
                 demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
                 demo.run()
-                self.ui.horizontal_rule()
+                self.ui.clear(self)
                 self.ui.information("'" + step["title"] + "' prerequisite completed.", True)
                 self.ui.new_para
                 
