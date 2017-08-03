@@ -5,6 +5,7 @@
 
 # First, stash index and work dir, keeping only the
 # to-be-committed changes in the working directory.
+echo "Stash changes not ready to be committed"
 old_stash=$(git rev-parse -q --verify refs/stash)
 git stash save -q --keep-index
 new_stash=$(git rev-parse -q --verify refs/stash)
@@ -19,22 +20,17 @@ if [ "$old_stash" = "$new_stash" ]; then
     exit 0
 fi
 
-echo "Running SimDem pre-commit.sh"
-
-STASH_NAME="pre-commit-$(date +%s)"
-git stash save -q --keep-index $STASH_NAME
-
-# Test prospective commit
+echo "Run the Simdem tests"
 python3 main.py -p demo_scripts/test test
 RESULT=$?
 
-# Check Dockerfles build
+echo "Check Docker images build successfully"
 if [ $RESULT -eq 0 ]; then
     ./scripts/build.sh
-    RESTUL=$?
+    RESULT=$?
 fi
 
-# Restore uncommitted Git changes
+echo "Restore unstaged changes"
 git reset --hard -q && git stash apply --index -q && git stash drop -q
 
 # Exit with status from test-run: nonzero prevents commit
