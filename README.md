@@ -21,12 +21,19 @@ can have a full desktop experience.
 
 # Try it Out
 
-The easiest way to try SimDem out is with a Docker container, this
-approach is fully documented below. he most flexible way to run SimDem
-is to use the Python code directly. This is generally best for
-deelopers so we provide minimal documentation here.
+The easiest way to try SimDem out is with a Docker container and work
+through the embedded tutorial. The following command will run the
+latest developer version of the code (i.e. there may be errors).
 
-## Docker Containers
+```
+docker run -it rgardler/simdem
+```
+
+The most flexible way to run SimDem is to use the Python code
+directly. This is generally best for developers of SimDem, so we
+provide minimal documentation here. 
+
+## Running in a Docker Container
 
 There are two containers available, the 'cli' version and the 'novnc'
 version. The first is command line only, the latter provides a browser
