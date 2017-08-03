@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+oFROM ubuntu:16.04
 
 ENV HOME /home/simdem
 WORKDIR $HOME
@@ -38,7 +38,7 @@ RUN chmod +x /usr/local/bin/simdem_cli/main.py
 RUN ln -s /usr/local/bin/simdem_cli/main.py /usr/local/bin/simdem
 
 # Demo Scripts
-COPY demo_scripts demo_scripts
+COPY demo_scripts/simdem demo_scripts
 
 USER 1984
 
