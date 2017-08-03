@@ -10,17 +10,17 @@
 
 REPOSITORY=rgardler
 FLAVOR=${1:-}
-CONTAINER_NAME_PREFIX=simdem_
+IMAGE_NAME_PREFIX=simdem_
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' config.py`
 
 build_container() {
-    docker build -f Dockerfile_$1 -t $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION .
+    docker build -f Dockerfile_$1 -t $REPOSITORY/${IMAGE_NAME_PREFIX}$1:$VERSION .
 
     if [ $? -eq 0 ]; then
-	echo "Built $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION"
+	echo "Built $REPOSITORY/${IMAGE_NAME_PREFIX}$1:$VERSION"
     else
-	echo "Failed to build $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION"
+	echo "Failed to build $REPOSITORY/${IMAGE_NAME_PREFIX}$1:$VERSION"
 	return 0
     fi
 }
