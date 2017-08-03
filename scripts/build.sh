@@ -10,30 +10,31 @@
 
 REPOSITORY=rgardler
 FLAVOR=${1:-}
-CONTAINERNAME=simdem_$FLAVOR
+CONTAINER_NAME_PREFIX=simdem_
 
 VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' config.py`
 
-print_result() {
-    if [ $1 -eq 0 ]; then
-	echo "Built $2"
+build_container() {
+    docker build -f Dockerfile_$1 -t $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION .
+
+    if [ $? -eq 0 ]; then
+	echo "Built $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION"
     else
-	echo "Failed to build $2"
-	exit 1
+	echo "Failed to build $REPOSITORY/${CONTAINER_NAME_PREFIX}$1:$VERSION"
+	return 0
     fi
 }
 
-
 if [[ $FLAVOR == "novnc" ]]; then
-    docker build -f Dockerfile_$FLAVOR -t $REPOSITORY/$CONTAINERNAME:$VERSION .
-    print_result $?  "$REPOSITORY/$CONTAINERNAME:$VERSION ."
+    build_container novnc
 elif [[ $FLAVOR == "cli" ]]; then
-    docker build -f Dockerfile_$FLAVOR -t $REPOSITORY/$CONTAINERNAME:$VERSION .
-    print_result  $? "$REPOSITORY/$CONTAINERNAME:$VERSION ."
-				  
+    build_container cli
 else
-    docker build -f Dockerfile_cli -t $REPOSITORY/${CONTAINERNAME}cli:$VERSION .
-    print_result $?  "$REPOSITORY/${CONTAINERNAME}cli:$VERSION ."
-    docker build -f Dockerfile_novnc -t $REPOSITORY/${CONTAINERNAME}novnc:$VERSION .
-    print_result $?  "$REPOSITORY/${CONTAINERNAME}novnc:$VERSION ."
-fi    
+    build_container cli
+    if [ $? eq 1 ]; then
+	exit 1
+    fi
+    build_container novnc
+fi
+
+exit $?
