@@ -1,4 +1,4 @@
-SIMDEM_VERSION = "0.7.4"
+SIMDEM_VERSION = "0.7.4-dev"
 
 # When in demo mode we insert a small random delay between characters.
 # TYPING DELAY is the upper bound of this delay.
