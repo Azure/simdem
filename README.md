@@ -37,7 +37,8 @@ provide minimal documentation here.
 
 The above command will walk you through the SimDem documentation. Pay
 particular attention to the Syntax page, but the short version is that
-you are writing markdown with code blocks.
+you are writing markdown with code blocks. For more information see
+`demo_scripts/simdem/tutorial/script.md`.
 
 ## Running in a Docker Container
 

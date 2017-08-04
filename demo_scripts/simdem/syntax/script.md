@@ -109,6 +109,7 @@ For example, this document offers next steps options.
 # Next Steps
 
   1. [Configure your scripts through variables](../variables/script.md)
-  2. [SimDem Index](../script.md)
-  3. [Write multi-part documents](../multipart/script.md)
-  4. [Use your documents as interactive tutorials or demos](../running/script.md)
+  2. [Build a Hello World script](../tutorial/script.md)
+  3. [SimDem Index](../script.md)
+  4. [Write multi-part documents](../multipart/script.md)
+  5. [Use your documents as interactive tutorials or demos](../running/script.md)

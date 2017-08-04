@@ -72,5 +72,6 @@ cleanup/script.md
 # Next Steps
 
   1. [SimDem Index](../script.md)
-  2. [Write SimDem documents](../syntax/script.md)
-  3. [Configure your scripts through variables](../variables/script.md)
+  2. [Build a Hello World script](../tutorial/script.md)
+  3. [Write SimDem documents](../syntax/script.md)
+  4. [Configure your scripts through variables](../variables/script.md)
