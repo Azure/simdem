@@ -34,7 +34,7 @@ following paths next:
 
   1. [Modes of operation](modes/script.md)
   2. [Hello World Demo](demo/script.md)
-  3. [Build a Hello World script](../tutorial/script.md)
+  3. [Build a Hello World script](tutorial/script.md)
   4. [Write SimDem documents](syntax/script.md)
   5. [Configure your scripts through variables](variables/script.md)
   6. [Write multi-part documents](multipart/script.md)
