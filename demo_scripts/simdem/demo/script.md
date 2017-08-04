@@ -3,8 +3,10 @@
 This script is intended to be used to demonstrate the key features of
 Simdem.
 
-When you hit a 'spacebar' a command will be "typed", hitting xpacebar
-again will execute the command.
+When you hit 'spacebar' a command will be "typed" and
+executed. Actually you can hit almost any key but we recommend
+'spacebar' here because we've not told you about the special keys yet
+and spacebar is not one of them.
 
 ```
 echo "Hello World"
@@ -13,7 +15,7 @@ echo "Hello World"
 That's cool, lets try again:
 
 ```
-echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the '--style simulate' flag), bit it really comes from a markdown file."
+echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the '--style simulate' flag, that simulates a person typing), bit it really comes from a markdown file."
 ```
 
 The date command will show that these commands are being executed.
