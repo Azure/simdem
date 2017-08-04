@@ -33,6 +33,12 @@ The most flexible way to run SimDem is to use the Python code
 directly. This is generally best for developers of SimDem, so we
 provide minimal documentation here. 
 
+# Writing a Script
+
+The above command will walk you through the SimDem documentation. Pay
+particular attention to the Syntax page, but the short version is that
+you are writing markdown with code blocks.
+
 ## Running in a Docker Container
 
 There are two containers available, the 'cli' version and the 'novnc'
