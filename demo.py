@@ -4,7 +4,7 @@ import difflib
 import os
 import re
 import sys
-
+import urllib.request
 from environment import Environment
 from cli import Ui
 
@@ -126,11 +126,17 @@ class Demo(object):
                             lines = lines + list(open(file))
 
         file = self.script_dir + self.filename
-            
-        if not lines and os.path.isfile(file):
-            lines = list(open(file))
-        elif not lines:
-            lines = self.generate_toc()
+
+        if file.startswith("http"):
+            # FIXME: Error handling
+            response = urllib.request.urlopen(file)
+            data = response.read().decode("utf-8")
+            lines = data.splitlines(True)
+        else:
+            if not lines and os.path.isfile(file):
+                lines = list(open(file))
+            elif not lines:
+                lines = self.generate_toc()
                     
         in_code_block = False
         in_results_section = False
