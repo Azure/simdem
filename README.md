@@ -150,7 +150,8 @@ need to install it manually at this time. Here's how..
 ```
 git clone git@github.com:rgardler/simdem.git
 cd simdem
-./install.sh
+./scripts/install.sh
+simdem
 ```
 
 # Hacking Guide

@@ -93,7 +93,8 @@ Welcome 10 times
 # Stripping ANSI escape sequances
 
 To make it easier to write scripts we don't want to include ANSI
-escape sequences, such as colors.
+escape sequences (such as colors) in the results section. SimDem
+automatically strips these when capturing the results.
 
 ```
 ls $SIMDEM_CWD/..
@@ -102,7 +103,7 @@ ls $SIMDEM_CWD/..
 Results:
 
 ```expected_similarity=0.9
-env.json  simdem  test
+env.json  script.md simdem  test
 ```
 
 # Commands that do not work
