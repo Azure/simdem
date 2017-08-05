@@ -31,13 +31,15 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
-        var_pattern = re.compile(".*?(?<=\$)(?<=\(){?(\w*)(?=[\W|\$|\s|\\\"]?)(?!\$).*?")
+        var_pattern = re.compile(".*?(?<=\$)\(?{?(\w*)(?=[\W|\$|\s|\\\"]?)\)?(?!\$).*")
         matches = var_pattern.findall(self.current_command)
         var_list = []
         if matches:
             for var in matches:
-                if var != "" and (var not in self.env.get() or self.env.get(var) == ""):
-                    var_list.append(var)
+                if len(var) > 0:
+                    value = self.ui.get_shell(self).run_command("echo $" + var).strip()
+                    if len(value) == 0 and not '$(' + var + ')' in self.current_command:
+                        var_list.append(var)
         return self.current_command, var_list
 
     def get_scripts(self, directory):
