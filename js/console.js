@@ -1,11 +1,17 @@
 function consoleMonitorSocket() {
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/console');
 
-    socket.on('update', function(msg) {
+    socket.on('update_console', function(msg) {
 	$('#console').append(msg);
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : " + msg ).html());
+	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : CONSOLE: " + msg ).html());
     });
 
+    socket.on('update_info', function(msg) {
+	$('#info').append(msg);
+	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : INFO : " + msg ).html());
+    });
+
+    
     socket.on('clear', function(msg) {
 	$('#console').html('');
 	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : clear").html());

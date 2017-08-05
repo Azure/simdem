@@ -16,8 +16,8 @@ url = "http://localhost:8080"
     
 def background_thread():
     while True:
-        socketio.sleep(1)
-        text = "FIXME: background thread"
+        socketio.sleep(10)
+        text = "I'm alive (background thread"
 
         socketio.emit('log',
                       text,
@@ -72,7 +72,7 @@ class WebUi(Ui):
 
     def heading(self, text):
         """Display a heading"""
-        self._send_text(text, "heading", True)
+        self._send_to_info(text, "heading", True)
         self.new_line()
 
     def description(self, text):
@@ -81,57 +81,67 @@ class WebUi(Ui):
 
         """
         # fixme: color self.display(text, colorama.Fore.CYAN)
-        self._send_text(text, "description", True)
+        self._send_to_info(text, "description", True)
 
     def next_step(self, index, title):
         """Displays a next step item with an index (the number to be entered
 to select it) and a title (to be displayed).
         """
-        # FIXME: color self.display(index, colorama.Fore.CYAN)
-        # FIXME: colorself.display(title, colorama.Fore.CYAN, True)
-        self._send_text(str(index) + " " + title, "next_step", True)
+        self._send_to_info(str(index) + " " + title, "next_step", True)
 
     def instruction(self, text):
         """Display an instruction for the user.
         """
-        # FIXME: color self.display(text, colorama.Fore.MAGENTA, True)    
-        self._send_text(text, "instruction", True)
+        self._send_to_info(text, "instruction", True)
     
     def warning(self, text):
         """Display a warning to the user.
         """
-        self._send_text(text, "warning", True)
+        self._send_to_info(text, "warning", True)
 
-    def new_para(self):
-        """Starts a new paragraph."""
-        self.new_line()
-        self.new_line()
+    def new_para(self, div = "console"):
+        """Starts a new paragraph in the indicated div."""
+        self.new_line(div)
+        self.new_line(div)
 
-    def new_line(self):
-        """Send a single new line"""
-        self._send_text("<br/>")
-    
+    def new_line(self, div = "console"):
+        """Send a single new line to te indicated div"""
+        if div == "console":
+            self._send_to_console("<br/>")
+        elif div == "info":
+            self._send_to_info("<br/>")
+            
     def horizontal_rule(self):
-        self._send_text("<br/><br/>============================================<br/><br/>")
+        self._send_to_info("<br/><br/>============================================<br/><br/>")
 
     def display(self, text, color, new_line=False):
         """Display some text in a given color. Do not print a new line unless
         new_line is set to True.
 
         """
-        self._send_text(text, color, new_line)
+        self._send_to_info(text, color, new_line)
         
     def request_input(self, text):
         """ Displays text that is intended to propmt the user for input. """
-        self._send_text(text, "request_input", True)
+        self._send_to_info(text, "request_input", True)
         
-    def _send_text(self, text, css_class = "description", new_line = False):
+    def _send_to_console(self, text, css_class = "description", new_line = False):
         """ Send a string to the console. If new_line is set to true then also send a <br/> """
         html = "<span class='" + css_class + "'>" + text + "</span>"
         if new_line:
             html += "<br/>"
             
-        socketio.emit('update',
+        socketio.emit('update_console',
+                      html,
+                      namespace='/console')
+
+    def _send_to_info(self, text, css_class = "description", new_line = False):
+        """ Send a string to the console. If new_line is set to true then also send a <br/> """
+        html = "<span class='" + css_class + "'>" + text + "</span>"
+        if new_line:
+            html += "<br/>"
+            
+        socketio.emit('update_info',
                       html,
                       namespace='/console')
 

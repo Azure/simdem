@@ -2,6 +2,16 @@
     background-color: black;
     color: white;
     font-family: "Lucida Console", Monaco, monospace;
+    width: 48%;
+    float: right
+}
+
+.info {
+    background-color: black;
+    color: white;
+    font-family: "Lucida Console", Monaco, monospace;
+    width: 48%;
+    float: left;
 }
 
 span.heading {
