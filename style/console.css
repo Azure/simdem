@@ -1,8 +1,13 @@
+#container {
+    margin: 0 auto;
+}
+
 .console {
     background-color: black;
     color: white;
     font-family: "Lucida Console", Monaco, monospace;
     width: 48%;
+    min-height: 80vh;
     float: right
 }
 
@@ -11,7 +16,13 @@
     color: white;
     font-family: "Lucida Console", Monaco, monospace;
     width: 48%;
+    min-height: 80vh;
     float: left;
+}
+
+.debug {
+    width: 100%;
+    clear: both
 }
 
 span.prompt {
