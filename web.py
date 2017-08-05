@@ -42,6 +42,10 @@ def ping_pong():
 def send_js(filename):
     return send_from_directory('js', filename)
 
+@app.route('/style/<path:filename>')
+def send_style(filename):
+    return send_from_directory('style', filename)
+
 @app.route('/')
 def index():
     return render_template('index.html', console = "Initializing...")
@@ -68,8 +72,7 @@ class WebUi(Ui):
 
     def heading(self, text):
         """Display a heading"""
-        # FIXME: self.display(text, colorama.Fore.CYAN + colorama.Style.BRIGHT, True)
-        self._send_text(text, True)
+        self._send_text(text, "heading", True)
         self.new_line()
 
     def description(self, text):
@@ -78,7 +81,7 @@ class WebUi(Ui):
 
         """
         # fixme: color self.display(text, colorama.Fore.CYAN)
-        self._send_text(text, True)
+        self._send_text(text, "description", True)
 
     def next_step(self, index, title):
         """Displays a next step item with an index (the number to be entered
@@ -86,19 +89,18 @@ to select it) and a title (to be displayed).
         """
         # FIXME: color self.display(index, colorama.Fore.CYAN)
         # FIXME: colorself.display(title, colorama.Fore.CYAN, True)
-        self._send_text(str(index) + " " + title, True)
+        self._send_text(str(index) + " " + title, "next_step", True)
 
     def instruction(self, text):
         """Display an instruction for the user.
         """
         # FIXME: color self.display(text, colorama.Fore.MAGENTA, True)    
-        self._send_text(text, True)
+        self._send_text(text, "instruction", True)
     
     def warning(self, text):
         """Display a warning to the user.
         """
-        # self.display(text, colorama.Fore.RED + colorama.Style.BRIGHT, True)
-        raise Exception("Not implemented yet", True)
+        self._send_text(text, "warning", True)
 
     def new_para(self):
         """Starts a new paragraph."""
@@ -110,30 +112,22 @@ to select it) and a title (to be displayed).
         self._send_text("<br/>")
     
     def horizontal_rule(self):
-        # print("\n\n============================================\n\n")
-        raise Exception("Not implemented yet")
+        self._send_text("<br/><br/>============================================<br/><br/>")
 
     def display(self, text, color, new_line=False):
         """Display some text in a given color. Do not print a new line unless
         new_line is set to True.
 
         """
-        # FIXME: print(color, end="")
-        self._send_text(text)
-        if new_line:
-            # FIXME: print(colorama.Style.RESET_ALL)
-            pass
-        else:
-            # FIXME: print(colorama.Style.RESET_ALL, end="")
-            pass
+        self._send_text(text, color, new_line)
         
     def request_input(self, text):
         """ Displays text that is intended to propmt the user for input. """
-        self._send_text(text, True)
+        self._send_text(text, "request_input", True)
         
-    def _send_text(self, text, new_line = False):
+    def _send_text(self, text, css_class = "description", new_line = False):
         """ Send a string to the console. If new_line is set to true then also send a <br/> """
-        html = "<span>" + text + "</span>"
+        html = "<span class='" + css_class + "'>" + text + "</span>"
         if new_line:
             html += "<br/>"
             

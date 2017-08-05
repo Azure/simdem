@@ -1,0 +1,25 @@
+.console {
+    background-color: black;
+    color: white;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+span.heading {
+    color: Cyan;
+}
+
+span.description {
+    color: Lime;
+}
+
+span.next_step {
+    color: RebeccaPurple;
+}
+
+span.warning {
+    color: Red;
+}
+
+span.request_input {
+    color: Purple
+}
