@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 thread = None
+command_key = None
 url = "http://localhost:8080"
     
 def background_thread():
@@ -37,6 +38,11 @@ def connect():
 @socketio.on('ping', namespace='/console')
 def ping_pong():
     emit('pong')
+
+@socketio.on('command_key', namespace='/console')
+def got_command_key(key):
+    global command_key
+    command_key = key
     
 @app.route('/js/<path:filename>')
 def send_js(filename):
@@ -159,36 +165,18 @@ to select it) and a title (to be displayed).
                       html,
                       namespace='/console')
 
-    def type_command(self, demo):
-        """
-        Displays the command on the screen
-        If simulation == True then it will look like someone is typing the command
-        Highlight uninstatiated environment variables
-        """
+    def get_instruction_key(self):
+        """Gets an instruction from the user. See get_help() for details of
+        relevant keys to respond with.
 
-        end_of_var = 0
-        current_command, var_list = demo.get_current_command()
-        for idx, char in enumerate(current_command):
-            if char == "$" and var_list:
-                for var in var_list:
-                    var_idx = current_command.find(var)
-                    if var_idx - 1 == idx:
-                        end_of_var = idx + len(var)
-                        #print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                        break
-                    elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
-                        end_of_var = idx + len(var) + 1
-                        #print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                        break
-            if end_of_var and idx == end_of_var:
-                end_of_var = 0
-                #print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-            if char != "\n":
-                self.command(char)
-            if demo.is_simulation:
-                delay = random.uniform(0.01, config.TYPING_DELAY)
-                time.sleep(delay)
-                    
+        """
+        global command_key
+        command_key = None
+        socketio.emit('get_command_key',
+                      namespace='/console')
+        while command_key is None:
+            return command_key
+
     def get_command(self):
         self.request_input("What mode do you want to run in? (default 'tutorial')")
         mode = ""
