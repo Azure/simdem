@@ -2,8 +2,13 @@ function consoleMonitorSocket() {
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/console');
 
     socket.on('update', function(msg) {
-	$('#console').append('<br/>' + $('<div/>').text(msg).html());
+	$('#console').append(msg);
 	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : " + msg ).html());
+    });
+
+    socket.on('clear', function(msg) {
+	$('#console').html('');
+	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : clear").html());
     });
 
     socket.on('log', function(msg) {
