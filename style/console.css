@@ -14,6 +14,18 @@
     float: left;
 }
 
+span.prompt {
+    color: White
+}
+
+span.command {
+    color: white
+}
+
+span.results {
+    color: LightGreen
+}
+
 span.heading {
     color: Cyan;
 }
