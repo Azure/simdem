@@ -60,6 +60,20 @@ class WebUi(Ui):
         t = threading.Thread(target=socketio.run, args=(app, '0.0.0.0', '8080'))
         t.start()
 
+    def prompt(self):
+        """Display the prompt for the user. This is intended to indicate that
+        the user is expected to take an action at this point.
+        """
+        self._send_to_console(config.console_prompt, "prompt")
+
+    def command(self, text):
+        """Display a command, or a part of a command tp be executed."""
+        self._send_to_console(text, "command", False)
+
+    def results(self, text):
+        """Display the results of a command execution"""
+        self._send_to_console(text, "results", True)
+        
     def clear(self, demo):
         """Clears the console ready for a new section of the script."""
         if demo.is_simulation:
@@ -174,8 +188,7 @@ to select it) and a title (to be displayed).
             if demo.is_simulation:
                 delay = random.uniform(0.01, config.TYPING_DELAY)
                 time.sleep(delay)
-
-        
+                    
     def get_command(self):
         self.request_input("What mode do you want to run in? (default 'tutorial')")
         mode = ""

@@ -24,7 +24,7 @@ class Ui(object):
         """Display the prompt for the user. This is intended to indicate that
         the user is expected to take an action at this point.
         """
-        self.display("$ ", colorama.Fore.WHITE)
+        self.display(config.console_prompt, colorama.Fore.WHITE)
 
     def command(self, text):
         """Display a command, or a part of a command tp be executed."""
@@ -32,8 +32,7 @@ class Ui(object):
         
     def results(self, text):
         """Display the results of a command execution"""
-        self.new_para()
-        self.display(text, colorama.Fore.GREEN + colorama.Style.BRIGHT)
+        self.display(text, colorama.Fore.GREEN + colorama.Style.BRIGHT, True)
         
     def heading(self, text):
         """Display a heading"""
@@ -53,7 +52,6 @@ class Ui(object):
 
         """
         self.display(text, colorama.Fore.WHITE, new_line)
-        self.new_para()
 
     def prep_step(self, step):
         """Displays a preparation step item.
@@ -260,6 +258,21 @@ to select it) and a title (to be displayed).
 
         return response
 
+    def get_help(self):
+        help = []
+        help.append("SimDem Help")
+        help.append("===========")
+        help.append("")
+        help.append("Pressing any key other than those listed below will result in the script progressing")
+        help.append("")
+        help.append("b           - break out of the script and accept a command from user input")
+        help.append("b -> CTRL-C - stop the script")
+        help.append("d           - (redisplay the description that precedes the current command then resume from this point)")
+        help.append("r           - repeat the previous command")
+        help.append("h           - displays this help message")
+        help.append("")
+        return help
+    
     def check_for_interactive_command(self, demo):
         """Wait for a key to be pressed.
 
@@ -272,22 +285,13 @@ to select it) and a title (to be displayed).
             key = self.get_instruction_key()
 
             if key == 'h':
-                print("help")
-                print()
-                print("SimDem Help")
-                print("===========")
-                print()
-                print("Pressing any key other than those listed below will result in the script progressing")
-                print()
-                print("b           - break out of the script and accept a command from user input")
-                print("b -> CTRL-C - stop the script")
-                print("d           - (re)display the description that precedes the current command then resume from this point")
-                print("r           - repeat the previous command")
-                print("h           - displays this help message")
-                print()
-                print("Press SPACEBAR to continue")
+                text = self.get_help()
+                for line in text:
+                    self.information(line, True)
+                    
+                self.information("Press SPACEBAR to continue", True)
                 while key != ' ':
-                    key = self.ui.get_instruction_key()
+                    key = self.get_instruction_key()
                     print()
                     self.prompt()
                     self.check_for_interactive_command(demo)
