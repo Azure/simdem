@@ -1,2 +1,5 @@
-pexpect
 colorama
+flask
+flask-socketio
+pexpect
+

@@ -29,6 +29,14 @@ latest developer version of the code (i.e. there may be errors).
 docker run -it rgardler/simdem
 ```
 
+This will start SimDem in CLI mode. An alternative is to start with
+the Web interface (once started point your browser at port 8080 on
+your host).
+
+```
+docker run -it -p 8080:8080 rgardler/simdem --webui true
+```
+
 The most flexible way to run SimDem is to use the Python code
 directly. This is generally best for developers of SimDem, so we
 provide minimal documentation here. 
@@ -169,7 +177,11 @@ scripts pull the current version number from the config.py (see
 `SIMDEM_VERSION=x.y.z`). This version number is used as the defaiult
 for the scripts in this folder.
 
-## Building
+## Writing a SimDem Script
+
+
+
+## Building SimDem in Containers
 
 ./scripts/build.sh Builds the noVNC (browser based) version of
 the container with the default tag of `rgardler/simdem_novnc:x.y.z`
