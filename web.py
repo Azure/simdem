@@ -82,13 +82,8 @@ class WebUi(Ui):
         
     def clear(self, demo):
         """Clears the console ready for a new section of the script."""
-        if demo.is_simulation:
-            # demo.current_command = "clear"
-            # self.simulate_command(demo)
-            raise Exception("Not implemented yet")
-        else:        
-            socketio.emit('clear',
-                          namespace='/console')
+        socketio.emit('clear',
+                      namespace='/console')
 
     def heading(self, text):
         """Display a heading"""

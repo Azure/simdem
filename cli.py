@@ -141,6 +141,7 @@ to select it) and a title (to be displayed).
         Highlight uninstatiated environment variables
         """
 
+        text = ""
         end_of_var = 0
         current_command, var_list = demo.get_current_command()
         for idx, char in enumerate(current_command):
@@ -159,10 +160,7 @@ to select it) and a title (to be displayed).
                 end_of_var = 0
                 print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
             if char != "\n":
-                self.command(char)
-            if demo.is_simulation:
-                delay = random.uniform(0.01, config.TYPING_DELAY)
-                time.sleep(delay)
+                text += char
 
     def simulate_command(self, demo, silent = False):
         """Types the command on the screen, executes it and outputs the
