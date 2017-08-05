@@ -11,6 +11,12 @@ function consoleMonitorSocket() {
 	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : INFO : " + msg ).html());
     });
 
+    socket.on('get_command_key', function(msg) {
+	command_key = "t"
+	alert("Continue?")
+	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : GET_COMAND_KEY : Got" + command_key ).html());
+	socket.emit('command_key', command_key)
+    });
     
     socket.on('clear', function(msg) {
 	$('#console').html('');
