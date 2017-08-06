@@ -1,30 +1,41 @@
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
+}
+
+function log(type, msg) {
+    $('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : " + type + " : " + msg).html());
+}
+
 function consoleMonitorSocket() {
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/console');
-
+    var command_key = ""
+    var keypress_interval;
+    
     socket.on('update_console', function(msg) {
 	$('#console').append(msg);
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : CONSOLE: " + msg ).html());
+	log("CONSOLE", msg);
     });
 
     socket.on('update_info', function(msg) {
 	$('#info').append(msg);
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : INFO : " + msg ).html());
+	log("INFO", msg)
     });
-
+    
     socket.on('get_command_key', function(msg) {
-	command_key = "t"
-	alert("Continue?")
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : GET_COMAND_KEY : Got" + command_key ).html());
-	socket.emit('command_key', command_key)
+	$('#info').append($('<span id="input" class="console_input"/>').text("Press a command key (h for help)"));
+	input_interval = window.setInterval(function () {
+	    log("GET_COMAND_KEY", "Waiting for input")
+	}, 1000);
     });
     
     socket.on('clear', function(msg) {
 	$('#console').html('');
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : clear").html());
+	log("CONSOLE", "clear")
     });
 
     socket.on('log', function(msg) {
-	$('#log').prepend('<br/>' + $('<div/>').text(new Date() + " : " + msg ).html());
+	log("LOG", msg)
     });
     
     var ping_pong_times = [];
@@ -42,5 +53,14 @@ function consoleMonitorSocket() {
       for (var i = 0; i < ping_pong_times.length; i++)
         sum += ping_pong_times[i];
         $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-      });
+    });
+
+    $(document).keypress(function(event) {
+	command_key = String.fromCharCode(event.which)
+	window.clearInterval(keypress_interval);
+	$('#input').remove()
+	log("GET_COMMAND_KEY", "Got '" + command_key + "'")
+	socket.emit('command_key', command_key)
+    })
+    
 }

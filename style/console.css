@@ -25,6 +25,11 @@
     clear: both
 }
 
+span.console_input {
+    display: block;
+    backgroun-color: white;
+}
+
 span.prompt {
     color: White
 }
