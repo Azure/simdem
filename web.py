@@ -36,6 +36,9 @@ def connect():
         thread = socketio.start_background_task(target=background_thread)
         ui.ready = True
 
+    if not ui.demo is None:
+        print("Starting demo: " + str(ui.demo))
+
 @socketio.on('ping', namespace='/console')
 def ping_pong():
     emit('pong')
@@ -190,7 +193,4 @@ to select it) and a title (to be displayed).
         while in_string is None:
             pass
         return in_string
-    
-
-
 
