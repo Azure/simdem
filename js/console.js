@@ -23,7 +23,18 @@ function consoleMonitorSocket() {
     });
     
     socket.on('get_command_key', function(msg) {
-	$('#info').append($('<span id="input" class="console_input"/>').text("Press a command key (h for help)"));
+	input = $('<span id="input" class="console_input"/>').text("Press a command key (h for help)");
+	$('#info').append(input);
+
+	$(document).keypress(function(event) {
+	    command_key = String.fromCharCode(event.which)
+	    window.clearInterval(keypress_interval);
+	    $(document).off("keypress")
+	    $('#input').remove()
+	    log("GET_COMMAND_KEY", "Got '" + command_key + "'")
+	    socket.emit('command_key', command_key)
+	})
+	
 	keypress_interval = window.setInterval(function () {
 	    log("GET_COMAND_KEY", "Waiting for input")
 	}, 1000);
@@ -78,14 +89,5 @@ function consoleMonitorSocket() {
       for (var i = 0; i < ping_pong_times.length; i++)
         sum += ping_pong_times[i];
         $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-    });
-
-    $(document).keypress(function(event) {
-	command_key = String.fromCharCode(event.which)
-	window.clearInterval(keypress_interval);
-	$('#input').remove()
-	log("GET_COMMAND_KEY", "Got '" + command_key + "'")
-	socket.emit('command_key', command_key)
-    })
-    
+    });    
 }
