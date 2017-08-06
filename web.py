@@ -170,7 +170,9 @@ to select it) and a title (to be displayed).
         socketio.emit('get_command_key',
                       namespace='/console')
         while command_key is None:
-            return command_key
+            pass
+            
+        return command_key
 
     def get_command(self):
         self.request_input("What mode do you want to run in? (default 'tutorial')")
