@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory
 from flask import render_template
-from flask.ext.socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit
 import threading
 import time
 
@@ -14,7 +14,8 @@ socketio = SocketIO(app)
 thread = None
 command_key = None
 url = "http://localhost:8080"
-    
+in_string = None
+
 def background_thread():
     while True:
         socketio.sleep(10)
@@ -43,6 +44,12 @@ def ping_pong():
 def got_command_key(key):
     global command_key
     command_key = key
+
+@socketio.on('input_string', namespace='/console')
+def got_input_String(in_str):
+    global in_string            
+    in_string = in_str
+    print("Got string: " + in_string)
     
 @app.route('/js/<path:filename>')
 def send_js(filename):
@@ -174,13 +181,15 @@ to select it) and a title (to be displayed).
             
         return command_key
 
-    def get_command(self):
-        self.request_input("What mode do you want to run in? (default 'tutorial')")
-        mode = ""
-        # mode = input()
-        if mode == "":
-            mode = "tutorial"
-        return mode
+    def input_string(self):
+        """ Get a string from the user."""
+        global in_string
+        in_string = None
+        socketio.emit('input_string',
+                      namespace='/console')
+        while in_string is None:
+            pass
+        return in_string
     
 
 
