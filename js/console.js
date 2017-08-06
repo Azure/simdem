@@ -32,12 +32,24 @@ function consoleMonitorSocket() {
     socket.on('input_string', function(msg) {
 	in_str = ""
 	$('#input_string_wrap').remove()
-	textarea = $('<div class="twrap" id="input_string_wrap">').append($('<textarea id="input_string" contenteditable="true" class="console_input"/>').text("FIXME: Need to get a string from the user"));
-	$('#info').append(textarea);
-	$("#input_string" ).on('change', function() {
+	textarea = $('<textarea id="input_string" contenteditable="true" class="console_input"/>').text("FIXME: Give this box focus and show cursor");
+	div = $('<div class="twrap" id="input_string_wrap">').append(textarea);
+	$('#info').append(div)
+
+	textarea.on('change', function() {
 	    in_str = $('#input_string').val()
 	    log("GET_INPUT", "Got '" + in_str + "'")
 	    socket.emit('input_string', in_str)
+	});
+
+	textarea.keypress(function(event) {
+	    if (event.which == 13) {
+		textarea.change()
+	    }
+	})
+
+	textarea.blur(function(){
+	    $('#input_string_wrap').remove()
 	});
     });
     
