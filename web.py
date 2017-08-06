@@ -87,7 +87,7 @@ class WebUi(Ui):
         """Display the results of a command execution"""
         self._send_to_console(text, "results", True)
         
-    def clear(self, demo):
+    def clear(self):
         """Clears the console ready for a new section of the script."""
         socketio.emit('clear',
                       namespace='/console')
