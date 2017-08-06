@@ -113,10 +113,14 @@ to select it) and a title (to be displayed).
             print(level.upper() + " : " + text)
             
     def request_input(self, text):
-        """ Displays text that is intended to propmt the user for input. """
+        """Displays text that is intended to propmt the user for 
+        input and then waits for input.
+
+        """
         print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
         print(text)
         print(colorama.Style.RESET_ALL, end="")
+        return self.input_string().lower()
         
     def input_interactive_variable(self, name):
         """
@@ -383,8 +387,8 @@ to select it) and a title (to be displayed).
         print(colorama.Style.RESET_ALL)
 
     def get_command(self, commands):
-        self.request_input("What mode do you want to run in? (default 'tutorial')")
-        cmd = self.input_string().lower()
+        cmd = self.request_input("What mode do you want to run in? (default 'tutorial')")
+
         if cmd == "":
             cmd = "tutorial"
         while not cmd in commands:
