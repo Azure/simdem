@@ -115,9 +115,7 @@ def main():
             print("Waiting for UI")
         
     if len(arguments) == 0:
-        cmd = "unkown"
-        while not cmd in commands:
-            cmd = ui.get_command()
+        cmd = ui.get_command(commands)
     else:
         cmd = arguments[0]
 

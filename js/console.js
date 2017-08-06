@@ -24,12 +24,25 @@ function consoleMonitorSocket() {
     
     socket.on('get_command_key', function(msg) {
 	$('#info').append($('<span id="input" class="console_input"/>').text("Press a command key (h for help)"));
-	input_interval = window.setInterval(function () {
+	keypress_interval = window.setInterval(function () {
 	    log("GET_COMAND_KEY", "Waiting for input")
 	}, 1000);
     });
+
+    socket.on('input_string', function(msg) {
+	in_str = ""
+	$('#input_string_wrap').remove()
+	textarea = $('<div class="twrap" id="input_string_wrap">').append($('<textarea id="input_string" contenteditable="true" class="console_input"/>').text("FIXME: Need to get a string from the user"));
+	$('#info').append(textarea);
+	$("#input_string" ).on('change', function() {
+	    in_str = $('#input_string').val()
+	    log("GET_INPUT", "Got '" + in_str + "'")
+	    socket.emit('input_string', in_str)
+	});
+    });
     
     socket.on('clear', function(msg) {
+	$('#info').html('');
 	$('#console').html('');
 	log("CONSOLE", "clear")
     });

@@ -27,7 +27,9 @@
 
 span.console_input {
     display: block;
-    backgroun-color: white;
+    background-color: white;
+    color: black;
+    margin: 2px 2px 2px 2px;
 }
 
 span.prompt {
@@ -61,3 +63,13 @@ span.warning {
 span.request_input {
     color: Purple
 }
+
+.console_input {
+    width: 100%
+}
+
+.twrap {
+    overflow: hidden;
+    padding: 0 4px 0 4px
+}
+		 

@@ -371,7 +371,6 @@ class Demo(object):
         the prerequisite script. If running in test mode assume that
         this is the case (pre-requisites should be handled in the
         test_plan
-
         """
 
         steps = []

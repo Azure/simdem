@@ -221,6 +221,10 @@ to select it) and a title (to be displayed).
         self.log("debug", "Output: '" + output +"'")
         return output
 
+    def input_string(self):
+        """ Get a string from the user."""
+        return input()
+    
     def get_shell(self, demo):
         """Gets or creates the shell in which to run commands for the
         supplied demo
@@ -381,9 +385,11 @@ to select it) and a title (to be displayed).
         print("\n\n=============================\n\n")
         print(colorama.Style.RESET_ALL)
 
-    def get_command(self):
+    def get_command(self, commands):
         self.request_input("What mode do you want to run in? (default 'tutorial')")
-        mode = input()
-        if mode == "":
-            mode = "tutorial"
-        return mode
+        cmd = self.input_string().lower()
+        if cmd == "":
+            cmd = "tutorial"
+        while not cmd in commands:
+            cmd = self.get_command(commands)
+        return cmd
