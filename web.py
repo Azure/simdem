@@ -147,8 +147,10 @@ to select it) and a title (to be displayed).
         self._send_to_info(text, color, new_line)
         
     def request_input(self, text):
-        """ Displays text that is intended to propmt the user for input. """
+        """Displays text that is intended to propmt the user for input and
+        then waits for input."""
         self._send_to_info(text, "request_input", True)
+        return self.input_string().lower()
         
     def _send_to_console(self, text, css_class = "description", new_line = False):
         """ Send a string to the console. If new_line is set to true then also send a <br/> """
