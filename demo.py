@@ -13,6 +13,7 @@ class Demo(object):
     def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
         """Initialize variables"""
         self.ui = ui
+        ui.set_demo(self)
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
@@ -39,8 +40,8 @@ class Demo(object):
         if matches:
             for var in matches:
                 if len(var) > 0:
-                    value = self.ui.get_shell(self).run_command("echo $" + var).strip()
-                    if len(value) == 0 and not '$(' + var in self.current_command:
+                    value = self.ui.get_shell().run_command("echo $" + var).strip()
+                    if len(value) == 0 and not '$(' + var + ')' in self.current_command:
                         var_list.append(var)
         return self.current_command, var_list
 
