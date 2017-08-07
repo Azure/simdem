@@ -115,6 +115,7 @@ def main():
     is_docker = os.path.isfile('/.dockerenv')
     demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
 
+    cmd = None
     if options.webui == "False":
         ui = Ui()
         if len(arguments) > 0:
