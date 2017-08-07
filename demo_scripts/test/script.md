@@ -23,7 +23,7 @@ echo $SIMDEM_CWD
 
 Results: 
 
-``` Expected_Similarity=0.9 
+``` Expected_Similarity=0.8
 demo_scripts/test/
 ```
 
