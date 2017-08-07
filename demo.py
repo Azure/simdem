@@ -6,14 +6,13 @@ import re
 import sys
 import urllib.request
 from environment import Environment
+
 from cli import Ui
 import config
 
 class Demo(object):
     def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
         """Initialize variables"""
-        self.ui = ui
-        ui.set_demo(self)
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
@@ -100,8 +99,7 @@ class Demo(object):
 
         return lines
     
-    def run(self):
-        """
+    def run(self, mode = None):
         Reads a README.md file in the indicated directoy and runs the
         commands contained within. If simulation == True then human
         entry will be simulated (looks like typing and waits for
@@ -115,6 +113,29 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
+        if self.ui is None:
+            raise Exception("Attempt to run a demo before ui is cofigured")
+
+        if mode is None:
+            mode = self.ui.get_command(config.modes)
+            
+        if mode == "script":
+            print(self.get_bash_script())
+            return
+        elif mode == "demo":
+            self.is_simulation = True
+        elif mode == "test":
+            self.is_testing = True
+            self.is_automated = True
+        elif mode == "learn":
+            self.is_learning = True
+        elif mode == "run" or mode == "tutorial":
+            pass
+        else:
+            raise Exception("Unkown mode: '" + mode + "'")
+
+        print("Mode is: " + mode)
+        
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
         classified_lines = self.classify_lines()
@@ -472,3 +493,39 @@ class Demo(object):
             s += "Fast fail test mode: {0}\n".format(self.is_fast_fail)
         
         return s
+
+    def set_ui(self, ui):
+        self.ui = ui
+        ui.set_demo(self)
+
+    def get_bash_script(self):
+        """Reads a script.md file in the indicated directoy and builds an
+        executable bash script from the commands contained within.
+
+        """
+        script = ""
+        env = Environment(self.script_dir, False).get()
+        for key, value in env.items():
+            script += key + "='" + value + "'\n"
+
+        in_code_block = False
+        in_results_section = False
+        lines = list(open(self.script_dir + "script.md"))
+        for line in lines:
+            if line.startswith("Results:"):
+                # Entering results section
+                in_results_section = True
+            elif line.startswith("```") and not in_code_block:
+                # Entering a code block, if in_results_section = True then it's a results block
+                in_code_block = True
+            elif line.startswith("```") and in_code_block:
+                # Finishing code block
+                in_results_section = False
+                in_code_block = False
+            elif in_code_block and not in_results_section:
+                # Executable line
+                script += line
+            elif line.startswith("#") and not in_code_block and not in_results_section:
+                # Heading in descriptive text
+                script += "\n"
+        return script

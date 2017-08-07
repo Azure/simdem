@@ -53,7 +53,7 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
 def main():
     """SimDem CLI interpreter"""
 
-    commands = [ "tutorial", "demo", "learn", "test", "script"]
+    commands = config.modes
     command_string = ""
     for command in commands:
         command_string = command_string + command + "|"
@@ -90,6 +90,11 @@ def main():
     else:
         is_test = True
 
+    if options.fastfail == "True":
+        is_fast_fail= True
+    else:
+        is_fast_fail= False
+        
     if options.style == "simulate":
         simulate = True
     elif options.style == 'tutorial':
@@ -105,45 +110,26 @@ def main():
         script_dir = options.path + arguments[1]
     else:
         script_dir = options.path
+        
+    filename = "script.md"
+    is_docker = os.path.isfile('/.dockerenv')
+    demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
 
     if options.webui == "False":
         ui = Ui()
+        if len(arguments) > 0:
+            cmd = arguments[0]
+            # 'run' is deprecated in the CLI, but not yet removed from code
+            if cmd == "tutorial":
+                cmd = "run"
     else:
         ui = WebUi()
         while not ui.ready:
             time.sleep(0.25)
-            print("Waiting for UI")
-        
-    if len(arguments) == 0:
-        cmd = ui.get_command(commands)
-    else:
-        cmd = arguments[0]
+            print("Waiting for client connection")
+        cmd = None
 
-    if cmd == "tutorial":
-        cmd = "run"
-        
-    env = Environment(script_dir, False)
-    filename = env.get_script_file_name(script_dir)
-    is_docker = os.path.isfile('/.dockerenv')
-    if cmd == "run":
-        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test);
-        demo.run()
-    elif cmd == "demo":
-        demo = Demo(ui, is_docker, script_dir, filename, True, is_automatic, is_test);
-        demo.run()
-    elif cmd == "test":
-        is_automatic = not options.auto.lower() == "no"
-        is_test = True and options.test
-        is_fast_fail = options.fastfail == "True"
-        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail=is_fast_fail);
-        demo.run()
-    elif cmd == "script":
-        print(get_bash_script(script_dir))
-    elif cmd == "learn":
-        demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test, is_learning=True);
-        demo.run()
-    else:
-        print("Unknown command: " + cmd)
-        print("Run with --help for guidance.")
-
+    demo.set_ui(ui)
+    demo.run(cmd)
+    
 main()

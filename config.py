@@ -8,12 +8,18 @@ TYPING_DELAY = 0.08
 # Prompt to use in the console
 console_prompt = "$ "
 
-#################################################################
-# Don't change anything below here unless you know what you are
-# doing
-#################################################################
+# ------------------------------------------------------------------ #
+# Danger zone
+#
+# Do not change anything after this notice,
+# unless you know what you are doing
+# ------------------------------------------------------------------ #
 
 # Set is_debug to True if you want to run in debug mode. This setting
 # can be overriden in the command like with the `--debug true` option.
 is_debug = False
+
+# Available modes of execution
+modes = [ "tutorial", "demo", "learn", "test", "script" ]
+
 
