@@ -14,11 +14,15 @@ function consoleMonitorSocket() {
     
     socket.on('update_console', function(msg) {
 	$('#console').append(msg);
+	$('#console').animate({
+	    scrollTop: $('#console')[0].scrollHeight}, 500)
 	log("CONSOLE", msg);
     });
 
     socket.on('update_info', function(msg) {
 	$('#info').append(msg);
+	$('#info').animate({
+	    scrollTop: $('#info')[0].scrollHeight}, 500)
 	log("INFO", msg)
     });
     
