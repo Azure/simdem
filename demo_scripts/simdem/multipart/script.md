@@ -47,11 +47,11 @@ containing tutorials. Tutorial sub-directories will contain at least a
 `
 My_Complex_SimDem_Tutorial
 ├── script.md 
-├── Tutotial_1
+├── Tutorial_1
 │   └── script.md
-├── Tutotial_2
+├── Tutorial_2
 │   └── script.md
-└── Tutotial_3
+└── Tutorial_3
     └── script.md
 `
 
