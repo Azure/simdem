@@ -36,9 +36,6 @@ def connect():
         thread = socketio.start_background_task(target=background_thread)
         ui.ready = True
 
-    if not ui.demo is None:
-        print("Starting demo: " + str(ui.demo))
-
 @socketio.on('ping', namespace='/console')
 def ping_pong():
     emit('pong')
