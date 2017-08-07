@@ -12,7 +12,7 @@ REPOSITORY=rgardler
 FLAVOR=${1:-}
 IMAGE_NAME_PREFIX=simdem_
 
-VERSION=`grep -Po '(?<=SIMDEM_VERSION = \")(.*)(?=\")' config.py`
+VERSION=`grep SIMDEM_VERSION config.py | awk '{print $3}' | tr -d '"'`
 
 build_container() {
     docker build -f Dockerfile_$1 -t $REPOSITORY/${IMAGE_NAME_PREFIX}$1:$VERSION .
