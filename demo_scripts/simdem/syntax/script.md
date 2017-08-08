@@ -1,7 +1,6 @@
 # Document syntax
 
-For the most part SimDem uses
-standard
+For the most part SimDem uses standard
 [Markdown syntx](https://daringfireball.net/projects/markdown/syntax). There
 are a few special strings that can be used to influence how SimDem
 works, but even these are intended to be human readable, thus
@@ -18,7 +17,7 @@ head -n 25 $SIMDEM_CWD/script.md
 
 It is common for a tutorial or demo to have a number of
 prerequisites. For example, it's a good idea to understand how these
-work, so take a look at our [prerequisites](./prerequisites/script.md)
+work, so take a look at our [prerequisites](../prerequisites/script.md)
 before proceeding.
 
 # SimDem Syntax

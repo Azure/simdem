@@ -38,4 +38,4 @@ else
     build_container novnc
 fi
 
-return $?
+exit $?
