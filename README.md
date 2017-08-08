@@ -4,7 +4,7 @@ of different modes:
 
   * Tutorial: Displays the descriptive text of the tutorial and pauses
     at code blocks to allow user interaction.
-  * Simulate: Does not disply the descriptive text, but pauses at each
+  * Simulate: Does not display the descriptive text, but pauses at each
     code block. When the user hits a key the command is "typed", a
     second keypress executes the command.
   * Test: Runs the commands and then verifies that the output is
