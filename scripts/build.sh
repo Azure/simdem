@@ -33,7 +33,7 @@ else
     build_container cli
     if [ $? -ne 0 ]; then
     	echo "Building container failed. Exiting"
-	exit 1
+	return 1
     fi
     build_container novnc
 fi
