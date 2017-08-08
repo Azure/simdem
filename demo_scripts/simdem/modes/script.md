@@ -7,7 +7,7 @@ modes:
     at code blocks to allow user interaction.
   * Learn: similar to Tutorial mode, but users are expected to type
     the commands themselves.
-  * Simulate: Does not disply the descriptive text, but pauses at each
+  * Simulate: Does not display the descriptive text, but pauses at each
     code block. When the user hits a key the command is "typed", a
     second keypress executes the command.
   * Test: Runs the commands and then verifies that the output is
