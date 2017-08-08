@@ -17,6 +17,8 @@ class Environment(object):
         self.read_simdem_environment(directory)
         self.set("SIMDEM_VERSION", config.SIMDEM_VERSION)
         self.set("SIMDEM_CWD", directory)
+        temp_dir = os.path.expanduser(config.SIMDEM_TEMP_DIR)
+        self.set("SIMDEM_TEMP_DIR", temp_dir)
 
     def read_simdem_environment(self, directory):
         """Populates each shell environment with a set of environment vars
