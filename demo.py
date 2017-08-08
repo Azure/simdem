@@ -23,7 +23,6 @@ class Demo(object):
         self.current_command = ""
         self.current_description = ""
         self.last_command = ""
-        self.prep_steps = []
         self.is_prerequisite = is_prerequisite
         
     def get_current_command(self):
@@ -139,132 +138,9 @@ class Demo(object):
                 lines = list(open(file))
             elif not lines:
                 lines = self.generate_toc()
-                    
-        in_code_block = False
-        in_results_section = False
-        expected_results = ""
-        actual_results = ""
-        passed_tests = 0
-        failed_tests = 0
-        is_first_line = True
-        in_next_steps = False
-        in_prerequisites = False
-        next_steps = []
-        executed_code_in_this_section = False
-        self.current_description = ""
 
-        for line in lines:
-            self.current_description += line;
-
-            if line.startswith("Results:"):
-                # Entering results section
-                in_results_section = True
-                # DEPRECATED: having the expected similarity in the results line is deprecated as of 6/22/17
-                pos = line.lower().find("expected similarity: ")
-                if pos >= 0:
-                    pos = pos + len("expected similarity: ")
-                    similarity = line[pos:]
-                    expected_similarity = float(similarity)
-                else:
-                    expected_similarity = 0.66
-            elif line.startswith("```") and not in_code_block:
-                # Entering a code block, if in_results_section = True then it's a results block
-                in_code_block = True
-                pos = line.lower().find("expected_similarity=")
-                if pos >= 0:
-                    pos = pos + len("expected_similarity=")
-                    similarity = line[pos:]
-                    expected_similarity = float(similarity)
-                else:
-                    expected_similarity = 0.66
-            elif line.startswith("```") and in_code_block and in_results_section:
-                # Finishing results section
-                if in_results_section and self.is_testing:
-                    ansi_escape = re.compile(r'\x1b[^m]*m')
-                    if self.ui.test_results(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
-                        passed_tests += 1
-                    else:
-                        failed_tests += 1
-                        if (self.is_fast_fail):
-                            break
-                expected_results = ""
-                actual_results = ""
-                in_results_section = False
-                in_code_block = False
-            elif line.startswith("```") and in_code_block:
-                # Finishing code block
-                in_code_block = False
-                in_results_section = False
-            elif in_results_section and in_code_block:
-                expected_results += line
-            elif in_code_block and not in_results_section:
-                # Executable line
-                if line.startswith("#"):
-                    # comment
-                    pass
-                else:
-                    if not self.is_learning:
-                        self.ui.prompt()
-                        self.ui.check_for_interactive_command(self)
-                        
-                    self.current_command = line
-                    actual_results = self.ui.simulate_command(self)
-                    executed_code_in_this_section = True
-            elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
-                # Heading in descriptive text, indicating a new section
-
-                if in_next_steps:
-                    # This should never happen as next steps should always be last in doc
-                    if is_testing:
-                        failed_tests += 1
-                        actual_results = "Next Steps has a sub heading, or following section. This is not allowed"
-                    in_next_steps = False
-                if in_prerequisites:
-                    self.check_prerequisites()
-                    in_prerequisites = False
-
-                if line.lower().strip().endswith("# next steps"):
-                    in_next_steps = True
-                if line.lower().strip().endswith("# prerequisites"):
-                    in_prerequisites = True
-                if is_first_line:
-                    self.ui.clear(self)
-                elif executed_code_in_this_section:
-                    executed_code_in_this_section = False
-                    self.ui.prompt()
-                    self.ui.check_for_interactive_command(self)
-                    self.current_description += line;
-                    self.ui.clear(self)
-                        
-                if not self.is_simulation:
-                    self.ui.heading(line)
-
-            else:
-                if not self.is_simulation and not in_results_section and not in_next_steps and not in_prerequisites:
-                    # Descriptive text
-                    self.ui.description(line)
-                if in_next_steps:
-                    pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
-                    match = pattern.match(line)
-                    if match:
-                        self.ui.next_step(match.groups()[0], match.groups()[1])
-                        next_steps.append(line) 
-                if in_prerequisites:
-                    self.ui.description(line)
-                    pattern = re.compile('.*\[(.*)\]\((.*)\).*')
-                    match = pattern.match(line)
-                    if match:
-                        prep_step = {}
-                        prep_step["title"] = match.groups()[0].strip()
-                        href = match.groups()[1]
-                        if not href.endswith(".md"):
-                            if not href.endswith("/"):
-                                href = href + "/"
-                            href = href + env.get_script_file_name(script_dir)
-                        prep_step["href"] = href
-                        self.prep_steps.append(prep_step)
-                   
-            is_first_line = False
+        classified_lines = self.classify_lines(lines)
+        failed_tests, passed_tests = self.execute(classified_lines)
 
         if self.is_testing:
             self.ui.horizontal_rule()
@@ -284,6 +160,11 @@ class Demo(object):
             else:
                 sys.exit(0)
 
+        next_steps = []
+        for line in classified_lines:
+            if line["type"] == "next_step" and len(line["text"].strip()) > 0:
+                next_steps.append(line)
+
         if len(next_steps) > 0:
             if self.is_prerequisite:
                 return
@@ -302,19 +183,171 @@ class Demo(object):
                     pass
 
             pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-            match = pattern.match(next_steps[in_value - 1])
+            match = pattern.match(next_steps[in_value - 1]["text"])
             self.script_dir = self.script_dir + match.groups()[0]
             self.filename = match.groups()[1]
             self.run()
+            
+    def classify_lines(self, lines):
+        in_code_block = False
+        in_results_section = False
+        is_first_line = True
+        in_next_steps = False
+        in_prerequisites = False
+        executed_code_in_this_section = False
 
-    def check_prerequisites(self):
-        """Check with the user that all prerequisites have been run
+        classified_lines = []
+
+        for line in lines:
+            if line.startswith("Results:"):
+                # Entering results section
+                in_results_section = True
+            elif line.startswith("```") and not in_code_block:
+                # Entering a code block,
+                # if in_results_section = True then it's a results block
+                in_code_block = True
+                pos = line.lower().find("expected_similarity=")
+                if pos >= 0:
+                    pos = pos + len("expected_similarity=")
+                    similarity = line[pos:]
+                    expected_similarity = float(similarity)
+                else:
+                    expected_similarity = 0.66
+            elif line.startswith("```") and in_code_block and in_results_section:
+                # Finishing results section
+                in_results_section = False
+                in_code_block = False
+            elif line.startswith("```") and in_code_block:
+                # Finishing code block
+                in_code_block = False
+                in_results_section = False
+            elif in_results_section and in_code_block:
+                classified_lines.append({"type": "result",
+                                         "expected_similarity": expected_similarity,
+                                         "text": line})
+            elif in_code_block and not in_results_section:
+                # Executable line
+                if line.startswith("#"):
+                    # comment
+                    pass
+                else:
+                    classified_lines.append({"type": "executable",
+                                             "text": line})
+            elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
+                # Heading in descriptive text, indicating a new section
+                if line.lower().strip().endswith("# next steps"):
+                    in_next_steps = True
+                elif line.lower().strip().endswith("# prerequisites"):
+                    in_prerequisites = True
+                else:
+                    in_prerequisites = False
+                    in_next_steps = False
+                classified_lines.append({"type": "heading",
+                                         "text": line})
+            else:
+                if in_next_steps:
+                    classified_lines.append({"type": "next_step",
+                                             "text": line})
+                elif in_prerequisites:
+                    classified_lines.append({"type": "prerequisite",
+                                             "text": line})
+                else:
+                    classified_lines.append({"type": "description",
+                                             "text": line})
+
+            is_first_line = False
+
+        return classified_lines
+
+    def execute(self, lines):
+        in_results = False
+        expected_results = ""
+        actual_results = ""
+        failed_tests = 0
+        passed_tests = 0
+        in_prerequisites = False
+        executed_code_in_this_section = False
+        next_steps = []
+
+        self.ui.clear(self)
+        self.ui.prompt()
+        for line in lines:
+            if line["type"] == "result":
+                in_results = True
+                expected_results += line["text"]
+                expected_similarity = line["expected_similarity"]
+            elif line["type"] != "result" and in_results:
+                # Finishing results section
+                if self.is_testing:
+                    ansi_escape = re.compile(r'\x1b[^m]*m')
+                    if self.ui.test_results(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                        passed_tests += 1
+                    else:
+                        failed_tests += 1
+                        if (self.is_fast_fail):
+                            break
+                expected_results = ""
+                actual_results = ""
+                in_results = False
+            elif line["type"] == "prerequisite":
+                in_prerequisites = True
+            elif line["type"] != "prerequisites" and in_prerequisites:
+                self.check_prerequisites(lines)
+                in_prerequisites = False
+                self.ui.heading(line["text"])
+            elif line["type"] == "executable":
+                if not self.is_learning:
+                    self.ui.prompt()
+                    self.ui.check_for_interactive_command(self)
+                self.current_command = line["text"]
+                actual_results = self.ui.simulate_command(self)
+                executed_code_in_this_section = True
+            elif line["type"] == "heading":
+                self.ui.check_for_interactive_command(self)
+                if not self.is_simulation:
+                    self.ui.clear(self)
+                    self.ui.heading(line["text"])
+            else:
+                if not self.is_simulation and line["type"] == "description":
+                    # Descriptive text
+                    self.ui.description(line["text"])
+                if line["type"] == "next_step":
+                    pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
+                    match = pattern.match(line["text"])
+                    if match:
+                        self.ui.next_step(match.groups()[0], match.groups()[1])
+                   
+            is_first_line = False
+
+        return failed_tests, passed_tests
+    
+    def check_prerequisites(self, lines):
+        """Check that all prerequisites have been run
         satisfied. If running in test mode assume that this is the
         case (pre-requisites should be handled in the test_plan"""
         if self.is_testing or self.is_automated:
             return
 
-        for step in self.prep_steps:
+# FIXME: run validation steps here
+
+        steps = []
+        for line in lines:
+            step = {}
+            if line["type"] == "prerequisite" and len(line["text"].strip()) > 0:
+                self.ui.description(line["text"])
+                pattern = re.compile('.*\[(.*)\]\((.*)\).*')
+                match = pattern.match(line["text"])
+                if match:
+                    step["title"] = match.groups()[0].strip()
+                    href = match.groups()[1]
+                    if not href.endswith(".md"):
+                        if not href.endswith("/"):
+                            href = href + "/"
+                        href = href + "script.md"
+                    step["href"] = href
+                    steps.append(step)
+
+        for step in steps:
             self.ui.new_para()
             self.ui.instruction("Have you satisfied the '" + step["title"] + "' prerequisite? (y/N)")
             
