@@ -37,6 +37,9 @@ COPY *.py /usr/local/bin/simdem_cli/
 RUN chmod +x /usr/local/bin/simdem_cli/main.py
 RUN ln -s /usr/local/bin/simdem_cli/main.py /usr/local/bin/simdem
 
+# Require commands for demos
+RUN apt-get install curl -y
+
 # Demo Scripts
 COPY demo_scripts/simdem demo_scripts
 
