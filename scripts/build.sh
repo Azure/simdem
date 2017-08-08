@@ -31,10 +31,11 @@ elif [[ $FLAVOR == "cli" ]]; then
     build_container cli
 else
     build_container cli
-    if [ $? eq 1 ]; then
-	exit 1
+    if [ $? -ne 0 ]; then
+    	echo "Building container failed. Exiting"
+	return 1
     fi
     build_container novnc
 fi
 
-exit $?
+return $?
