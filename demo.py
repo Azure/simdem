@@ -38,7 +38,7 @@ class Demo(object):
             for var in matches:
                 if len(var) > 0:
                     value = self.ui.get_shell(self).run_command("echo $" + var).strip()
-                    if len(value) == 0 and not '$(' + var + ')' in self.current_command:
+                    if len(value) == 0 and not '$(' + var in self.current_command:
                         var_list.append(var)
         return self.current_command, var_list
 
