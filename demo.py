@@ -54,7 +54,7 @@ class Demo(object):
         lines = []
         for dirpath, dirs, files in os.walk(directory):
             for file in files:
-                if file == "README.md":                                
+                if file == "README.md" or file == "script.md":
                     lines.append(os.path.join(dirpath[len(directory):], file) + "\n")
                 
         return lines
@@ -260,7 +260,7 @@ class Demo(object):
                         if not href.endswith(".md"):
                             if not href.endswith("/"):
                                 href = href + "/"
-                            href = href + "README.md"
+                            href = href + env.get_script_file_name(script_dir)
                         prep_step["href"] = href
                         self.prep_steps.append(prep_step)
                    

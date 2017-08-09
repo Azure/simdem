@@ -19,17 +19,16 @@ def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_tes
     """
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
-    filename = script_dir + "README.md"
-
 
     script = ""
     env = Environment(script_dir, False).get()
     for key, value in env.items():
         script += key + "='" + value + "'\n"
 
+    filename = env.get_script_file_name(script_dir)
     in_code_block = False
     in_results_section = False
-    lines = list(open(filename))
+    lines = list(open(script_dir + filename))
     for line in lines:
         if line.startswith("Results:"):
             # Entering results section
@@ -110,7 +109,8 @@ def main():
     if cmd == "tutorial":
         cmd = "run"
         
-    filename = "README.md"
+    env = Environment(script_dir, False)
+    filename = env.get_script_file_name(script_dir)
     is_docker = os.path.isfile('/.dockerenv')
     if cmd == "run":
         demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test);
