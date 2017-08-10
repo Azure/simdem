@@ -97,13 +97,13 @@ escape sequences (such as colors) in the results section. SimDem
 automatically strips these when capturing the results.
 
 ```
-ls $SIMDEM_CWD/..
+ls -m $SIMDEM_CWD/..
 ```
 
 Results:
 
 ```expected_similarity=0.9
-env.json  script.md simdem  test
+env.json, script.md, simdem, test
 ```
 
 # Commands that do not work
