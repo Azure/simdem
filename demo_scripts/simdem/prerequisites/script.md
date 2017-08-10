@@ -61,10 +61,22 @@ touch $SIMDEM_TEMP_DIR/this_file_must_be_modfied_every_minute.txt
 
 Now we have a set of commands that should be executed as part of this
 pre-requisite. In order to use them we simply add a reference to this
-file in the pre-requisites section of any other script. The following
-"Validation" section will be executed before the above step
+file in the pre-requisites section of any other script. 
+
+Any code in a section headed with '# Validation' will be used by
+SimDem to test whether the pre-requisites have been satisfied. If
+validation tests pass the pre-requisite step will be skipped over,
+otherwise the other commands in the script will be executed.
 
 # Validation
+
+In order to continue with our example we include some vlaidation steps
+in this script. If you have not run through the commands above less
+than one minute ago this validation stage will fail. If you are
+working through this tutorial now you just executed the above
+statements and so the tests here will pass, but if you include this
+file as pre-requisite again it may well fail and thus automatically
+execute this script.
 
 For this pre-requisite we need to ensure that the test.txt file has
 been updated in the last 5 minutes. If not then we need to run the
