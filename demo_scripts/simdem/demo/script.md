@@ -35,7 +35,7 @@ You can run almost any shell command this way.
 # Special keys
 
 Although we said "spacebar" above, in reality you can hit almost any
-key. There are a few exceltions though:
+key. There are a few exceptions though:
 
 ## 'd' for description
 
@@ -43,7 +43,7 @@ Hitting 'd' will print all the text since the last command, that is it
 will print the description of the next command to be executed.
 
 ```
-echo "Hitting 'd' now will display the descriptin for this command."
+echo "Hitting 'd' now will display the description for this command."
 ```
 
 ## 'b' for break
