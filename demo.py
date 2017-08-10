@@ -7,6 +7,7 @@ import sys
 import urllib.request
 from environment import Environment
 from cli import Ui
+import config
 
 class Demo(object):
     def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
@@ -15,6 +16,8 @@ class Demo(object):
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
+        if not self.script_dir.endswith('/'):
+            self.script_dir = self.script_dir + "/"
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
@@ -66,15 +69,20 @@ class Demo(object):
         lines.append("# Next Steps\n")
 
         scripts = self.get_scripts(self.script_dir)
-
+            
         for script in scripts:
             script = script.strip()
             with open(os.path.join(self.script_dir, script)) as f:
                 title = f.readline().strip()
                 title = title[2:]
             demo = { "title": title, "path": script }
+
+            idx = script.rfind(os.sep)
+            if idx:
+                name = script[:idx]
+            else:
+                name = script
                 
-            name = script[:script.index(os.sep)]
             if not name.endswith(".md") and name not in toc:
                 toc[name] = [ demo ]
             elif name in toc:
@@ -108,11 +116,6 @@ class Demo(object):
         """
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
-        if not self.script_dir.endswith('/'):
-            self.script_dir = self.script_dir + "/"
-
-        lines = None
-        
         if self.is_testing:
             test_file = self.script_dir + "test_plan.txt"
             if os.path.isfile(test_file):
@@ -126,20 +129,7 @@ class Demo(object):
                             file = self.script_dir + line
                             lines = lines + list(open(file))
 
-        file = self.script_dir + self.filename
-
-        if file.startswith("http"):
-            # FIXME: Error handling
-            response = urllib.request.urlopen(file)
-            data = response.read().decode("utf-8")
-            lines = data.splitlines(True)
-        else:
-            if not lines and os.path.isfile(file):
-                lines = list(open(file))
-            elif not lines:
-                lines = self.generate_toc()
-
-        classified_lines = self.classify_lines(lines)
+        classified_lines = self.classify_lines()
         failed_tests, passed_tests = self.execute(classified_lines)
 
         if self.is_testing:
@@ -188,23 +178,38 @@ class Demo(object):
             self.filename = match.groups()[1]
             self.run()
             
-    def classify_lines(self, lines):
+    def classify_lines(self):
+        lines = None
+        file = self.script_dir + self.filename
+        self.ui.log("info", "Reading lines from " + file)
+    
+        if file.startswith("http"):
+            # FIXME: Error handling
+            response = urllib.request.urlopen(file)
+            data = response.read().decode("utf-8")
+            lines = data.splitlines(True)
+        else:
+            if not lines and os.path.isfile(file):
+                lines = list(open(file))
+            elif not lines:
+                lines = self.generate_toc()
+                
         in_code_block = False
         in_results_section = False
         is_first_line = True
         in_next_steps = False
         in_prerequisites = False
+        in_validation_section = False
         executed_code_in_this_section = False
 
         classified_lines = []
 
         for line in lines:
-            if line.startswith("Results:"):
+            if line.lower().startswith("results:"):
                 # Entering results section
                 in_results_section = True
             elif line.startswith("```") and not in_code_block:
                 # Entering a code block,
-                # if in_results_section = True then it's a results block
                 in_code_block = True
                 pos = line.lower().find("expected_similarity=")
                 if pos >= 0:
@@ -213,10 +218,6 @@ class Demo(object):
                     expected_similarity = float(similarity)
                 else:
                     expected_similarity = 0.66
-            elif line.startswith("```") and in_code_block and in_results_section:
-                # Finishing results section
-                in_results_section = False
-                in_code_block = False
             elif line.startswith("```") and in_code_block:
                 # Finishing code block
                 in_code_block = False
@@ -239,8 +240,12 @@ class Demo(object):
                     in_next_steps = True
                 elif line.lower().strip().endswith("# prerequisites"):
                     in_prerequisites = True
+                elif line.lower().strip().startswith("# validation"):
+                    # Entering validation section
+                    in_validation_section = True
                 else:
                     in_prerequisites = False
+                    in_validation_section = False
                     in_next_steps = False
                 classified_lines.append({"type": "heading",
                                          "text": line})
@@ -250,6 +255,9 @@ class Demo(object):
                                              "text": line})
                 elif in_prerequisites:
                     classified_lines.append({"type": "prerequisite",
+                                             "text": line})
+                elif in_validation_section:
+                    classified_lines.append({"type": "validation",
                                              "text": line})
                 else:
                     classified_lines.append({"type": "description",
@@ -266,6 +274,7 @@ class Demo(object):
         failed_tests = 0
         passed_tests = 0
         in_prerequisites = False
+        in_validation = False
         executed_code_in_this_section = False
         next_steps = []
 
@@ -280,7 +289,7 @@ class Demo(object):
                 # Finishing results section
                 if self.is_testing:
                     ansi_escape = re.compile(r'\x1b[^m]*m')
-                    if self.ui.test_results(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                    if self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
                         passed_tests += 1
                     else:
                         failed_tests += 1
@@ -308,7 +317,7 @@ class Demo(object):
                     self.ui.clear(self)
                     self.ui.heading(line["text"])
             else:
-                if not self.is_simulation and line["type"] == "description":
+                if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
                     # Descriptive text
                     self.ui.description(line["text"])
                 if line["type"] == "next_step":
@@ -322,13 +331,16 @@ class Demo(object):
         return failed_tests, passed_tests
     
     def check_prerequisites(self, lines):
-        """Check that all prerequisites have been run
-        satisfied. If running in test mode assume that this is the
-        case (pre-requisites should be handled in the test_plan"""
+        """Check that all prerequisites have been satisfied by iterating
+        through them and running the validation steps. If the
+        validatin tests pass then move on, if they do not then execute
+        the prerequisite script. If running in test mode assume that
+        this is the case (pre-requisites should be handled in the
+        test_plan
+
+        """
         if self.is_testing or self.is_automated:
             return
-
-# FIXME: run validation steps here
 
         steps = []
         for line in lines:
@@ -348,29 +360,74 @@ class Demo(object):
                     steps.append(step)
 
         for step in steps:
-            self.ui.new_para()
-            self.ui.instruction("Have you satisfied the '" + step["title"] + "' prerequisite? (y/N)")
-            
-            selection = None
-            while not selection:
-                in_string = input()
-                if in_string.lower() == "y" or in_string.lower() == "yes":
-                    selection = "yes"
-                elif in_string == "" or in_string.lower() =="n" or in_string.lower() == "no":
-                    selection = "no"
+            path, filename = os.path.split(step["href"])
+            if (step["href"].startswith(".")):
+                new_dir = self.script_dir + path
+            else:
+                new_dir = path
 
-            if selection == "no":
-                path, filename = os.path.split(step["href"])
-                if (step["href"].startswith(".")):
-                    new_dir = self.script_dir + path
-                else:
-                    new_dir = path
-                    
-                self.ui.horizontal_rule()
-                demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
-                demo.run()
-                self.ui.clear(self)
-                self.ui.information("'" + step["title"] + "' prerequisite completed.", True)
-                self.ui.new_para
-                
-                
+            self.ui.new_para()
+            self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
+            
+            demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
+            demo.run_if_validation_fails()
+
+    def run_if_validation_fails(self):
+        self.ui.information("Validating pre-requisite...")
+        lines = self.classify_lines()
+        if self.validate(lines):
+            self.ui.information("Validation passed.")
+        else:
+            self.ui.information("Validation failed. Running the pre-requisite script.")
+            self.run()
+            self.ui.clear(self)
+            self.ui.new_para
+            
+    def validate(self, lines):
+        in_validation = False
+        in_results = False
+        expected_results = ""
+        failed_validation = False
+        for line in lines:
+            if line["type"] == "validation":
+                in_validation = True
+            elif line["type"] == "heading":
+                in_validation = False
+            elif in_validation and line["type"] == "executable":
+                self.current_command = line["text"]
+                self.ui.log("debug", "Execute validation command: " + self.current_command)
+                actual_results = self.ui.simulate_command(self, not config.is_debug)
+            elif in_validation and line["type"] == "result":
+                in_results = True
+                expected_results += line["text"]
+                expected_similarity = line["expected_similarity"]
+            elif line["type"] != "result" and in_results:
+                # Finishing results section
+                ansi_escape = re.compile(r'\x1b[^m]*m')
+                if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                    self.ui.log("debug", "expected results: " + expected_results)
+                    self.ui.log("debug", "actual results: " + actual_results)
+                    return False
+                expected_results = ""
+                actual_results = ""
+                in_results = False
+
+        return True
+
+    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66):
+        """ Checks to see if a command execution passes.
+        If actual results compared to expected results is within
+        the expected similarity level then it's considered a pass.
+        """
+        differ = difflib.Differ()
+        comparison = differ.compare(actual_results, expected_results)
+        diff = differ.compare(actual_results, expected_results)
+        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
+
+        is_pass = seq.ratio() >= expected_similarity
+
+        self.ui.log("debug", "Similairty is: " + str(seq.ratio()))
+
+        if not is_pass:
+            self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
+        return is_pass

@@ -109,6 +109,10 @@ to select it) and a title (to be displayed).
         else:
             print(colorama.Style.RESET_ALL, end="")
 
+    def log(self, level, text):
+        if config.is_debug and level.upper() == "DEBUG":
+            print(level.upper() + " : " + text)
+            
     def request_input(self, text):
         """ Displays text that is intended to propmt the user for input. """
         print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
@@ -159,16 +163,20 @@ to select it) and a title (to be displayed).
                 delay = random.uniform(0.01, config.TYPING_DELAY)
                 time.sleep(delay)
 
-    def simulate_command(self, demo):
-        """
-        Types the command on the screen, executes it and outputs the
+    def simulate_command(self, demo, silent = False):
+        """Types the command on the screen, executes it and outputs the
         results if simulation == True then system will make the "typing"
         look real and will wait for keyboard entry before proceeding to
-        the next command
+        the next command.
+
+        If silent = True then the command and its results will not be
+        ouptut.
+
         """
 
         if not demo.is_learning or demo.current_command.strip() == "clear":
-            self.type_command(demo)
+            if not silent:
+                self.type_command(demo)
             _, var_list = demo.get_current_command()
 
             # Get values for unknown variables
@@ -179,12 +187,11 @@ to select it) and a title (to be displayed).
                     var_value = self.input_interactive_variable(var_name)
                 if not var_name.startswith("SIMDEM_"):
                     demo.env.set(var_name, var_value)
-                    self.run_command(demo, var_name + '="' + var_value + '"')
+                    self.run_command(demo, var_name + '="' + var_value + '"', silent = silent)
 
-            output = self.run_command(demo)
+            output = self.run_command(demo, silent = silent)
             demo.last_command = demo.current_command
             demo.current_command = ""
-
         else:
             done = False
             while not done:
@@ -212,6 +219,7 @@ to select it) and a title (to be displayed).
                     print(colorama.Fore.RED, end="")
                     print("You have a typo there")
 
+        self.log("debug", "Output: " + output)
         return output
 
     def get_shell(self, demo):
@@ -226,11 +234,11 @@ to select it) and a title (to be displayed).
             self._shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
         return self._shell
 
-    def run_command(self, demo, command=None):
+    def run_command(self, demo, command=None, silent = False):
         """
         Run the demo.curent_command unless command is passed in, in
         which case run the supplied command in the current demo
-        encironment.
+        environment. Return the output of the command.
         """
         if not command:
             command = demo.current_command
@@ -241,7 +249,8 @@ to select it) and a title (to be displayed).
         response = self.get_shell(demo).run_command(command)
         end_time = time.time()
 
-        self.results(response)
+        if not silent:
+            self.results(response)
 
         if demo.is_testing:
             self.information("--- %s seconds execution time ---" % (end_time - start_time))
@@ -345,38 +354,26 @@ to select it) and a title (to be displayed).
             fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
         return ret
 
-    def test_results(self, expected_results, actual_results, expected_similarity = 0.66):
-        """Compares the similarity of the expected vs actual results.
-
-        Pass when the similarity ratio is greater or equal to the expected
-        similarity. Defaults to 66% similarity to pass.
+    def test_results(self, expected_results, actual_results, similarity, expected_similarity = 0.66):
+        """Display the test results for a single test
         """
-        differ = difflib.Differ()
-        comparison = differ.compare(actual_results, expected_results)
-        diff = differ.compare(actual_results, expected_results)
-        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
-
-        is_pass = seq.ratio() >= expected_similarity
-
-        if not is_pass:
-            print("\n\n=============================\n\n")
-            print(colorama.Fore.RED + colorama.Style.BRIGHT)
-            print("FAILED")
-            print(colorama.Style.RESET_ALL)
-            print("Similarity ratio:    " + str(seq.ratio()))
-            print("Expected Similarity: " + str(expected_similarity))
-            print("\n\n=============================\n\n")
-            print("Expected results:")
-            print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
-            print(expected_results)
-            print(colorama.Style.RESET_ALL)
-            print("Actual results:")
-            print(colorama.Fore.RED + colorama.Style.BRIGHT)
-            print(actual_results)
-            print(colorama.Style.RESET_ALL)
-            print("\n\n=============================\n\n")
-            print(colorama.Style.RESET_ALL)
-        return is_pass
+        print("\n\n=============================\n\n")
+        print(colorama.Fore.RED + colorama.Style.BRIGHT)
+        print("FAILED")
+        print(colorama.Style.RESET_ALL)
+        print("Similarity ratio:    " + str(similarity))
+        print("Expected Similarity: " + str(expected_similarity))
+        print("\n\n=============================\n\n")
+        print("Expected results:")
+        print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
+        print(expected_results)
+        print(colorama.Style.RESET_ALL)
+        print("Actual results:")
+        print(colorama.Fore.RED + colorama.Style.BRIGHT)
+        print(actual_results)
+        print(colorama.Style.RESET_ALL)
+        print("\n\n=============================\n\n")
+        print(colorama.Style.RESET_ALL)
 
     def get_command(self):
         self.request_input("What mode do you want to run in? (default 'tutorial')")
