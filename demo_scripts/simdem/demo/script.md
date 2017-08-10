@@ -3,7 +3,7 @@
 This script is intended to be used to demonstrate the key features of
 Simdem.
 
-When you hit 'spacebar' a command will be "typed" and
+When you hit 'spacebar' a command will be displayed and
 executed. Actually you can hit almost any key but we recommend
 'spacebar' here because we've not told you about the special keys yet
 and spacebar is not one of them.
