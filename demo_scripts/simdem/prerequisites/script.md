@@ -1,9 +1,16 @@
 # Understanding Prerequisites
 
-There aren't really any pre-requisites for this tutorial / demo, but
-this is a convenient place to explain how they work.
+Prerequisite scripts are scripts that must be run in order for another
+script to work. When SimDem finds a pre-requisite section it will test
+whether the steps have been completed (see validation below). If the
+validation tests fail then the code blocks in the pre-requisite script
+are executed.
 
-# Syntax
+There aren't really any pre-requisites for this tutorial /
+demo. Howeve,r this document is inserted as a pre-requisite so that we
+can see how they work.
+
+# Syntax Prerequisites
 
 The prerequisites section starts with a heading of `# prerequisites`.
 
