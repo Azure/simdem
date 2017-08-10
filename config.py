@@ -5,3 +5,9 @@ SIMDEM_TEMP_DIR = "~/.simdem/tmp"
 # TYPING DELAY is the upper bound of this delay.
 TYPING_DELAY = 0.08
 
+#################################################################
+# Don't change anything below here unless you know what you are
+# doing
+#################################################################
+
+is_debug = False

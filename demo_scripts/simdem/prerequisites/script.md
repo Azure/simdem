@@ -47,7 +47,9 @@ satisfied.
 
 ```
 sleep 5
-touch $SIMDEM_TEMP_DIR/test.txt
+echo $SIMDEM_TEMP_DIR
+mkdir -p $SIMDEM_TEMP_DIR
+touch $SIMDEM_TEMP_DIR/this_file_must_be_modfied_every_minute.txt
 ```
 
 Now we have a set of commands that should be executed as part of this
@@ -66,13 +68,13 @@ minutes you won't come back here. You can do this by selecting
 "Understanding SimDem Syntax" in the next steps section.
 
 ``` 
-find $SIMDEM_TEMP_DIR -name "test.txt" -newermt "5 minutes ago"
+find $SIMDEM_TEMP_DIR -name "this_file_must_be_modfied_every_minute.txt" -newermt "1 minutes ago"
 ```
 
 Results:
 
-```expected_similarity=0.2
-/home/username/.simdem/test.txt
+```
+/home/<username>/.simdem/tmp/this_file_must_be_modfied_every_minute.txt
 ```
 
 # Next Steps
