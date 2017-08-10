@@ -47,7 +47,12 @@ it waits, silently, for input.
 
 ## Result Blocks
 
-### Including Results in the Script
+Result blocks serve two main purposes:
+
+  1. Help readers of the markdown content understand expected behaviour
+  2. Enable SimDem documents to be used as tests
+
+### Including results blocks for readablity and testing
 
 When using the script as a web page or printout it is likley that you
 will want to include the results. However, when you are running in a
