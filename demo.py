@@ -196,7 +196,6 @@ class Demo(object):
                 
         in_code_block = False
         in_results_section = False
-        is_first_line = True
         in_next_steps = False
         in_prerequisites = False
         in_validation_section = False
@@ -268,6 +267,7 @@ class Demo(object):
         return classified_lines
 
     def execute(self, lines):
+        is_first_line = True
         in_results = False
         expected_results = ""
         actual_results = ""
@@ -312,7 +312,8 @@ class Demo(object):
                 actual_results = self.ui.simulate_command(self)
                 executed_code_in_this_section = True
             elif line["type"] == "heading":
-                self.ui.check_for_interactive_command(self)
+                if not is_first_line:
+                    self.ui.check_for_interactive_command(self)
                 if not self.is_simulation:
                     self.ui.clear(self)
                     self.ui.heading(line["text"])
@@ -378,7 +379,8 @@ class Demo(object):
         if self.validate(lines):
             self.ui.information("Validation passed.")
         else:
-            self.ui.information("Validation failed. Running the pre-requisite script.")
+            self.ui.information("Validation failed. Let's run the pre-requisite script.")
+            self.ui.check_for_interactive_command(self)
             self.run()
             self.ui.clear(self)
             self.ui.new_para
@@ -404,7 +406,7 @@ class Demo(object):
             elif line["type"] != "result" and in_results:
                 # Finishing results section
                 ansi_escape = re.compile(r'\x1b[^m]*m')
-                if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity, True):
                     self.ui.log("debug", "expected results: " + expected_results)
                     self.ui.log("debug", "actual results: " + actual_results)
                     return False
@@ -414,10 +416,14 @@ class Demo(object):
 
         return True
 
-    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66):
-        """ Checks to see if a command execution passes.
+    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66, is_silent = False):
+        """Checks to see if a command execution passes.
         If actual results compared to expected results is within
         the expected similarity level then it's considered a pass.
+
+        If is_silent is set to True then error results will be
+        displayed.
+
         """
         differ = difflib.Differ()
         comparison = differ.compare(actual_results, expected_results)
@@ -428,6 +434,6 @@ class Demo(object):
 
         self.ui.log("debug", "Similairty is: " + str(seq.ratio()))
 
-        if not is_pass:
+        if not is_pass and not is_silent:
             self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
         return is_pass
