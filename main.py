@@ -68,6 +68,8 @@ def main():
                  help="If set to anything other than False the output of the command will be compared to the expected results in the sript. Any failures will be reported")
     p.add_option('--fastfail', default="True",
                  help="If set to anything other than True test execution has will stop on the first failure. This has no affect if running in any mode other than 'test'.")
+    p.add_option('--debug', '-d', default="False",
+                 help="Turn on debug logging by setting to True.")
 
     options, arguments = p.parse_args()
 
@@ -91,6 +93,9 @@ def main():
     else:
         print("Unknown style (--style, -s): " + options.style)
         exit(1)
+
+    if options.debug.lower() == "true":
+        config.is_debug = True
 
     if len(arguments) == 2:
         script_dir = options.path + arguments[1]
