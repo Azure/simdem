@@ -116,19 +116,6 @@ class Demo(object):
         """
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
-        if self.is_testing:
-            test_file = self.script_dir + "test_plan.txt"
-            if os.path.isfile(test_file):
-                plan_lines = list(open(test_file))
-                lines = []
-                for line in plan_lines:
-                    line = line.strip()
-                    if not line.startswith("#"):
-                        # not a comment so should be a path to a script with tests
-                        if not line == "":
-                            file = self.script_dir + line
-                            lines = lines + list(open(file))
-
         classified_lines = self.classify_lines()
         failed_tests, passed_tests = self.execute(classified_lines)
 
@@ -147,8 +134,6 @@ class Demo(object):
                 self.ui.instruction("View failure reports in context in the above output.")
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
-            else:
-                sys.exit(0)
 
         next_steps = []
         for line in classified_lines:
@@ -180,19 +165,38 @@ class Demo(object):
             
     def classify_lines(self):
         lines = None
-        file = self.script_dir + self.filename
-        self.ui.log("info", "Reading lines from " + file)
+
+        if self.is_testing:
+            test_file = self.script_dir + "test_plan.txt"
+            if os.path.isfile(test_file):
+                self.ui.log("info", "Executing test plan in " + test_file)
+                plan_lines = list(open(test_file))
+                lines = []
+                for line in plan_lines:
+                    line = line.strip()
+                    if not line == "" and not line.startswith("#"):
+                        # not a comment or whitespace so should be a path to a script with tests
+                        self.ui.log("debug", "Including " + line + " in tests.")
+                        before = len(lines)
+                        file = self.script_dir + line
+                        lines = lines + list(open(file))
+                        after = len(lines)
+                        self.ui.log("debug", "Added " + str(after - before) + " lines.")
+                        
+        if lines is None:
+            file = self.script_dir + self.filename
+            self.ui.log("info", "Reading lines from " + file)
     
-        if file.startswith("http"):
-            # FIXME: Error handling
-            response = urllib.request.urlopen(file)
-            data = response.read().decode("utf-8")
-            lines = data.splitlines(True)
-        else:
-            if not lines and os.path.isfile(file):
-                lines = list(open(file))
-            elif not lines:
-                lines = self.generate_toc()
+            if file.startswith("http"):
+                # FIXME: Error handling
+                response = urllib.request.urlopen(file)
+                data = response.read().decode("utf-8")
+                lines = data.splitlines(True)
+            else:
+                if not lines and os.path.isfile(file):
+                    lines = list(open(file))
+                elif not lines:
+                    lines = self.generate_toc()
                 
         in_code_block = False
         in_results_section = False
@@ -233,11 +237,12 @@ class Demo(object):
                 else:
                     classified_lines.append({"type": "executable",
                                              "text": line})
-            elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
+            elif line.startswith("#") and not in_code_block and not in_results_section:
                 # Heading in descriptive text, indicating a new section
                 if line.lower().strip().endswith("# next steps"):
                     in_next_steps = True
                 elif line.lower().strip().endswith("# prerequisites"):
+                    self.ui.log("debug", "Found a prerequisites section")
                     in_prerequisites = True
                 elif line.lower().strip().startswith("# validation"):
                     # Entering validation section
@@ -264,6 +269,14 @@ class Demo(object):
 
             is_first_line = False
 
+        classified_lines.append({"type": "EOF",
+                                 "text": ""})
+
+        if config.is_debug:
+            self.ui.log("debug", "Classified lines: ")
+            for line in classified_lines:
+                self.ui.log("debug", str(line))
+        
         return classified_lines
 
     def execute(self, lines):
@@ -281,6 +294,7 @@ class Demo(object):
         self.ui.clear(self)
         self.ui.prompt()
         for line in lines:
+            self.ui.log("debug", "Execute line: " + str(line))
             if line["type"] == "result":
                 in_results = True
                 expected_results += line["text"]
@@ -299,8 +313,10 @@ class Demo(object):
                 actual_results = ""
                 in_results = False
             elif line["type"] == "prerequisite":
+                self.ui.log("debug", "Entering prerequisites")
                 in_prerequisites = True
             elif line["type"] != "prerequisites" and in_prerequisites:
+                self.ui.log("debug", "Got all prerequisites")
                 self.check_prerequisites(lines)
                 in_prerequisites = False
                 self.ui.heading(line["text"])
@@ -340,8 +356,6 @@ class Demo(object):
         test_plan
 
         """
-        if self.is_testing or self.is_automated:
-            return
 
         steps = []
         for line in lines:
@@ -403,7 +417,7 @@ class Demo(object):
                 in_results = True
                 expected_results += line["text"]
                 expected_similarity = line["expected_similarity"]
-            elif line["type"] != "result" and in_results:
+            elif (line["type"] != "result" and in_results):
                 # Finishing results section
                 ansi_escape = re.compile(r'\x1b[^m]*m')
                 if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity, True):
@@ -432,7 +446,7 @@ class Demo(object):
 
         is_pass = seq.ratio() >= expected_similarity
 
-        self.ui.log("debug", "Similairty is: " + str(seq.ratio()))
+        self.ui.log("debug", "Similarity is: " + str(seq.ratio()))
 
         if not is_pass and not is_silent:
             self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
