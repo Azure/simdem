@@ -127,7 +127,7 @@ Test value for the test script
 # Capturing the output of commands
 
 ```
-CAPTURED_OUTPUT=$(uname)
+CAPTURED_OUTPUT=$(echo foo | sed 's/foo/bar/')
 ```
 
 Captured value is:
@@ -139,7 +139,7 @@ echo $CAPTURED_OUTPUT
 Results:
 
 ```
-Linux
+bar
 ```
 
 # Processing of Environment Variables

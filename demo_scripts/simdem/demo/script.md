@@ -3,7 +3,7 @@
 This script is intended to be used to demonstrate the key features of
 Simdem.
 
-When you hit 'spacebar' a command will be "typed" and
+When you hit 'spacebar' a command will be displayed and
 executed. Actually you can hit almost any key but we recommend
 'spacebar' here because we've not told you about the special keys yet
 and spacebar is not one of them.
@@ -35,7 +35,7 @@ You can run almost any shell command this way.
 # Special keys
 
 Although we said "spacebar" above, in reality you can hit almost any
-key. There are a few exceltions though:
+key. There are a few exceptions though:
 
 ## 'd' for description
 
@@ -43,7 +43,7 @@ Hitting 'd' will print all the text since the last command, that is it
 will print the description of the next command to be executed.
 
 ```
-echo "Hitting 'd' now will display the descriptin for this command."
+echo "Hitting 'd' now will display the description for this command."
 ```
 
 ## 'b' for break

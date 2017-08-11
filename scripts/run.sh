@@ -43,8 +43,8 @@ MODE=${3:-tutorial}
 REPOSITORY=rgardler
 CONTAINER_NAME=simdem_$FLAVOR
 SCRIPTS_VOLUME=${CONTAINER_NAME}_scripts
-AZURE_VOLUME=azure_data
-SSH_VOLUME=ssh_data
+AZURE_VOLUME=${AZURE_VOLUME:-$HOME/.azure}
+SSH_VOLUME=${SSH_VOLUME:-$HOME/.ssh}
 
 if [[ $FLAVOR == "novnc" ]]; then
     HOME="/headless"
