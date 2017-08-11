@@ -66,9 +66,9 @@ It's possible to provide a branching point a the end of a script. The
 user can select one of a selection of options or they can enter "quit"
 (or just "q") to exit SimDem.
 
-  1. [Write SimDem documents](../syntax/script.md)
-  2. [SimDem Index](../script.md)
-  3. [Modes of operation](../modes/script.md)
+  1. [Write SimDem documents](../syntax/README.md)
+  2. [SimDem Index](../README.md)
+  3. [Modes of operation](../modes/README.md)
 
 
 

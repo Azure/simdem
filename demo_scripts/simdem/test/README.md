@@ -8,7 +8,7 @@ section in the script.
 First, lets take a look at the source of this file. 
 
 ```
-cat $SIMDEM_CWD/script.md
+cat $SIMDEM_CWD/README.md
 ```
 
 ## Running in test mode
@@ -60,18 +60,18 @@ filename for a SimDem script to be used in testing. Each of these
 files will be concatenated together to create a complete test plan.
 
 For example, the following example `test_plan.txt` will run all the
-code and tests in `preparation/script.md` followed by those in
-`main/script.md` and finally those in `cleanup/script.md`.
+code and tests in `preparation/README.md` followed by those in
+`main/README.md` and finally those in `cleanup/README.md`.
 
 `
-preparation/script.md
-main/script.md
-cleanup/script.md
+preparation/README.md
+main/README.md
+cleanup/README.md
 `
 
 # Next Steps
 
-  1. [SimDem Index](../script.md)
-  2. [Build a Hello World script](../tutorial/script.md)
-  3. [Write SimDem documents](../syntax/script.md)
-  4. [Configure your scripts through variables](../variables/script.md)
+  1. [SimDem Index](../README.md)
+  2. [Build a Hello World script](../tutorial/README.md)
+  3. [Write SimDem documents](../syntax/README.md)
+  4. [Configure your scripts through variables](../variables/README.md)
