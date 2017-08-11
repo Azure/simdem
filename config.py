@@ -10,5 +10,7 @@ TYPING_DELAY = 0.08
 # doing
 #################################################################
 
+# Set is_debug to True if you want to run in debug mode. This setting
+# can be overriden in the command like with the `--debug true` option.
 is_debug = False
 
