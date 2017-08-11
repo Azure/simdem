@@ -7,6 +7,7 @@ import sys
 import urllib.request
 from environment import Environment
 from cli import Ui
+import config
 
 class Demo(object):
     def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
@@ -15,6 +16,8 @@ class Demo(object):
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = script_dir
+        if not self.script_dir.endswith('/'):
+            self.script_dir = self.script_dir + "/"
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
@@ -23,7 +26,6 @@ class Demo(object):
         self.current_command = ""
         self.current_description = ""
         self.last_command = ""
-        self.prep_steps = []
         self.is_prerequisite = is_prerequisite
         
     def get_current_command(self):
@@ -67,15 +69,20 @@ class Demo(object):
         lines.append("# Next Steps\n")
 
         scripts = self.get_scripts(self.script_dir)
-
+            
         for script in scripts:
             script = script.strip()
             with open(os.path.join(self.script_dir, script)) as f:
                 title = f.readline().strip()
                 title = title[2:]
             demo = { "title": title, "path": script }
+
+            idx = script.rfind(os.sep)
+            if idx:
+                name = script[:idx]
+            else:
+                name = script
                 
-            name = script[:script.index(os.sep)]
             if not name.endswith(".md") and name not in toc:
                 toc[name] = [ demo ]
             elif name in toc:
@@ -109,162 +116,8 @@ class Demo(object):
         """
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
-        if not self.script_dir.endswith('/'):
-            self.script_dir = self.script_dir + "/"
-
-        lines = None
-        
-        if self.is_testing:
-            test_file = self.script_dir + "test_plan.txt"
-            if os.path.isfile(test_file):
-                plan_lines = list(open(test_file))
-                lines = []
-                for line in plan_lines:
-                    line = line.strip()
-                    if not line.startswith("#"):
-                        # not a comment so should be a path to a script with tests
-                        if not line == "":
-                            file = self.script_dir + line
-                            lines = lines + list(open(file))
-
-        file = self.script_dir + self.filename
-
-        if file.startswith("http"):
-            # FIXME: Error handling
-            response = urllib.request.urlopen(file)
-            data = response.read().decode("utf-8")
-            lines = data.splitlines(True)
-        else:
-            if not lines and os.path.isfile(file):
-                lines = list(open(file))
-            elif not lines:
-                lines = self.generate_toc()
-                    
-        in_code_block = False
-        in_results_section = False
-        expected_results = ""
-        actual_results = ""
-        passed_tests = 0
-        failed_tests = 0
-        is_first_line = True
-        in_next_steps = False
-        in_prerequisites = False
-        next_steps = []
-        executed_code_in_this_section = False
-        self.current_description = ""
-
-        for line in lines:
-            self.current_description += line;
-
-            if line.startswith("Results:"):
-                # Entering results section
-                in_results_section = True
-                # DEPRECATED: having the expected similarity in the results line is deprecated as of 6/22/17
-                pos = line.lower().find("expected similarity: ")
-                if pos >= 0:
-                    pos = pos + len("expected similarity: ")
-                    similarity = line[pos:]
-                    expected_similarity = float(similarity)
-                else:
-                    expected_similarity = 0.66
-            elif line.startswith("```") and not in_code_block:
-                # Entering a code block, if in_results_section = True then it's a results block
-                in_code_block = True
-                pos = line.lower().find("expected_similarity=")
-                if pos >= 0:
-                    pos = pos + len("expected_similarity=")
-                    similarity = line[pos:]
-                    expected_similarity = float(similarity)
-                else:
-                    expected_similarity = 0.66
-            elif line.startswith("```") and in_code_block and in_results_section:
-                # Finishing results section
-                if in_results_section and self.is_testing:
-                    ansi_escape = re.compile(r'\x1b[^m]*m')
-                    if self.ui.test_results(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
-                        passed_tests += 1
-                    else:
-                        failed_tests += 1
-                        if (self.is_fast_fail):
-                            break
-                expected_results = ""
-                actual_results = ""
-                in_results_section = False
-                in_code_block = False
-            elif line.startswith("```") and in_code_block:
-                # Finishing code block
-                in_code_block = False
-                in_results_section = False
-            elif in_results_section and in_code_block:
-                expected_results += line
-            elif in_code_block and not in_results_section:
-                # Executable line
-                if line.startswith("#"):
-                    # comment
-                    pass
-                else:
-                    if not self.is_learning:
-                        self.ui.prompt()
-                        self.ui.check_for_interactive_command(self)
-                        
-                    self.current_command = line
-                    actual_results = self.ui.simulate_command(self)
-                    executed_code_in_this_section = True
-            elif line.startswith("#") and not in_code_block and not in_results_section and not self.is_automated:
-                # Heading in descriptive text, indicating a new section
-
-                if in_next_steps:
-                    # This should never happen as next steps should always be last in doc
-                    if is_testing:
-                        failed_tests += 1
-                        actual_results = "Next Steps has a sub heading, or following section. This is not allowed"
-                    in_next_steps = False
-                if in_prerequisites:
-                    self.check_prerequisites()
-                    in_prerequisites = False
-
-                if line.lower().strip().endswith("# next steps"):
-                    in_next_steps = True
-                if line.lower().strip().endswith("# prerequisites"):
-                    in_prerequisites = True
-                if is_first_line:
-                    self.ui.clear(self)
-                elif executed_code_in_this_section:
-                    executed_code_in_this_section = False
-                    self.ui.prompt()
-                    self.ui.check_for_interactive_command(self)
-                    self.current_description += line;
-                    self.ui.clear(self)
-                        
-                if not self.is_simulation:
-                    self.ui.heading(line)
-
-            else:
-                if not self.is_simulation and not in_results_section and not in_next_steps and not in_prerequisites:
-                    # Descriptive text
-                    self.ui.description(line)
-                if in_next_steps:
-                    pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
-                    match = pattern.match(line)
-                    if match:
-                        self.ui.next_step(match.groups()[0], match.groups()[1])
-                        next_steps.append(line) 
-                if in_prerequisites:
-                    self.ui.description(line)
-                    pattern = re.compile('.*\[(.*)\]\((.*)\).*')
-                    match = pattern.match(line)
-                    if match:
-                        prep_step = {}
-                        prep_step["title"] = match.groups()[0].strip()
-                        href = match.groups()[1]
-                        if not href.endswith(".md"):
-                            if not href.endswith("/"):
-                                href = href + "/"
-                            href = href + env.get_script_file_name(script_dir)
-                        prep_step["href"] = href
-                        self.prep_steps.append(prep_step)
-                   
-            is_first_line = False
+        classified_lines = self.classify_lines()
+        failed_tests, passed_tests = self.execute(classified_lines)
 
         if self.is_testing:
             self.ui.horizontal_rule()
@@ -281,8 +134,11 @@ class Demo(object):
                 self.ui.instruction("View failure reports in context in the above output.")
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
-            else:
-                sys.exit(0)
+
+        next_steps = []
+        for line in classified_lines:
+            if line["type"] == "next_step" and len(line["text"].strip()) > 0:
+                next_steps.append(line)
 
         if len(next_steps) > 0:
             if self.is_prerequisite:
@@ -302,42 +158,301 @@ class Demo(object):
                     pass
 
             pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-            match = pattern.match(next_steps[in_value - 1])
+            match = pattern.match(next_steps[in_value - 1]["text"])
             self.script_dir = self.script_dir + match.groups()[0]
             self.filename = match.groups()[1]
             self.run()
-
-    def check_prerequisites(self):
-        """Check with the user that all prerequisites have been run
-        satisfied. If running in test mode assume that this is the
-        case (pre-requisites should be handled in the test_plan"""
-        if self.is_testing or self.is_automated:
-            return
-
-        for step in self.prep_steps:
-            self.ui.new_para()
-            self.ui.instruction("Have you satisfied the '" + step["title"] + "' prerequisite? (y/N)")
             
-            selection = None
-            while not selection:
-                in_string = input()
-                if in_string.lower() == "y" or in_string.lower() == "yes":
-                    selection = "yes"
-                elif in_string == "" or in_string.lower() =="n" or in_string.lower() == "no":
-                    selection = "no"
+    def classify_lines(self):
+        lines = None
 
-            if selection == "no":
-                path, filename = os.path.split(step["href"])
-                if (step["href"].startswith(".")):
-                    new_dir = self.script_dir + path
+        if self.is_testing:
+            test_file = self.script_dir + "test_plan.txt"
+            if os.path.isfile(test_file):
+                self.ui.log("info", "Executing test plan in " + test_file)
+                plan_lines = list(open(test_file))
+                lines = []
+                for line in plan_lines:
+                    line = line.strip()
+                    if not line == "" and not line.startswith("#"):
+                        # not a comment or whitespace so should be a path to a script with tests
+                        self.ui.log("debug", "Including " + line + " in tests.")
+                        before = len(lines)
+                        file = self.script_dir + line
+                        lines = lines + list(open(file))
+                        after = len(lines)
+                        self.ui.log("debug", "Added " + str(after - before) + " lines.")
+                        
+        if lines is None:
+            file = self.script_dir + self.filename
+            self.ui.log("info", "Reading lines from " + file)
+    
+            if file.startswith("http"):
+                # FIXME: Error handling
+                response = urllib.request.urlopen(file)
+                data = response.read().decode("utf-8")
+                lines = data.splitlines(True)
+            else:
+                if not lines and os.path.isfile(file):
+                    lines = list(open(file))
+                elif not lines:
+                    lines = self.generate_toc()
+                
+        in_code_block = False
+        in_results_section = False
+        in_next_steps = False
+        in_prerequisites = False
+        in_validation_section = False
+        executed_code_in_this_section = False
+
+        classified_lines = []
+
+        for line in lines:
+            if line.lower().startswith("results:"):
+                # Entering results section
+                in_results_section = True
+            elif line.startswith("```") and not in_code_block:
+                # Entering a code block,
+                in_code_block = True
+                pos = line.lower().find("expected_similarity=")
+                if pos >= 0:
+                    pos = pos + len("expected_similarity=")
+                    similarity = line[pos:]
+                    expected_similarity = float(similarity)
                 else:
-                    new_dir = path
-                    
-                self.ui.horizontal_rule()
-                demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
-                demo.run()
-                self.ui.clear(self)
-                self.ui.information("'" + step["title"] + "' prerequisite completed.", True)
-                self.ui.new_para
-                
-                
+                    expected_similarity = 0.66
+            elif line.startswith("```") and in_code_block:
+                # Finishing code block
+                in_code_block = False
+                in_results_section = False
+            elif in_results_section and in_code_block:
+                classified_lines.append({"type": "result",
+                                         "expected_similarity": expected_similarity,
+                                         "text": line})
+            elif in_code_block and not in_results_section:
+                # Executable line
+                if line.startswith("#"):
+                    # comment
+                    pass
+                else:
+                    classified_lines.append({"type": "executable",
+                                             "text": line})
+            elif line.startswith("#") and not in_code_block and not in_results_section:
+                # Heading in descriptive text, indicating a new section
+                if line.lower().strip().endswith("# next steps"):
+                    in_next_steps = True
+                elif line.lower().strip().endswith("# prerequisites"):
+                    self.ui.log("debug", "Found a prerequisites section")
+                    in_prerequisites = True
+                elif line.lower().strip().startswith("# validation"):
+                    # Entering validation section
+                    in_validation_section = True
+                else:
+                    in_prerequisites = False
+                    in_validation_section = False
+                    in_next_steps = False
+                classified_lines.append({"type": "heading",
+                                         "text": line})
+            else:
+                if in_next_steps:
+                    classified_lines.append({"type": "next_step",
+                                             "text": line})
+                elif in_prerequisites:
+                    classified_lines.append({"type": "prerequisite",
+                                             "text": line})
+                elif in_validation_section:
+                    classified_lines.append({"type": "validation",
+                                             "text": line})
+                else:
+                    classified_lines.append({"type": "description",
+                                             "text": line})
+
+            is_first_line = False
+
+        classified_lines.append({"type": "EOF",
+                                 "text": ""})
+
+        if config.is_debug:
+            self.ui.log("debug", "Classified lines: ")
+            for line in classified_lines:
+                self.ui.log("debug", str(line))
+        
+        return classified_lines
+
+    def execute(self, lines):
+        is_first_line = True
+        in_results = False
+        expected_results = ""
+        actual_results = ""
+        failed_tests = 0
+        passed_tests = 0
+        in_prerequisites = False
+        in_validation = False
+        executed_code_in_this_section = False
+        next_steps = []
+
+        self.ui.clear(self)
+        self.ui.prompt()
+        for line in lines:
+            if line["type"] == "result":
+                if not in_results:
+                    in_results = True
+                    expected_results = ""
+                expected_results += line["text"]
+                expected_similarity = line["expected_similarity"]
+            elif line["type"] != "result" and in_results:
+                # Finishing results section
+                if self.is_testing:
+                    ansi_escape = re.compile(r'\x1b[^m]*m')
+                    if self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                        passed_tests += 1
+                    else:
+                        failed_tests += 1
+                        if (self.is_fast_fail):
+                            break
+                expected_results = ""
+                actual_results = ""
+                in_results = False
+            elif line["type"] == "prerequisite":
+                self.ui.log("debug", "Entering prerequisites")
+                in_prerequisites = True
+            elif line["type"] != "prerequisites" and in_prerequisites:
+                self.ui.log("debug", "Got all prerequisites")
+                self.check_prerequisites(lines)
+                in_prerequisites = False
+                self.ui.heading(line["text"])
+            elif line["type"] == "executable":
+                if not self.is_learning:
+                    self.ui.prompt()
+                    self.ui.check_for_interactive_command(self)
+                self.current_command = line["text"]
+                actual_results = self.ui.simulate_command(self)
+                executed_code_in_this_section = True
+            elif line["type"] == "heading":
+                if not is_first_line:
+                    self.ui.check_for_interactive_command(self)
+                if not self.is_simulation:
+                    self.ui.clear(self)
+                    self.ui.heading(line["text"])
+            else:
+                if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
+                    # Descriptive text
+                    self.ui.description(line["text"])
+                if line["type"] == "next_step":
+                    pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
+                    match = pattern.match(line["text"])
+                    if match:
+                        self.ui.next_step(match.groups()[0], match.groups()[1])
+                   
+            is_first_line = False
+
+        return failed_tests, passed_tests
+    
+    def check_prerequisites(self, lines):
+        """Check that all prerequisites have been satisfied by iterating
+        through them and running the validation steps. If the
+        validatin tests pass then move on, if they do not then execute
+        the prerequisite script. If running in test mode assume that
+        this is the case (pre-requisites should be handled in the
+        test_plan
+
+        """
+
+        steps = []
+        for line in lines:
+            step = {}
+            if line["type"] == "prerequisite" and len(line["text"].strip()) > 0:
+                self.ui.description(line["text"])
+                pattern = re.compile('.*\[(.*)\]\((.*)\).*')
+                match = pattern.match(line["text"])
+                if match:
+                    step["title"] = match.groups()[0].strip()
+                    href = match.groups()[1]
+                    if not href.endswith(".md"):
+                        if not href.endswith("/"):
+                            href = href + "/"
+                        href = href + "script.md"
+                    step["href"] = href
+                    steps.append(step)
+
+        for step in steps:
+            path, filename = os.path.split(step["href"])
+            if (step["href"].startswith(".")):
+                new_dir = self.script_dir + path
+            else:
+                new_dir = path
+
+            self.ui.new_para()
+            self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
+            
+            demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
+            demo.run_if_validation_fails()
+
+    def run_if_validation_fails(self):
+        self.ui.information("Validating pre-requisite...")
+        lines = self.classify_lines()
+        if self.validate(lines):
+            self.ui.information("Validation passed.")
+        else:
+            self.ui.information("Validation failed. Let's run the pre-requisite script.")
+            self.ui.check_for_interactive_command(self)
+            self.run()
+            self.ui.clear(self)
+            self.ui.new_para
+            
+    def validate(self, lines):
+        result = True
+        in_validation = False
+        in_results = False
+        expected_results = ""
+        failed_validation = False
+        for line in lines:
+            if line["type"] == "validation":
+                in_validation = True
+            elif line["type"] == "heading":
+                in_validation = False
+            elif in_validation and line["type"] == "executable":
+                self.current_command = line["text"]
+                self.ui.log("debug", "Execute validation command: " + self.current_command)
+                actual_results = self.ui.simulate_command(self, not config.is_debug)
+                expected_results = ""
+            elif in_validation and line["type"] == "result":
+                if not in_results:
+                    in_results = True
+                    expected_results = ""
+                expected_results += line["text"]
+                expected_similarity = line["expected_similarity"]
+            elif (line["type"] != "result" and in_results):
+                # Finishing results section
+                ansi_escape = re.compile(r'\x1b[^m]*m')
+                if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity, True):
+                    self.ui.log("debug", "expected results: '" + expected_results + "'")
+                    self.ui.log("debug", "actual results: '" + actual_results + "'")
+                    result = False
+                expected_results = ""
+                actual_results = ""
+                in_results = False
+
+        return result
+
+    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66, is_silent = False):
+        """Checks to see if a command execution passes.
+        If actual results compared to expected results is within
+        the expected similarity level then it's considered a pass.
+
+        If is_silent is set to True then error results will be
+        displayed.
+
+        """
+        differ = difflib.Differ()
+        comparison = differ.compare(actual_results, expected_results)
+        diff = differ.compare(actual_results, expected_results)
+        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
+
+        is_pass = seq.ratio() >= expected_similarity
+
+        self.ui.log("debug", "Similarity is: " + str(seq.ratio()))
+
+        if not is_pass and not is_silent:
+            self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
+        return is_pass
