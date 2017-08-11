@@ -38,7 +38,7 @@ provide minimal documentation here.
 The above command will walk you through the SimDem documentation. Pay
 particular attention to the Syntax page, but the short version is that
 you are writing markdown with code blocks. For more information see
-`demo_scripts/simdem/tutorial/script.md`.
+`demo_scripts/simdem/tutorial/README.md`.
 
 ## Running in a Docker Container
 
@@ -255,4 +255,4 @@ near the top of the file):
 If you want to learn more before running the container then why not
 read the interactive tutorial as
 a
-[markdown page on GitHub](https://github.com/rgardler/simdem/blob/master/demo_scripts/simdem/script.md).
+[markdown page on GitHub](https://github.com/rgardler/simdem/blob/master/demo_scripts/simdem/README.md).

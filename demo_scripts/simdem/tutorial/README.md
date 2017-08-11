@@ -24,7 +24,7 @@ Let's build a hello world script:
 
 ```
 mkdir -p hello_world
-echo "# Hello World Script" > hello_world/script.md
+echo "# Hello World Script" > hello_world/README.md
 ```
 
 ## Run the script
@@ -40,7 +40,7 @@ really ask questions / report bugs via the
 http://github.com/rgardler/simdem issue tracker). If you feel a little
 lost then try one of these documents for guidance:
 
-  1. [Review SimDem Syntax](../syntx/script.md)
-  2. [Understand how to parameterize scripts](../variables/script.md)
-  3. [Understand how to make a script a test](../test/script.md)
+  1. [Review SimDem Syntax](../syntx/README.md)
+  2. [Understand how to parameterize scripts](../variables/README.md)
+  3. [Understand how to make a script a test](../test/README.md)
 

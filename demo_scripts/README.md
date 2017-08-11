@@ -14,6 +14,6 @@ It's all of them!
 
 # Next Steps
 
-  1. [Hello World Demo](simdem/demo/script.md)
-  2. [SimDem Documentation](simdem/script.md)
+  1. [Hello World Demo](simdem/demo/README.md)
+  2. [SimDem Documentation](simdem/README.md)
 

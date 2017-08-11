@@ -12,7 +12,7 @@ that the user may want to work through next.
 For example, this file is one part of a multi-part document.
 
 ```
-cat $SIMDEM_CWD/script.md
+cat $SIMDEM_CWD/README.md
 ```
 
 When executed using SimDem this results in the user being prompted to
@@ -22,44 +22,44 @@ the scripts it will be executed.
 # Prerequisites
 
 It is assumed that you have a basic understanding of the various
-SimDem execution [modes](../modes/script.md). You should also ensure
+SimDem execution [modes](../modes/README.md). You should also ensure
 you understand the SimDem [document syntax](../syntax).
 
 # Directory structure
 
 SimDem projects consist of a root directory and one or more
 sub-directories. Project directories will contain at least a
-`script.md` file that will be used by default when SimDem is run
+`README.md` file that will be used by default when SimDem is run
 against the project. Therefore the minimum directory structure for a
 simple tutorial is:
 
 `
 My_SimDem_Tutorial
-└── script.md 
+└── README.md 
 `
 
 # Multi-part tutorials
 
 A more complex project will contain a number of sub-directories
 containing tutorials. Tutorial sub-directories will contain at least a
-`script.md` file, this is the main file for that tutorial. For example:
+`README.md` file, this is the main file for that tutorial. For example:
 
 `
 My_Complex_SimDem_Tutorial
-├── script.md 
+├── README.md 
 ├── Tutorial_1
-│   └── script.md
+│   └── README.md
 ├── Tutorial_2
-│   └── script.md
+│   └── README.md
 └── Tutorial_3
-    └── script.md
+    └── README.md
 `
 
 ## Auto Table of Contents
 
 If the root of the demo scripts directory does not contain a
-`script.md` file then SimDem will create a Table of Contents from all
-sub-directories that contain a `script.md` file. This ToC will use the
+`README.md` file then SimDem will create a Table of Contents from all
+sub-directories that contain a `README.md` file. This ToC will use the
 first line (which should be a heading marked with '# ' at the start)
 as the text for the link to the script. This ToC will be displayed as
 a 'Next Steps' section, thus users will be able to step into any area
@@ -85,22 +85,22 @@ Results: Expected Similarity: 0.5
 demo_scripts/
 ├── env.json
 ├── env.local.json
-├── script.md
+├── README.md
 ├── simdem
 │   ├── env.json
 │   ├── env.local.json
-│   └── script.md
+│   └── README.md
 └── test
     ├── env.json
-    └── script.md						
+    └── README.md						
 ```
 
 # Next Steps
 
-  1. [Configure your scripts through variables](../variables/script.md)
-  2. [SimDem Index](../script.md)
-  3. [Use your documents as interactive tutorials or demos](../running/script.md)
-  4. [Use your documents as automated tests](../test/script.md)
-  5. [Build a SimDem container](../building/script.md)
+  1. [Configure your scripts through variables](../variables/README.md)
+  2. [SimDem Index](../README.md)
+  3. [Use your documents as interactive tutorials or demos](../running/README.md)
+  4. [Use your documents as automated tests](../test/README.md)
+  5. [Build a SimDem container](../building/README.md)
   
   
