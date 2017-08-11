@@ -33,7 +33,7 @@ rm -Rf $SIMDEM_TEMP_DIR/test/*
 # Prerequisites
 
 Test to see if our prerequesites work. In the setup we cleaned out our
-test files. The [prerequisite test script](./prerequisites/script.md)
+test files. The [prerequisite test script](./prerequisites/README.md)
 validates whether the file exists and, if it doesn't it will execute
 and create it.
 
