@@ -91,6 +91,9 @@ to select it) and a title (to be displayed).
 
     def clear(self, demo):
         """Clears the screen ready for  anew section of the script."""
+        if demo.is_testing:
+            return
+        
         if demo.is_simulation:
             demo.current_command = "clear"
             self.simulate_command(demo)

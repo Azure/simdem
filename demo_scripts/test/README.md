@@ -3,7 +3,11 @@
 This is a simple test script. It runs a number of commands in
 succession. This script also lists commands known not to work.
 
-# Version check
+# Setup
+
+Ensure the test environment is correctly setup.
+
+## SimDem version check
 
 ```
 echo $SIMDEM_VERSION
@@ -14,6 +18,40 @@ Results:
 ```
 0.7.4-dev
 ```
+
+## Clean test working files
+
+Ensure that our working files folder exists and that there are no
+residual files from previus test runs.
+
+```
+echo $SIMDEM_TEMP_DIR
+mkdir -p $SIMDEM_TEMP_DIR/test
+rm -Rf $SIMDEM_TEMP_DIR/test/*
+```
+
+# Prerequisites
+
+Test to see if our prerequesites work. In the setup we cleaned out our
+test files. The [prerequisite test script](./prerequisites/script.md)
+validates whether the file exists and, if it doesn't it will execute
+and create it.
+
+## Validate prerequisite ran
+
+The prerequisite script should have run and created a `prereq_ran`
+file.
+
+```
+ls $SIMDEM_TEMP_DIR/test
+```
+
+Results:
+
+```
+prereq_ran
+```
+
 
 # Directory Check
 
