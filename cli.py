@@ -222,7 +222,7 @@ to select it) and a title (to be displayed).
                     print(colorama.Fore.RED, end="")
                     print("You have a typo there")
 
-        self.log("debug", "Output: " + output)
+        self.log("debug", "Output: '" + output +"'")
         return output
 
     def get_shell(self, demo):

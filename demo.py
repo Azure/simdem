@@ -295,7 +295,9 @@ class Demo(object):
         self.ui.prompt()
         for line in lines:
             if line["type"] == "result":
-                in_results = True
+                if not in_results:
+                    in_results = True
+                    expected_results = ""
                 expected_results += line["text"]
                 expected_similarity = line["expected_similarity"]
             elif line["type"] != "result" and in_results:
@@ -399,6 +401,7 @@ class Demo(object):
             self.ui.new_para
             
     def validate(self, lines):
+        result = True
         in_validation = False
         in_results = False
         expected_results = ""
@@ -412,22 +415,25 @@ class Demo(object):
                 self.current_command = line["text"]
                 self.ui.log("debug", "Execute validation command: " + self.current_command)
                 actual_results = self.ui.simulate_command(self, not config.is_debug)
+                expected_results = ""
             elif in_validation and line["type"] == "result":
-                in_results = True
+                if not in_results:
+                    in_results = True
+                    expected_results = ""
                 expected_results += line["text"]
                 expected_similarity = line["expected_similarity"]
             elif (line["type"] != "result" and in_results):
                 # Finishing results section
                 ansi_escape = re.compile(r'\x1b[^m]*m')
                 if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity, True):
-                    self.ui.log("debug", "expected results: " + expected_results)
-                    self.ui.log("debug", "actual results: " + actual_results)
-                    return False
+                    self.ui.log("debug", "expected results: '" + expected_results + "'")
+                    self.ui.log("debug", "actual results: '" + actual_results + "'")
+                    result = False
                 expected_results = ""
                 actual_results = ""
                 in_results = False
 
-        return True
+        return result
 
     def is_pass(self, expected_results, actual_results, expected_similarity = 0.66, is_silent = False):
         """Checks to see if a command execution passes.
