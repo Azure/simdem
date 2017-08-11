@@ -20,18 +20,16 @@ else
     IS_DOCKER=false
     INSTALL_DIR=/usr/local/bin/simdem-dev/
 fi
+
 MAIN_FILE=main.py
 SYMLINK=simdem
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-        # Mac OSX
-        brew install python3
-else
-    if [ "$IS_DOCKER" = false ]; then
-	# If running in Docker assume python3 is already installed
-	sudo apt-get install -y python3-pip
-    fi
-fi
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     sudo apt update; sudo apt-get install -y python3-pip;;
+    Darwin*)    brew install python3;;
+    *)          echo "Unsupported OS: ${unameOut}"
+esac
 
 pip3 install -r requirements.txt
 
