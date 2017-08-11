@@ -10,7 +10,7 @@ There aren't really any pre-requisites for this tutorial /
 demo. Howeve,r this document is inserted as a pre-requisite so that we
 can see how they work.
 
-# Syntax Prerequisites
+# Prerequisites Syntax
 
 The prerequisites section starts with a heading of `# prerequisites`.
 

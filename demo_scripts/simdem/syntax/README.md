@@ -17,7 +17,7 @@ head -n 25 $SIMDEM_CWD/README.md
 
 It is common for a tutorial or demo to have a number of
 prerequisites. For example, it's a good idea to understand how these
-work, so take a look at our [prerequisites](./prerequisites/README.md)
+work, so take a look at our [prerequisites](../prerequisites/README.md)
 before proceeding.
 
 # SimDem Syntax
