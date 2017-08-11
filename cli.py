@@ -161,8 +161,18 @@ to select it) and a title (to be displayed).
             if end_of_var and idx == end_of_var:
                 end_of_var = 0
                 print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
+
             if char != "\n":
                 text += char
+
+        if self.demo.is_simulation:
+            for char in text:
+                delay = random.uniform(0.02, config.TYPING_DELAY)
+                time.sleep(delay)
+                self.command(char)
+        else:
+            self.command(text)
+                    
 
     def simulate_command(self, silent = False):
         """Types the current command on the screen, executes it and outputs
