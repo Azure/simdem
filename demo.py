@@ -9,7 +9,7 @@ from environment import Environment
 from cli import Ui
 
 class Demo(object):
-    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="script.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
+    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
         """Initialize variables"""
         self.ui = ui
         self.is_docker = is_running_in_docker
@@ -44,17 +44,17 @@ class Demo(object):
 
     def get_scripts(self, directory):
         """
-        Starting with the supplied directory find all `script.md` files
+        Starting with the supplied directory find all `README.md` files
         and return them as a list of scripts available to this execution.
-        We will not return multiple `script.md` files from each part of 
-        the tree. It is assumed that the highest level `script.md` files
+        We will not return multiple `README.md` files from each part of 
+        the tree. It is assumed that the highest level `README.md` files
         contains an index of scripts in that directory.
 
         """
         lines = []
         for dirpath, dirs, files in os.walk(directory):
             for file in files:
-                if file == "script.md":                                
+                if file == "README.md":                                
                     lines.append(os.path.join(dirpath[len(directory):], file) + "\n")
                 
         return lines
@@ -94,13 +94,13 @@ class Demo(object):
     
     def run(self):
         """
-        Reads a script.md file in the indicated directoy and runs the
+        Reads a README.md file in the indicated directoy and runs the
         commands contained within. If simulation == True then human
         entry will be simulated (looks like typing and waits for
         keyboard input before proceeding to the next command). This is
         useful if you want to run a fully automated demo.
 
-        The script.md file will be parsed as follows:
+        The README.md file will be parsed as follows:
 
         ``` marks the start or end of a code block
 
@@ -260,7 +260,7 @@ class Demo(object):
                         if not href.endswith(".md"):
                             if not href.endswith("/"):
                                 href = href + "/"
-                            href = href + "script.md"
+                            href = href + "README.md"
                         prep_step["href"] = href
                         self.prep_steps.append(prep_step)
                    

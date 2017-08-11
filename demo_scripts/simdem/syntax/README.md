@@ -10,14 +10,14 @@ use cases (documentation, tutorial, demo, test and script).
 For example, lets take a look at the start of this file this file:
 
 ```
-head -n 25 $SIMDEM_CWD/script.md 
+head -n 25 $SIMDEM_CWD/README.md 
 ```
 
 # Prerequisites
 
 It is common for a tutorial or demo to have a number of
 prerequisites. For example, it's a good idea to understand how these
-work, so take a look at our [prerequisites](../prerequisites/script.md)
+work, so take a look at our [prerequisites](./prerequisites/README.md)
 before proceeding.
 
 # SimDem Syntax
@@ -107,8 +107,8 @@ For example, this document offers next steps options.
 
 # Next Steps
 
-  1. [Configure your scripts through variables](../variables/script.md)
-  2. [Build a Hello World script](../tutorial/script.md)
-  3. [SimDem Index](../script.md)
-  4. [Write multi-part documents](../multipart/script.md)
-  5. [Use your documents as interactive tutorials or demos](../running/script.md)
+  1. [Configure your scripts through variables](../variables/README.md)
+  2. [Build a Hello World script](../tutorial/README.md)
+  3. [SimDem Index](../README.md)
+  4. [Write multi-part documents](../multipart/README.md)
+  5. [Use your documents as interactive tutorials or demos](../running/README.md)

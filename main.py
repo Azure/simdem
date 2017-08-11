@@ -14,12 +14,12 @@ from environment import Environment
 
 def get_bash_script(script_dir, is_simulation = True, is_automated=False, is_testing=False):
     """
-    Reads a script.md file in the indicated directoy and builds an
+    Reads a README.md file in the indicated directoy and builds an
     executable bash script from the commands contained within.
     """
     if not script_dir.endswith('/'):
         script_dir = script_dir + "/"
-    filename = script_dir + "script.md"
+    filename = script_dir + "README.md"
 
 
     script = ""
@@ -110,7 +110,7 @@ def main():
     if cmd == "tutorial":
         cmd = "run"
         
-    filename = "script.md"
+    filename = "README.md"
     is_docker = os.path.isfile('/.dockerenv')
     if cmd == "run":
         demo = Demo(ui, is_docker, script_dir, filename, simulate, is_automatic, is_test);

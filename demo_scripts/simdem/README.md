@@ -32,15 +32,15 @@ a key to execute the command.
 Tutorials can branch too, for example you can choose any of the
 following paths next:
 
-  1. [Modes of operation](modes/script.md)
-  2. [Hello World Demo](demo/script.md)
-  3. [Build a Hello World script](tutorial/script.md)
-  4. [Write SimDem documents](syntax/script.md)
-  5. [Configure your scripts through variables](variables/script.md)
-  6. [Write multi-part documents](multipart/script.md)
-  7. [Use your documents as interactive tutorials or demos](running/script.md)
-  8. [Use your documents as automated tests](test/script.md)
-  9. [Build an SimDem container](building/script.md)
+  1. [Modes of operation](modes/README.md)
+  2. [Hello World Demo](demo/README.md)
+  3. [Build a Hello World script](tutorial/README.md)
+  4. [Write SimDem documents](syntax/README.md)
+  5. [Configure your scripts through variables](variables/README.md)
+  6. [Write multi-part documents](multipart/README.md)
+  7. [Use your documents as interactive tutorials or demos](running/README.md)
+  8. [Use your documents as automated tests](test/README.md)
+  9. [Build an SimDem container](building/README.md)
 
 
   
