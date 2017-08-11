@@ -131,17 +131,17 @@ Welcome 10 times
 # Stripping ANSI escape sequances
 
 To make it easier to write scripts we don't want to include ANSI
-escape sequences (such as colors) in the results section. SimDem
-automatically strips these when capturing the results.
+escape sequences (such as colors and text deocration) in the results
+section. SimDem automatically strips these when capturing the results.
 
 ```
-ls -m $SIMDEM_CWD/..
+echo -e "Normal \e[4mUnderlined\e[24m Normal"
 ```
 
 Results:
 
 ```expected_similarity=0.9
-env.json, README.md, simdem, test
+Normal Underlined Normal
 ```
 
 # Commands that do not work
