@@ -109,7 +109,7 @@ to select it) and a title (to be displayed).
             print(colorama.Style.RESET_ALL, end="")
 
     def log(self, level, text):
-        if config.is_debug and level.upper() == "DEBUG":
+        if config.is_debug:
             print(level.upper() + " : " + text)
             
     def request_input(self, text):
@@ -165,16 +165,17 @@ to select it) and a title (to be displayed).
                 text += char
 
     def simulate_command(self, silent = False):
-        """Types the command on the screen, executes it and outputs the
-        results if simulation == True then system will make the "typing"
-        look real and will wait for keyboard entry before proceeding to
-        the next command.
+        """Types the current command on the screen, executes it and outputs
+        the results if simulation == True then system will make the
+        "typing" look real and will wait for keyboard entry before
+        proceeding to the next command.
 
         If silent = True then the command and its results will not be
         ouptut.
 
         """
-
+        
+        self.log("debug", "Simulating command: '" + self.demo.current_command + "'")
         if not self.demo.is_learning or self.demo.current_command.strip() == "clear":
             self.type_command()
             _, var_list = self.demo.get_current_command()
@@ -248,7 +249,8 @@ to select it) and a title (to be displayed).
             command = self.demo.current_command
 
         self.new_line();
-        
+
+        self.log("debug", "Execute command: '" + command + "'")
         start_time = time.time()
         response = self.get_shell().run_command(command)
         end_time = time.time()

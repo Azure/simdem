@@ -111,7 +111,7 @@ def main():
     else:
         script_dir = options.path
         
-    filename = "script.md"
+    filename = "README.md"
     is_docker = os.path.isfile('/.dockerenv')
     demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
 
