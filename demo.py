@@ -294,7 +294,6 @@ class Demo(object):
         self.ui.clear(self)
         self.ui.prompt()
         for line in lines:
-            self.ui.log("debug", "Execute line: " + str(line))
             if line["type"] == "result":
                 in_results = True
                 expected_results += line["text"]
