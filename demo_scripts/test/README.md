@@ -103,7 +103,7 @@ ls -m $SIMDEM_CWD/..
 Results:
 
 ```expected_similarity=0.9
-README.md, env.json, simdem, test
+env.json, README.md, simdem, test
 ```
 
 # Commands that do not work
