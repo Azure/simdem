@@ -16,6 +16,7 @@ PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
 class Ui(object):
     _shell = None
+    demo = None
 
     def __init__(self):
         pass
@@ -24,7 +25,7 @@ class Ui(object):
         """Display the prompt for the user. This is intended to indicate that
         the user is expected to take an action at this point.
         """
-        self.display("$ ", colorama.Fore.WHITE)
+        self.display(config.console_prompt, colorama.Fore.WHITE)
 
     def command(self, text):
         """Display a command, or a part of a command tp be executed."""
@@ -32,8 +33,7 @@ class Ui(object):
         
     def results(self, text):
         """Display the results of a command execution"""
-        self.new_para()
-        self.display(text, colorama.Fore.GREEN + colorama.Style.BRIGHT)
+        self.display(text, colorama.Fore.GREEN + colorama.Style.BRIGHT, True)
         
     def heading(self, text):
         """Display a heading"""
@@ -53,7 +53,6 @@ class Ui(object):
 
         """
         self.display(text, colorama.Fore.WHITE, new_line)
-        self.new_para()
 
     def prep_step(self, step):
         """Displays a preparation step item.
@@ -89,16 +88,13 @@ to select it) and a title (to be displayed).
     def horizontal_rule(self):
         print("\n\n============================================\n\n")
 
-    def clear(self, demo):
+    def clear(self):
         """Clears the screen ready for  anew section of the script."""
-        if demo.is_testing:
-            return
-        
-        if demo.is_simulation:
-            demo.current_command = "clear"
-            self.simulate_command(demo)
+        if self.demo.is_simulation:
+            self.demo.current_command = "clear"
+            self.simulate_command()
         else:        
-            self.run_command(demo, "clear")
+            self.run_command("clear")
         
     def display(self, text, color, new_line=False):
         """Display some text in a given color. Do not print a new line unless
@@ -117,10 +113,14 @@ to select it) and a title (to be displayed).
             print(level.upper() + " : " + text)
             
     def request_input(self, text):
-        """ Displays text that is intended to propmt the user for input. """
+        """Displays text that is intended to propmt the user for 
+        input and then waits for input.
+
+        """
         print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
         print(text)
         print(colorama.Style.RESET_ALL, end="")
+        return self.input_string().lower()
         
     def input_interactive_variable(self, name):
         """
@@ -136,15 +136,16 @@ to select it) and a title (to be displayed).
         value = input()
         return value
 
-    def type_command(self, demo):
+    def type_command(self):
         """
         Displays the command on the screen
         If simulation == True then it will look like someone is typing the command
         Highlight uninstatiated environment variables
         """
 
+        text = ""
         end_of_var = 0
-        current_command, var_list = demo.get_current_command()
+        current_command, var_list = self.demo.get_current_command()
         for idx, char in enumerate(current_command):
             if char == "$" and var_list:
                 for var in var_list:
@@ -160,48 +161,55 @@ to select it) and a title (to be displayed).
             if end_of_var and idx == end_of_var:
                 end_of_var = 0
                 print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-            if char != "\n":
-                self.command(char)
-            if demo.is_simulation:
-                delay = random.uniform(0.01, config.TYPING_DELAY)
-                time.sleep(delay)
 
-    def simulate_command(self, demo, silent = False):
-        """Types the command on the screen, executes it and outputs the
-        results if simulation == True then system will make the "typing"
-        look real and will wait for keyboard entry before proceeding to
-        the next command.
+            if char != "\n":
+                text += char
+
+        if self.demo.is_simulation:
+            for char in text:
+                delay = random.uniform(0.02, config.TYPING_DELAY)
+                time.sleep(delay)
+                self.command(char)
+        else:
+            self.command(text)
+                    
+
+    def simulate_command(self, silent = False):
+        """Types the current command on the screen, executes it and outputs
+        the results if simulation == True then system will make the
+        "typing" look real and will wait for keyboard entry before
+        proceeding to the next command.
 
         If silent = True then the command and its results will not be
         ouptut.
 
         """
-
-        if not demo.is_learning or demo.current_command.strip() == "clear":
-            if not silent:
-                self.type_command(demo)
-            _, var_list = demo.get_current_command()
+        
+        self.log("debug", "Simulating command: '" + self.demo.current_command + "'")
+        if not self.demo.is_learning or self.demo.current_command.strip() == "clear":
+            self.type_command()
+            _, var_list = self.demo.get_current_command()
 
             # Get values for unknown variables
             for var_name in var_list:
-                if (demo.is_testing):
+                if (self.demo.is_testing):
                     var_value = "Dummy value for test"
                 else:
                     var_value = self.input_interactive_variable(var_name)
                 if not var_name.startswith("SIMDEM_"):
-                    demo.env.set(var_name, var_value)
-                    self.run_command(demo, var_name + '="' + var_value + '"', silent = silent)
+                    self.demo.env.set(var_name, var_value)
+                    self.run_command(var_name + '="' + var_value + '"')
 
-            output = self.run_command(demo, silent = silent)
-            demo.last_command = demo.current_command
-            demo.current_command = ""
+            output = self.run_command()
+            self.demo.last_command = self.demo.current_command
+            self.demo.current_command = ""
         else:
             done = False
             while not done:
                 print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
                 print("\nType the command '", end = "")
                 print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-                print(demo.current_command.strip(), end = "")
+                print(self.demo.current_command.strip(), end = "")
                 print(colorama.Fore.MAGENTA + colorama.Style.BRIGHT, end="")
                 print("'")
                 print("\t- type 'auto' (or 'a') to automatically type the command")
@@ -209,14 +217,14 @@ to select it) and a title (to be displayed).
                 print("\n$ ", end = "", flush = True)
                 typed_command = input()
                 if typed_command.lower() == "a" or typed_command.lower() == "auto":
-                    demo.is_learning = False
-                    output = self.simulate_command(demo)
-                    demo.is_learning = True
+                    self.demo.is_learning = False
+                    output = self.simulate_command()
+                    self.demo.is_learning = True
                     done = True
-                elif typed_command == demo.current_command.strip():
-                    demo.is_learning = False
-                    output = self.simulate_command(demo)
-                    demo.is_learning = True
+                elif typed_command == self.demo.current_command.strip():
+                    self.demo.is_learning = False
+                    output = self.simulate_command()
+                    self.demo.is_learning = True
                     done = True
                 else:
                     print(colorama.Fore.RED, end="")
@@ -225,91 +233,98 @@ to select it) and a title (to be displayed).
         self.log("debug", "Output: '" + output +"'")
         return output
 
-    def get_shell(self, demo):
+    def input_string(self):
+        """ Get a string from the user."""
+        return input()
+    
+    def get_shell(self):
         """Gets or creates the shell in which to run commands for the
         supplied demo
         """
         if self._shell == None:
-            child = pexpect.spawnu('/bin/bash', env=demo.env.get(), echo=False, timeout=None)
+            child = pexpect.spawnu('/bin/bash', env=self.demo.env.get(), echo=False, timeout=None)
             ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
             ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
             prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
             self._shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
         return self._shell
 
-    def run_command(self, demo, command=None, silent = False):
+    def run_command(self, command=None, silent = False):
         """
-        Run the demo.curent_command unless command is passed in, in
+        Run the self.demo.curent_command unless command is passed in, in
         which case run the supplied command in the current demo
         environment. Return the output of the command.
         """
         if not command:
-            command = demo.current_command
+            command = self.demo.current_command
 
         self.new_line();
-        
+
+        self.log("debug", "Execute command: '" + command + "'")
         start_time = time.time()
-        response = self.get_shell(demo).run_command(command)
+        response = self.get_shell().run_command(command)
         end_time = time.time()
 
         if not silent:
             self.results(response)
 
-        if demo.is_testing:
+        if self.demo.is_testing:
             self.information("--- %s seconds execution time ---" % (end_time - start_time))
 
         return response
 
-    def check_for_interactive_command(self, demo):
+    def get_help(self):
+        help = []
+        help.append("SimDem Help")
+        help.append("===========")
+        help.append("")
+        help.append("Pressing any key other than those listed below will result in the script progressing")
+        help.append("")
+        help.append("b           - break out of the script and accept a command from user input")
+        help.append("b -> CTRL-C - stop the script")
+        help.append("d           - (redisplay the description that precedes the current command then resume from this point)")
+        help.append("r           - repeat the previous command")
+        help.append("h           - displays this help message")
+        help.append("")
+        return help
+    
+    def check_for_interactive_command(self):
         """Wait for a key to be pressed.
 
         Most keys result in the script
         progressing, but a few have special meaning. See the
         documentation or code for a description of the special keys.
         """
-        if not demo.is_automated:
-            self.instruction("Press a command key to proceed (h for help)")
+        if not self.demo.is_automated:
+            if not self.demo.is_simulation:
+                self.instruction("Press a command key to proceed (h for help)")
             key = self.get_instruction_key()
 
             if key == 'h':
-                print("help")
-                print()
-                print("SimDem Help")
-                print("===========")
-                print()
-                print("Pressing any key other than those listed below will result in the script progressing")
-                print()
-                print("b           - break out of the script and accept a command from user input")
-                print("b -> CTRL-C - stop the script")
-                print("d           - (re)display the description that precedes the current command then resume from this point")
-                print("r           - repeat the previous command")
-                print("h           - displays this help message")
-                print()
-                print("Press SPACEBAR to continue")
-                while key != ' ':
-                    key = self.ui.get_instruction_key()
-                    print()
-                    self.prompt()
-                    self.check_for_interactive_command(demo)
+                text = self.get_help()
+                for line in text:
+                    self.information(line, True)
+
+                self.check_for_interactive_command()
             elif key == 'b':
                 command = input()
-                self.run_command(demo, command)
+                self.run_command(command)
                 self.prompt()
-                self.check_for_interactive_command(demo)
+                self.check_for_interactive_command()
             elif key == 'd':
                 print("")
                 print(colorama.Fore.CYAN) 
-                print(demo.current_description);
+                print(self.demo.current_description);
                 print(colorama.Style.RESET_ALL)
                 self.prompt()
-                print(demo.current_command, end="", flush=True)
-                self.check_for_interactive_command(demo)
+                print(self.demo.current_command, end="", flush=True)
+                self.check_for_interactive_command()
             elif key == 'r':
-                if not demo.last_command == "":
-                    demo.current_command = demo.last_command
-                    self.simulate_command(demo)
+                if not self.demo.last_command == "":
+                    self.demo.current_command = self.demo.last_command
+                    self.simulate_command()
                     self.prompt()
-                    self.check_for_interactive_command(demo)
+                    self.check_for_interactive_command()
 
     def get_instruction_key(self):
         """Waits for a single keypress on stdin.
@@ -379,9 +394,14 @@ to select it) and a title (to be displayed).
         print("\n\n=============================\n\n")
         print(colorama.Style.RESET_ALL)
 
-    def get_command(self):
-        self.request_input("What mode do you want to run in? (default 'tutorial')")
-        mode = input()
-        if mode == "":
-            mode = "tutorial"
-        return mode
+    def get_command(self, commands):
+        cmd = self.request_input("What mode do you want to run in? (default 'tutorial')")
+
+        if cmd == "":
+            cmd = "tutorial"
+        while not cmd in commands:
+            cmd = self.get_command(commands)
+        return cmd
+
+    def set_demo(self, demo):
+        self.demo = demo

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SimDem</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" src="/js/console.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        consoleMonitorSocket();
+      });
+    </script>
+    <link href="style/console.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="container">
+      <div id="console" class="console">
+	{{ console }}
+      </div>
+      <div id="info" class="info">
+      </div>
+      
+      <div class="debug">
+	<p>Ping: <b><span id="ping-pong"></span>ms</b></p>
+	<h1>Log</h1>
+	<div id="log" class="log">
+	</div>
+      </div>
+    </div>
+  </body>
+</html>

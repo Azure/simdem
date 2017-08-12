@@ -18,7 +18,7 @@ That's cool, lets try again:
 echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the '--style simulate' flag, that simulates a person typing), bit it really comes from a markdown file."
 ```
 
-The date command will show that these commands are being executed.
+The date command will show that these commands are being executed in real time.
 
 ```
 date

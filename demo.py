@@ -6,13 +6,14 @@ import re
 import sys
 import urllib.request
 from environment import Environment
+
 from cli import Ui
 import config
 
 class Demo(object):
-    def __init__(self, ui, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
         """Initialize variables"""
-        self.ui = ui
+        self.mode = None
         self.is_docker = is_running_in_docker
         self.filename = filename
         self.script_dir = ""
@@ -48,8 +49,8 @@ class Demo(object):
         if matches:
             for var in matches:
                 if len(var) > 0:
-                    value = self.ui.get_shell(self).run_command("echo $" + var).strip()
-                    if len(value) == 0 and not '$(' + var in self.current_command:
+                    value = self.ui.get_shell().run_command("echo $" + var).strip()
+                    if len(value) == 0 and not '$(' + var + ')' in self.current_command:
                         var_list.append(var)
         return self.current_command, var_list
 
@@ -108,7 +109,7 @@ class Demo(object):
 
         return lines
     
-    def run(self):
+    def run(self, mode = None):
         """
         Reads a README.md file in the indicated directoy and runs the
         commands contained within. If simulation == True then human
@@ -124,6 +125,31 @@ class Demo(object):
         All other lines will be ignored
         """
         self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
+
+        if self.ui is None:
+            raise Exception("Attempt to run a demo before ui is configured")
+
+        if mode is None:
+            mode = self.ui.get_command(config.modes)
+        self.mode = mode
+
+        self.ui.log("debug", "Running script in " + self.mode + " mode")
+
+        if mode == "script":
+            print(self.get_bash_script())
+            return
+        elif mode == "demo":
+            self.is_simulation = True
+        elif mode == "test":
+            self.is_testing = True
+            self.is_automated = True
+        elif mode == "learn":
+            self.is_learning = True
+        elif mode == "run" or mode == "tutorial":
+            pass
+        else:
+            raise Exception("Unkown mode: '" + mode + "'")
+
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
         classified_lines = self.classify_lines()
@@ -145,37 +171,37 @@ class Demo(object):
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
-        next_steps = []
-        for line in classified_lines:
-            if line["type"] == "next_step" and len(line["text"].strip()) > 0:
-                pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-                match = pattern.match(line["text"])
-                if match:
-                    next_steps.append(line)
+        if not self.is_simulation:
+            next_steps = []
+            for line in classified_lines:
+                if line["type"] == "next_step" and len(line["text"].strip()) > 0:
+                    pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
+                    match = pattern.match(line["text"])
+                    if match:
+                        next_steps.append(line)
 
-        if len(next_steps) > 0:
-            if self.is_prerequisite:
-                return
-            in_string = ""
-            in_value = 0
-            self.ui.instruction("Would you like to move on to one of the next steps listed above?")
-
-            while in_value < 1 or in_value > len(next_steps):
-                self.ui.instruction("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
-                in_string = input()
-                if in_string.lower() == "quit" or in_string.lower() == "q":
+            if len(next_steps) > 0:
+                if self.is_prerequisite:
                     return
-                try:
-                    in_value = int(in_string)
-                except ValueError:
-                    pass
+                in_string = ""
+                in_value = 0
+                self.ui.instruction("Would you like to move on to one of the next steps listed above?")
 
-            self.ui.log("debug", "Selected next step: " + str(next_steps[in_value -1]))
-            pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-            match = pattern.match(next_steps[in_value -1]["text"])
-            self.set_script_dir(match.groups()[0], self.script_dir)
-            self.filename = match.groups()[1]
-            self.run()
+                while in_value < 1 or in_value > len(next_steps):
+                    in_string = self.ui.request_input("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
+                    if in_string.lower() == "quit" or in_string.lower() == "q":
+                        return
+                    try:
+                        in_value = int(in_string)
+                    except ValueError:
+                        pass
+
+                self.ui.log("debug", "Selected next step: " + str(next_steps[in_value -1]))
+                pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
+                match = pattern.match(next_steps[in_value -1]["text"])
+                self.set_script_dir(match.groups()[0], self.script_dir)
+                self.filename = match.groups()[1]
+                self.run(self.mode)
             
     def classify_lines(self):
         lines = None
@@ -305,8 +331,7 @@ class Demo(object):
         executed_code_in_this_section = False
         next_steps = []
 
-        self.ui.clear(self)
-        self.ui.prompt()
+        self.ui.clear()
         for line in lines:
             if line["type"] == "result":
                 if not in_results:
@@ -338,21 +363,23 @@ class Demo(object):
             elif line["type"] == "executable":
                 if not self.is_learning:
                     self.ui.prompt()
-                    self.ui.check_for_interactive_command(self)
+                    self.ui.check_for_interactive_command()
                 self.current_command = line["text"]
-                actual_results = self.ui.simulate_command(self)
+                actual_results = self.ui.simulate_command()
                 executed_code_in_this_section = True
+                self.current_description = ""
             elif line["type"] == "heading":
-                if not is_first_line:
-                    self.ui.check_for_interactive_command(self)
+                if not is_first_line and not self.is_simulation:
+                    self.ui.check_for_interactive_command()
                 if not self.is_simulation:
-                    self.ui.clear(self)
+                    self.ui.clear()
                     self.ui.heading(line["text"])
             else:
                 if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
                     # Descriptive text
                     self.ui.description(line["text"])
-                if line["type"] == "next_step":
+                    self.current_description += line["text"]
+                if line["type"] == "next_step" and not self.is_simulation:
                     pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
                     match = pattern.match(line["text"])
                     if match:
@@ -371,7 +398,6 @@ class Demo(object):
         the prerequisite script. If running in test mode assume that
         this is the case (pre-requisites should be handled in the
         test_plan
-
         """
 
         steps = []
@@ -387,7 +413,7 @@ class Demo(object):
                     if not href.endswith(".md"):
                         if not href.endswith("/"):
                             href = href + "/"
-                        href = href + "script.md"
+                        href = href + "README.md"
                     step["href"] = href
                     steps.append(step)
 
@@ -400,20 +426,24 @@ class Demo(object):
 
             self.ui.new_para()
             self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
-            
-            demo = Demo(self.ui, self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
-            demo.run_if_validation_fails()
 
-    def run_if_validation_fails(self):
-        self.ui.information("Validating pre-requisite...")
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
+            demo.set_ui(self.ui)
+            demo.run_if_validation_fails(self.mode)
+            self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
+
+    def run_if_validation_fails(self, mode = None):
+        self.ui.information("Validating pre-requisite...", True)
+        self.ui.new_para()
         lines = self.classify_lines()
         if self.validate(lines):
-            self.ui.information("Validation passed.")
+            self.ui.information("Validation passed.", True)
         else:
-            self.ui.information("Validation failed. Let's run the pre-requisite script.")
-            self.ui.check_for_interactive_command(self)
-            self.run()
-            self.ui.clear(self)
+            self.ui.information("Validation failed. Let's run the pre-requisite script.", True)
+            self.ui.new_para()
+            self.ui.check_for_interactive_command()
+            self.run(mode)
+            self.ui.clear()
             self.ui.new_para
             
     def validate(self, lines):
@@ -430,7 +460,7 @@ class Demo(object):
             elif in_validation and line["type"] == "executable":
                 self.current_command = line["text"]
                 self.ui.log("debug", "Execute validation command: " + self.current_command)
-                actual_results = self.ui.simulate_command(self, not config.is_debug)
+                actual_results = self.ui.simulate_command(not config.is_debug)
                 expected_results = ""
             elif in_validation and line["type"] == "result":
                 if not in_results:
@@ -472,3 +502,55 @@ class Demo(object):
         if not is_pass and not is_silent:
             self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
         return is_pass
+                
+    def __str__( self ):
+        s = "Demo directory: " + self.script_dir + "\n"
+        s += "Demo filename: " + self.filename + "\n"
+        if self.is_docker:
+            s += "Running in a Docker container\n"
+        else:
+            s += "Not running in a Docker container\n"
+        s += "Simulation mode: {0}\n".format(self.is_simulation)
+        s += "Automotic mode: {0}\n".format(self.is_automated)
+        s += "Learn mode: {0}\n".format(self.is_learning)
+        s += "Test mode: {0}\n".format(self.is_testing)
+        if self.is_testing:
+            s += "Fast fail test mode: {0}\n".format(self.is_fast_fail)
+        
+        return s
+
+    def set_ui(self, ui):
+        self.ui = ui
+        ui.set_demo(self)
+
+    def get_bash_script(self):
+        """Reads a README.md file in the indicated directoy and builds an
+        executable bash script from the commands contained within.
+
+        """
+        script = ""
+        env = Environment(self.script_dir, False).get()
+        for key, value in env.items():
+            script += key + "='" + value + "'\n"
+
+        in_code_block = False
+        in_results_section = False
+        lines = list(open(self.script_dir + "README.md"))
+        for line in lines:
+            if line.startswith("Results:"):
+                # Entering results section
+                in_results_section = True
+            elif line.startswith("```") and not in_code_block:
+                # Entering a code block, if in_results_section = True then it's a results block
+                in_code_block = True
+            elif line.startswith("```") and in_code_block:
+                # Finishing code block
+                in_results_section = False
+                in_code_block = False
+            elif in_code_block and not in_results_section:
+                # Executable line
+                script += line
+            elif line.startswith("#") and not in_code_block and not in_results_section:
+                # Heading in descriptive text
+                script += "\n"
+        return script

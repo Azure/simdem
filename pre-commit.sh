@@ -24,12 +24,6 @@ echo "Run the Simdem tests"
 python3 main.py -p demo_scripts/test test
 RESULT=$?
 
-echo "Check Docker images build successfully"
-if [ $RESULT -eq 0 ]; then
-    ./scripts/build.sh
-    RESULT=$?
-fi
-
 echo "Restore unstaged changes"
 git reset --hard -q && git stash apply --index -q && git stash drop -q
 
