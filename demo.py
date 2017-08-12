@@ -171,36 +171,37 @@ class Demo(object):
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
-        next_steps = []
-        for line in classified_lines:
-            if line["type"] == "next_step" and len(line["text"].strip()) > 0:
-                pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-                match = pattern.match(line["text"])
-                if match:
-                    next_steps.append(line)
+        if not self.is_simulation:
+            next_steps = []
+            for line in classified_lines:
+                if line["type"] == "next_step" and len(line["text"].strip()) > 0:
+                    pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
+                    match = pattern.match(line["text"])
+                    if match:
+                        next_steps.append(line)
 
-        if len(next_steps) > 0:
-            if self.is_prerequisite:
-                return
-            in_string = ""
-            in_value = 0
-            self.ui.instruction("Would you like to move on to one of the next steps listed above?")
-
-            while in_value < 1 or in_value > len(next_steps):
-                in_string = self.ui.request_input("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
-                if in_string.lower() == "quit" or in_string.lower() == "q":
+            if len(next_steps) > 0:
+                if self.is_prerequisite:
                     return
-                try:
-                    in_value = int(in_string)
-                except ValueError:
-                    pass
+                in_string = ""
+                in_value = 0
+                self.ui.instruction("Would you like to move on to one of the next steps listed above?")
 
-            self.ui.log("debug", "Selected next step: " + str(next_steps[in_value -1]))
-            pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-            match = pattern.match(next_steps[in_value -1]["text"])
-            self.set_script_dir(match.groups()[0], self.script_dir)
-            self.filename = match.groups()[1]
-            self.run(self.mode)
+                while in_value < 1 or in_value > len(next_steps):
+                    in_string = self.ui.request_input("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
+                    if in_string.lower() == "quit" or in_string.lower() == "q":
+                        return
+                    try:
+                        in_value = int(in_string)
+                    except ValueError:
+                        pass
+
+                self.ui.log("debug", "Selected next step: " + str(next_steps[in_value -1]))
+                pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
+                match = pattern.match(next_steps[in_value -1]["text"])
+                self.set_script_dir(match.groups()[0], self.script_dir)
+                self.filename = match.groups()[1]
+                self.run(self.mode)
             
     def classify_lines(self):
         lines = None
@@ -331,7 +332,6 @@ class Demo(object):
         next_steps = []
 
         self.ui.clear()
-        self.ui.prompt()
         for line in lines:
             if line["type"] == "result":
                 if not in_results:
@@ -366,10 +366,10 @@ class Demo(object):
                     self.ui.check_for_interactive_command()
                 self.current_command = line["text"]
                 actual_results = self.ui.simulate_command()
-                
                 executed_code_in_this_section = True
+                self.current_description = ""
             elif line["type"] == "heading":
-                if not is_first_line:
+                if not is_first_line and not self.is_simulation:
                     self.ui.check_for_interactive_command()
                 if not self.is_simulation:
                     self.ui.clear()
@@ -378,7 +378,8 @@ class Demo(object):
                 if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
                     # Descriptive text
                     self.ui.description(line["text"])
-                if line["type"] == "next_step":
+                    self.current_description += line["text"]
+                if line["type"] == "next_step" and not self.is_simulation:
                     pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
                     match = pattern.match(line["text"])
                     if match:

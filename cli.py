@@ -296,9 +296,9 @@ to select it) and a title (to be displayed).
         documentation or code for a description of the special keys.
         """
         if not self.demo.is_automated:
-            self.instruction("Press a command key to proceed (h for help)")
+            if not self.demo.is_simulation:
+                self.instruction("Press a command key to proceed (h for help)")
             key = self.get_instruction_key()
-            self.prompt()
 
             if key == 'h':
                 text = self.get_help()
