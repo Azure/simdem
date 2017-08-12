@@ -29,13 +29,19 @@ latest developer version of the code (i.e. there may be errors).
 docker run -it rgardler/simdem
 ```
 
-This will start SimDem in CLI mode. An alternative is to start with
-the Web interface (once started point your browser at port 8080 on
-your host).
+This will start SimDem in CLI mode. 
+
+## Experimental Web mode
+
+In addition to the web NoVNC container noted above there is an
+experimental web mode available using the `--webui true` option shown
+below. Once started point your browser at port 8080 on your host.
 
 ```
 docker run -it -p 8080:8080 rgardler/simdem --webui true
 ```
+
+## Python
 
 The most flexible way to run SimDem is to use the Python code
 directly. This is generally best for developers of SimDem, so we
