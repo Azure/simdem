@@ -303,13 +303,8 @@ to select it) and a title (to be displayed).
                 text = self.get_help()
                 for line in text:
                     self.information(line, True)
-                    
-                self.information("Press SPACEBAR to continue", True)
-                while key != ' ':
-                    key = self.get_instruction_key()
-                    print()
-                    self.prompt()
-                    self.check_for_interactive_command()
+
+                self.check_for_interactive_command()
             elif key == 'b':
                 command = input()
                 self.run_command(command)
