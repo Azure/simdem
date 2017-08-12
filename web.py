@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory
 from flask import render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import threading
 import time
 
@@ -13,19 +13,19 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 thread = None
 command_key = None
-url = "http://localhost:8080"
 in_string = None
 
 def background_thread():
     while True:
         socketio.sleep(10)
-        text = "I'm alive (background thread"
+        if ui.ready:
+            text = "Server connection alive."
 
-        socketio.emit('log',
-                      text,
-                      namespace='/console')
+            socketio.emit('log',
+                          text,
+                          namespace='/control')
 
-@socketio.on('connect', namespace='/console')
+@socketio.on('connect', namespace='/control')
 def connect():
     global thread
     global ui
@@ -36,20 +36,17 @@ def connect():
         thread = socketio.start_background_task(target=background_thread)
         ui.ready = True
 
-@socketio.on('ping', namespace='/console')
-def ping_pong():
-    emit('pong')
+    print("Connection in /control namespace")
 
-@socketio.on('command_key', namespace='/console')
+@socketio.on('command_key', namespace='/control')
 def got_command_key(key):
     global command_key
     command_key = key
 
-@socketio.on('input_string', namespace='/console')
+@socketio.on('input_string', namespace='/control')
 def got_input_String(in_str):
     global in_string            
     in_string = in_str
-    print("Got string: " + in_string)
     
 @app.route('/js/<path:filename>')
 def send_js(filename):
@@ -88,9 +85,11 @@ class WebUi(Ui):
         self._send_to_console(text, "results", True)
         
     def clear(self):
-        """Clears the console ready for a new section of the script."""
+        """Clears the console and info panel ready for a new section of the script."""
         socketio.emit('clear',
                       namespace='/console')
+        socketio.emit('clear',
+                      namespace='/control')
 
     def heading(self, text):
         """Display a heading"""
@@ -167,7 +166,7 @@ to select it) and a title (to be displayed).
             
         socketio.emit('update_info',
                       html,
-                      namespace='/console')
+                      namespace='/control')
 
     def get_instruction_key(self):
         """Gets an instruction from the user. See get_help() for details of
@@ -177,7 +176,7 @@ to select it) and a title (to be displayed).
         global command_key
         command_key = None
         socketio.emit('get_command_key',
-                      namespace='/console')
+                      namespace='/control')
         while command_key is None:
             pass
             
@@ -188,7 +187,7 @@ to select it) and a title (to be displayed).
         global in_string
         in_string = None
         socketio.emit('input_string',
-                      namespace='/console')
+                      namespace='/control')
         while in_string is None:
             pass
         return in_string

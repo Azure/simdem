@@ -3,14 +3,23 @@
   <head>
     <title>SimDem</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/console.js"></script>
+    <script type="text/javascript" src="/js/control.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
-        consoleMonitorSocket();
+        init_control();
+        init_console();
       });
     </script>
+
+    <!-- Stylesheets -->
+    <link href="style/common.css" rel="stylesheet" type="text/css">
     <link href="style/console.css" rel="stylesheet" type="text/css">
+    <link href="style/speaker.css" rel="stylesheet" type="text/css">
   </head>
   <body>
     <div id="container">
@@ -19,9 +28,13 @@
       </div>
       <div id="info" class="info">
       </div>
+
+      <div class"control_panel">
+	<h1>Control Panel</h1>
+	<button id="btn_launch_console_window" type="button">Console Window</button>
+      </div>
       
       <div class="debug">
-	<p>Ping: <b><span id="ping-pong"></span>ms</b></p>
 	<h1>Log</h1>
 	<div id="log" class="log">
 	</div>

@@ -1,7 +1,3 @@
-#container {
-    margin: 0 auto;
-}
-
 .console {
     background-color: black;
     color: white;
@@ -11,29 +7,6 @@
     overflow: auto;
     float: right
 }
-
-.info {
-    background-color: black;
-    color: white;
-    font-family: "Lucida Console", Monaco, monospace;
-    width: 48%;
-    height: 80vh;
-    overflow: auto;
-    float: left;
-}
-
-.debug {
-    width: 100%;
-    clear: both
-}
-
-span.console_input {
-    display: block;
-    background-color: white;
-    color: black;
-    margin: 2px 2px 2px 2px;
-}
-
 span.prompt {
     color: White
 }
@@ -46,32 +19,4 @@ span.results {
     color: LightGreen
 }
 
-span.heading {
-    color: Cyan;
-}
-
-span.description {
-    color: Lime;
-}
-
-span.next_step {
-    color: RebeccaPurple;
-}
-
-span.warning {
-    color: Red;
-}
-
-span.request_input {
-    color: Purple
-}
-
-.console_input {
-    width: 100%
-}
-
-.twrap {
-    overflow: hidden;
-    margin: 4px 4px 4px 4px
-}
 		 
