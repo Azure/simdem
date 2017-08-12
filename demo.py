@@ -15,9 +15,8 @@ class Demo(object):
         self.ui = ui
         self.is_docker = is_running_in_docker
         self.filename = filename
-        self.script_dir = script_dir
-        if not self.script_dir.endswith('/'):
-            self.script_dir = self.script_dir + "/"
+        self.script_dir = ""
+        self.set_script_dir(script_dir)
         self.is_simulation = is_simulation
         self.is_automated = is_automated
         self.is_testing = is_testing
@@ -27,6 +26,16 @@ class Demo(object):
         self.current_description = ""
         self.last_command = ""
         self.is_prerequisite = is_prerequisite
+
+    def set_script_dir(self, script_dir, base_dir = None):
+        if base_dir is not None and not base_dir.endswith(os.sep):
+            base_dir += os.sep
+        elif base_dir is None:
+            base_dir = ""
+            
+        if not script_dir.endswith(os.sep):
+            script_dir += os.sep
+        self.script_dir = base_dir + script_dir
         
     def get_current_command(self):
         """
@@ -114,6 +123,7 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
+        self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
         classified_lines = self.classify_lines()
@@ -138,7 +148,10 @@ class Demo(object):
         next_steps = []
         for line in classified_lines:
             if line["type"] == "next_step" and len(line["text"].strip()) > 0:
-                next_steps.append(line)
+                pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
+                match = pattern.match(line["text"])
+                if match:
+                    next_steps.append(line)
 
         if len(next_steps) > 0:
             if self.is_prerequisite:
@@ -157,9 +170,10 @@ class Demo(object):
                 except ValueError:
                     pass
 
+            self.ui.log("debug", "Selected next step: " + str(next_steps[in_value -1]))
             pattern = re.compile('.*\[.*\]\((.*)\/(.*)\).*')
-            match = pattern.match(next_steps[in_value - 1]["text"])
-            self.script_dir = self.script_dir + match.groups()[0]
+            match = pattern.match(next_steps[in_value -1]["text"])
+            self.set_script_dir(match.groups()[0], self.script_dir)
             self.filename = match.groups()[1]
             self.run()
             
@@ -343,7 +357,9 @@ class Demo(object):
                     match = pattern.match(line["text"])
                     if match:
                         self.ui.next_step(match.groups()[0], match.groups()[1])
-                   
+                    else:
+                        self.ui.description(line["text"])
+
             is_first_line = False
 
         return failed_tests, passed_tests

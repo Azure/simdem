@@ -113,7 +113,7 @@ to select it) and a title (to be displayed).
             print(colorama.Style.RESET_ALL, end="")
 
     def log(self, level, text):
-        if config.is_debug and level.upper() == "DEBUG":
+        if config.is_debug:
             print(level.upper() + " : " + text)
             
     def request_input(self, text):
