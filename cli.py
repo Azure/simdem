@@ -298,6 +298,7 @@ to select it) and a title (to be displayed).
         if not self.demo.is_automated:
             self.instruction("Press a command key to proceed (h for help)")
             key = self.get_instruction_key()
+            self.prompt()
 
             if key == 'h':
                 text = self.get_help()
