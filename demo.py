@@ -187,8 +187,7 @@ class Demo(object):
             self.ui.instruction("Would you like to move on to one of the next steps listed above?")
 
             while in_value < 1 or in_value > len(next_steps):
-                self.ui.instruction("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
-                in_string = input()
+                in_string = self.ui.request_input("Enter a value between 1 and " + str(len(next_steps)) + " or 'quit'")
                 if in_string.lower() == "quit" or in_string.lower() == "q":
                     return
                 try:
