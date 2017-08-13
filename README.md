@@ -179,7 +179,7 @@ The CLI version of SimDem works fine in Azure Cloud Shell, but you
 need to install it manually at this time. Here's how..
 
 ```
-git clone git@github.com:rgardler/simdem.git
+git clone https://github.com/Azure/simdem.git
 cd simdem
 ./scripts/install.sh
 simdem
