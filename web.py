@@ -95,7 +95,8 @@ class WebUi(Ui):
                       namespace='/console')
         socketio.emit('clear',
                       namespace='/control')
-
+        self.prompt()
+        
     def heading(self, text):
         """Display a heading"""
         self._send_to_info(text, "heading", True)
