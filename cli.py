@@ -269,7 +269,7 @@ to select it) and a title (to be displayed).
             self.results(response)
 
         if self.demo.is_testing:
-            self.information("--- %s seconds execution time ---" % (end_time - start_time))
+            self.information("--- %s seconds execution time ---" % (end_time - start_time), True)
 
         return response
 
