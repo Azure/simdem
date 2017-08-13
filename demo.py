@@ -27,6 +27,7 @@ class Demo(object):
         self.current_description = ""
         self.last_command = ""
         self.is_prerequisite = is_prerequisite
+        self.env = None
 
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
@@ -43,11 +44,23 @@ class Demo(object):
         Return a tuple of the current command and a list of environment
         variables that haven't been set.
         """
+
+        # If the command sets a variable put it in our env copy
+        pattern = re.compile("^(\w*)=(.*)$")
+        match = pattern.match(self.current_command)
+        if match:
+            key = match.groups()[0]
+            val = match.groups()[1]
+            self.env.set(key, val)
+            
+        # Get all the vars, check to see if they are uninitialized
         var_pattern = re.compile(".*?(?<=\$)\(?{?(\w*)(?=[\W|\$|\s|\\\"]?)\)?(?!\$).*")
         matches = var_pattern.findall(self.current_command)
         var_list = []
         if matches:
             for var in matches:
+                if self.env and var in self.env.get():
+                    break
                 if len(var) > 0 and not '$(' + var + ')' in self.current_command:
                     value = self.ui.get_shell().run_command("echo $" + var).strip()
                     if len(value) == 0:

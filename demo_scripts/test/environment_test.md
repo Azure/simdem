@@ -124,6 +124,15 @@ Results:
 Test value for the test script
 ```
 
+# Setting new variables in script
+
+If a script sets a variable during execution this will be recorded in
+the SimDem environment.
+
+```
+new_var=new_val
+```
+
 # Capturing the output of commands
 
 ```
