@@ -60,6 +60,10 @@ def send_style(filename):
 def index():
     return render_template('index.html', console = "Initializing...")
 
+@app.route('/console')
+def console():
+    return render_template('console.html', console= "$")
+
 class WebUi(Ui):
     def __init__(self):
         global ui

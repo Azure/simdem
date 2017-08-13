@@ -4,7 +4,6 @@ function init_control() {
     var keypress_interval;
     
     $("#btn_launch_console_window").click(function() {
-	alert("open console window")
 	window.open('/console', '_blank', 'toolbar=0,location=0,menubar=0');
     })
 
