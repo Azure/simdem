@@ -1,4 +1,4 @@
-OBThis project provides ways to write tutorials in markdown that then
+This project provides ways to write tutorials in markdown that then
 become interactive demo's and automated tests. You can run in a number
 of different modes:
 
