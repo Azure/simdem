@@ -124,7 +124,10 @@ def main():
             if cmd == "tutorial":
                 cmd = "run"
     else:
-        ui = WebUi()
+        ui = WebUi(8080)
+        print("Server started. Listening on port " + str(ui.port))
+        print("Point your browser at " + str(ui.port))
+        print()
         while not ui.ready:
             time.sleep(0.25)
             print("Waiting for client connection")
