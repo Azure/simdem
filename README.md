@@ -1,4 +1,4 @@
-This project provides ways to write tutorials in markdown that then
+OBThis project provides ways to write tutorials in markdown that then
 become interactive demo's and automated tests. You can run in a number
 of different modes:
 
@@ -29,13 +29,29 @@ latest developer version of the code (i.e. there may be errors).
 docker run -it rgardler/simdem
 ```
 
-This will start SimDem in CLI mode. An alternative is to start with
-the Web interface (once started point your browser at port 8080 on
-your host).
+This will start SimDem in CLI mode. 
+
+## Experimental browser mode
+
+In addition to the web NoVNC container noted above there is an
+experimental web mode available using the `--webui true` option shown
+below. Once started point your browser at port 8080 on your host.
 
 ```
 docker run -it -p 8080:8080 rgardler/simdem --webui true
 ```
+
+### Presenter view
+
+When using the Web UI it is possible to open a view on the demo that
+shows only the console. This is ideal for use when delivering
+presentations. Have this view visible to the audience while using the
+speaker view, with full descriptive text, on the presenters machine.
+
+To open this in a separate window click the
+'Console View' button (or browse to http://HOST:8080/console).
+
+## Python
 
 The most flexible way to run SimDem is to use the Python code
 directly. This is generally best for developers of SimDem, so we

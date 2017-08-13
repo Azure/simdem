@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SimDem Control Center</title>
+    <title>SimDem Console View</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
     <!-- Javascript -->
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript" src="/js/console.js"></script>
-    <script type="text/javascript" src="/js/control.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
-        init_control();
         init_console();
       });
     </script>
@@ -23,21 +21,8 @@
   </head>
   <body>
     <div id="container">
-      <div id="console" class="console">
+      <div id="console" class="console full_screen">
 	{{ console }}
-      </div>
-      <div id="info" class="info">
-      </div>
-
-      <div class"control_panel">
-	<h1>Control Panel</h1>
-	<button id="btn_launch_console_window" type="button">Console Window</button>
-      </div>
-      
-      <div class="debug">
-	<h1>Log</h1>
-	<div id="log" class="log">
-	</div>
       </div>
     </div>
   </body>
