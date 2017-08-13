@@ -141,28 +141,12 @@ to select it) and a title (to be displayed).
         """
         Displays the command on the screen
         If simulation == True then it will look like someone is typing the command
-        Highlight uninstatiated environment variables
         """
 
         text = ""
         end_of_var = 0
         current_command, var_list = self.demo.get_current_command()
         for idx, char in enumerate(current_command):
-            if char == "$" and var_list:
-                for var in var_list:
-                    var_idx = current_command.find(var)
-                    if var_idx - 1 == idx:
-                        end_of_var = idx + len(var)
-                        print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                        break
-                    elif var_idx - 2 == idx and current_command[var_idx - 1] == "{":
-                        end_of_var = idx + len(var) + 1
-                        print(colorama.Fore.YELLOW + colorama.Style.BRIGHT, end="")
-                        break
-            if end_of_var and idx == end_of_var:
-                end_of_var = 0
-                print(colorama.Fore.WHITE + colorama.Style.BRIGHT, end="")
-
             if char != "\n":
                 text += char
 
