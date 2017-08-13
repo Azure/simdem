@@ -65,13 +65,14 @@ def console():
     return render_template('console.html', console= "$")
 
 class WebUi(Ui):
-    def __init__(self):
+    def __init__(self, port=8080):
         global ui
         import logging
         logging.basicConfig(filename='error.log',level=logging.DEBUG)
         ui = self
+        self.port = port
         self.ready = False
-        t = threading.Thread(target=socketio.run, args=(app, '0.0.0.0', '8080'))
+        t = threading.Thread(target=socketio.run, args=(app, '0.0.0.0', port))
         t.start()
 
     def prompt(self):
@@ -94,7 +95,8 @@ class WebUi(Ui):
                       namespace='/console')
         socketio.emit('clear',
                       namespace='/control')
-
+        self.prompt()
+        
     def heading(self, text):
         """Display a heading"""
         self._send_to_info(text, "heading", True)

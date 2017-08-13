@@ -8,6 +8,9 @@ TYPING_DELAY = 0.08
 # Prompt to use in the console
 console_prompt = "$ "
 
+# Port for web server when running with '--webui true' optios
+port = 8080
+
 # ------------------------------------------------------------------ #
 # Danger zone
 #
