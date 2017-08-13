@@ -56,13 +56,13 @@ prereq_ran
 # Directory Check
 
 ```
-echo $SIMDEM_CWD
+head -n 1 README.md
 ```
 
 Results: 
 
 ``` Expected_Similarity=0.8
-demo_scripts/test/
+# SimDem Test Script
 ```
 
 # Simple Echo
