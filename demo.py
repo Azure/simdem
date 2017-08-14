@@ -135,8 +135,6 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
-        self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
-
         if self.ui is None:
             raise Exception("Attempt to run a demo before ui is configured")
 
@@ -163,6 +161,9 @@ class Demo(object):
 
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
+        self.filename = self.env.get_script_file_name(self.script_dir)
+        self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
+        
         classified_lines = self.classify_lines()
         failed_tests, passed_tests = self.execute(classified_lines)
 
