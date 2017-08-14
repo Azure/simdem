@@ -36,6 +36,16 @@ function installLinuxDependencies() {
 MAIN_FILE=main.py
 SYMLINK=simdem
 
+if [ -f /.dockerenv ]; then
+    echo "Running in a Docker container"
+    IS_DOCKER=true
+    INSTALL_DIR=~/bin/
+else
+    echo "Not running in a Docker container"
+    IS_DOCKER=false
+    INSTALL_DIR=/usr/local/bin/
+fi
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     installLinuxDependencies;;
