@@ -53,6 +53,9 @@ case "${unameOut}" in
     *)          echo "Unsupported OS: ${unameOut}"
 esac
 
+virtualenv simdem-env
+source simdem-env/bin/activate
+
 pip3 install -r requirements.txt
 
 if [ "$IS_DOCKER" = true ]; then
