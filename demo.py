@@ -100,12 +100,7 @@ class Demo(object):
                 title = title[2:]
             demo = { "title": title, "path": script }
 
-            idx = script.rfind(os.sep)
-            if idx:
-                name = script[:idx]
-            else:
-                name = script
-                
+            name, _ = os.path.split(script)
             if not name.endswith(".md") and name not in toc:
                 toc[name] = [ demo ]
             elif name in toc:
@@ -117,7 +112,10 @@ class Demo(object):
         for item in sorted(toc):
             demos = toc[item]
             for demo in demos:
-                lines.append("  " + str(idx) + ". [" + item + " / " + demo["title"] + "](" + demo["path"] + ")\n")
+                if not item == "":
+                    lines.append("  " + str(idx) + ". [" + item + " / " + demo["title"] + "](" + demo["path"] + ")\n")
+                else:
+                    lines.append("  " + str(idx) + ". [" + demo["title"] + "](" + demo["path"] + ")\n")
                 idx += 1
 
         return lines
