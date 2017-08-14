@@ -1,4 +1,6 @@
-OBThis project provides ways to write tutorials in markdown that then
+[![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
+
+This project provides ways to write tutorials in markdown that then
 become interactive demo's and automated tests. You can run in a number
 of different modes:
 
