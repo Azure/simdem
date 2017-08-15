@@ -8,4 +8,5 @@ env.local.json
 
 # Python
 __pycache__
-simdem=env/
+simdem-env/
+

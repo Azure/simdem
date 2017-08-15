@@ -1,35 +1,60 @@
+function removeEarlier() {
 # Remove < 0.7.0 version
-if [ -f ~/bin/simdem.py ]; then
-    echo "Since version 0.7.0 Simdem is installed in a different way, we need to remove the old Simdem version."
-    rm ~/bin/simdem.py
-    rm ~/bin/simdem
-fi
+    if [ -f ~/bin/simdem.py ]; then
+	echo "Since version 0.7.0 Simdem is installed in a different way, we need to remove the old Simdem version."
+	rm ~/bin/simdem.py
+	rm ~/bin/simdem
+    fi
 
-if [ -f /usr/local/bin/simdem.py ]; then
-    echo "Since version 0.7.0 Simdem is installed in a different way, we need to remove the old Simdem version."
-    sudo rm /usr/local/bin/simdem.py
-    sudo rm /usr/local/bin/simdem
-fi
+    if [ -f /usr/local/bin/simdem.py ]; then
+	echo "Since version 0.7.0 Simdem is installed in a different way, we need to remove the old Simdem version."
+	sudo rm /usr/local/bin/simdem.py
+	sudo rm /usr/local/bin/simdem
+    fi
 
-if [ -f /.dockerenv ]; then
-    echo "Running in a Docker container"
-    IS_DOCKER=true
-    INSTALL_DIR=~/bin/simdem-dev/
-else
-    echo "Not running in a Docker container"
-    IS_DOCKER=false
-    INSTALL_DIR=/usr/local/bin/simdem-dev/
-fi
+    if [ -f /.dockerenv ]; then
+	echo "Running in a Docker container"
+	IS_DOCKER=true
+	INSTALL_DIR=~/bin/simdem-dev/
+    else
+	echo "Not running in a Docker container"
+	IS_DOCKER=false
+	INSTALL_DIR=/usr/local/bin/simdem-dev/
+    fi
+}
+
+function installLinuxDependencies() {
+    if [ "$IS_DOCKER" = true ]; then
+	apt update
+	apt-get install -y python3-pip
+    else
+	sudo apt update
+	sudo apt-get install -y python3-pip
+    fi
+}
 
 MAIN_FILE=main.py
 SYMLINK=simdem
 
+if [ -f /.dockerenv ]; then
+    echo "Running in a Docker container"
+    IS_DOCKER=true
+    INSTALL_DIR=~/bin/
+else
+    echo "Not running in a Docker container"
+    IS_DOCKER=false
+    INSTALL_DIR=/usr/local/bin/
+fi
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
-    Linux*)     sudo apt update; sudo apt-get install -y python3-pip;;
+    Linux*)     installLinuxDependencies;;
     Darwin*)    brew install python3;;
     *)          echo "Unsupported OS: ${unameOut}"
 esac
+
+virtualenv simdem-env
+source simdem-env/bin/activate
 
 pip3 install -r requirements.txt
 
