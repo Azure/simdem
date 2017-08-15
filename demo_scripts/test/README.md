@@ -16,7 +16,7 @@ echo $SIMDEM_VERSION
 Results:
 
 ```
-0.8.0-dev
+0.8.1-dev
 ```
 
 ## Clean test working files
