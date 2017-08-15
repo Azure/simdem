@@ -1,10 +1,12 @@
 # Environment tests
 
 We should be able to retrieve environment variables from the directory
-in which the command was given:
+in which the command was given. Note that SimDem provides the
+environment variable `SIMDEM_EXEC_DIR` which provides access to this
+folder in SimDem scripts should it be necessary.
 
 ```
-cat env.json
+cat $SIMDEM_EXEC_DIR/./env.json
 ```
 
 Results:
@@ -35,7 +37,7 @@ There should also be environment variables in the the directory in
 which the current script resides.
 
 ```
-cat $SIMDEM_CWD/env.json
+cat env.json
 ```
 
 Results:
@@ -51,7 +53,7 @@ Local variables can also be found in the the directory in which the
 current script resides.
 
 ```
-cat $SIMDEM_CWD/env.local.json
+cat env.local.json
 ```
 
 Results:
@@ -79,7 +81,7 @@ There should be variable definitions in the parent of the
 current script directory:
 
 ```
-cat $SIMDEM_CWD/../env.json
+cat ../env.json
 ```
 
 Results:

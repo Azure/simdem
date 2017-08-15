@@ -89,7 +89,7 @@ def main():
         is_test = False
     else:
         is_test = True
-
+    
     if options.fastfail == "True":
         is_fast_fail= True
     else:
@@ -110,19 +110,23 @@ def main():
         script_dir = options.path + arguments[1]
     else:
         script_dir = options.path
+
+    cmd = None
+    if len(arguments) > 0:
+        cmd = arguments[0]
+        # 'run' is deprecated in the CLI, but not yet removed from code
+        if cmd == "tutorial":
+            cmd = "run"
+        if cmd == "test":
+            is_test = True
+            is_auto = True
         
     filename = "README.md"
     is_docker = os.path.isfile('/.dockerenv')
     demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test);
 
-    cmd = None
     if options.webui == "False":
         ui = Ui()
-        if len(arguments) > 0:
-            cmd = arguments[0]
-            # 'run' is deprecated in the CLI, but not yet removed from code
-            if cmd == "tutorial":
-                cmd = "run"
     else:
         ui = WebUi(config.port)
         print("Server started. Listening on port " + str(ui.port))
