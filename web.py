@@ -198,3 +198,26 @@ to select it) and a title (to be displayed).
             pass
         return in_string
 
+    def run_special_command(self, command):
+        """Test to see if the command is a spcial command that needs to be
+        handled diferently, these include:
+
+        `xdg-open $URL` - intercepted and converted to an instruction to open a new window
+
+        Returns the response from the command if it was handled by this function,
+        otherwise returns False.
+
+        """
+        if command.startswith("xdg-open "):
+            self.warning("Since you are running in Web UI mode it is not possible to execute xdg-open commands.")
+            self.warning("Attempting to open a new browser window instead.")
+
+            url = command[9:]
+            socketio.emit('open_tab',
+                          url,
+                          namespace='/console')
+            
+            self.warning("Note that this may break tests.")
+            return "<opened tab for " + url + ">"
+        else:
+            return False

@@ -167,7 +167,6 @@ to select it) and a title (to be displayed).
 
         If silent = True then the command and its results will not be
         ouptut.
-
         """
         
         self.log("debug", "Simulating command: '" + self.demo.current_command + "'")
@@ -239,15 +238,23 @@ to select it) and a title (to be displayed).
         Run the self.demo.curent_command unless command is passed in, in
         which case run the supplied command in the current demo
         environment. Return the output of the command.
+
+        A small number of commands are intercepted and handled as
+        special cases, see `run_special_command`
         """
         if not command:
             command = self.demo.current_command
 
+        command = command.strip()
         self.new_line();
 
         self.log("debug", "Execute command: '" + command + "'")
         start_time = time.time()
-        response = self.get_shell().run_command(command)
+        response = self.run_special_command(command)
+        if response:
+            pass
+        else:
+            response = self.get_shell().run_command(command)
         end_time = time.time()
 
         if not silent:
@@ -258,6 +265,29 @@ to select it) and a title (to be displayed).
 
         return response
 
+    def run_special_command(self, command):
+        """Test to see if the command is a spcial command that needs to be
+        handled diferently, these include:
+
+        `xdg-open $URL` - intercepted and converted to a curl for headless CLI
+
+        Returns the response from the command if it was handled by this function,
+        otherwise returns False.
+
+        """
+        if command.startswith("xdg-open "):
+            self.warning("Since you are running in headless CLI mode it is not possible to execute xdg-open commands.")
+
+            command = "curl -I " + command[9:]
+            
+            self.warning("Converting to `" + command + "`")
+            self.warning("Note that this may break tests.")
+
+            response = self.get_shell().run_command(command)
+            return response
+        else:
+            return False
+    
     def get_help(self):
         help = []
         help.append("SimDem Help")
@@ -274,6 +304,7 @@ to select it) and a title (to be displayed).
         return help
     
     def check_for_interactive_command(self):
+
         """Wait for a key to be pressed.
 
         Most keys result in the script
