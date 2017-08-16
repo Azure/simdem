@@ -1,4 +1,6 @@
-OBThis project provides ways to write tutorials in markdown that then
+[![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
+
+This project provides ways to write tutorials in markdown that then
 become interactive demo's and automated tests. You can run in a number
 of different modes:
 
@@ -182,7 +184,20 @@ need to install it manually at this time. Here's how..
 git clone https://github.com/Azure/simdem.git
 cd simdem
 ./scripts/install.sh
-simdem
+
+```
+
+Now that you have the code and enviornment setup you will first need
+to acivite the Python Virtual Environment.
+
+```
+source simdem-env/bin/activate
+```
+
+Now you can run the Simdem CLI:
+
+```
+simdem --version
 ```
 
 # Hacking Guide

@@ -36,11 +36,12 @@ following paths next:
   2. [Hello World Demo](demo/README.md)
   3. [Build a Hello World script](tutorial/README.md)
   4. [Write SimDem documents](syntax/README.md)
-  5. [Configure your scripts through variables](variables/README.md)
-  6. [Write multi-part documents](multipart/README.md)
-  7. [Use your documents as interactive tutorials or demos](running/README.md)
-  8. [Use your documents as automated tests](test/README.md)
-  9. [Build an SimDem container](building/README.md)
+  5. [Special Commands](special_commands/README.md)
+  6. [Configure your scripts through variables](variables/README.md)
+  7. [Write multi-part documents](multipart/README.md)
+  8. [Use your documents as interactive tutorials or demos](running/README.md)
+  9. [Use your documents as automated tests](test/README.md)
+ 10. [Build an SimDem container](building/README.md)
 
 
   

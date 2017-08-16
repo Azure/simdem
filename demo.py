@@ -11,7 +11,7 @@ from cli import Ui
 import config
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, is_prerequisite = False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None):
         """Initialize variables"""
         self.mode = None
         self.is_docker = is_running_in_docker
@@ -26,9 +26,12 @@ class Demo(object):
         self.current_command = ""
         self.current_description = ""
         self.last_command = ""
-        self.is_prerequisite = is_prerequisite
-        self.env = None
-
+        self.parent_script_dir = parent_script_dir
+        if self.parent_script_dir:
+            self.env = Environment(self.parent_script_dir, is_test = self.is_testing)
+        else:
+            self.env = Environment(self.script_dir, is_test = self.is_testing)
+            
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -59,9 +62,13 @@ class Demo(object):
         var_list = []
         if matches:
             for var in matches:
-                if self.env and var in self.env.get():
-                    break
-                if len(var) > 0 and not '$(' + var + ')' in self.current_command:
+                have_value = False
+                if self.env:
+                    for item in self.env.get():
+                        if var == item:
+                            have_value = True
+                            break
+                if len(var) > 0 and not have_value and not '$(' + var + ')' in self.current_command:
                     value = self.ui.get_shell().run_command("echo $" + var).strip()
                     if len(value) == 0:
                         var_list.append(var)
@@ -100,12 +107,7 @@ class Demo(object):
                 title = title[2:]
             demo = { "title": title, "path": script }
 
-            idx = script.rfind(os.sep)
-            if idx:
-                name = script[:idx]
-            else:
-                name = script
-                
+            name, _ = os.path.split(script)
             if not name.endswith(".md") and name not in toc:
                 toc[name] = [ demo ]
             elif name in toc:
@@ -117,7 +119,10 @@ class Demo(object):
         for item in sorted(toc):
             demos = toc[item]
             for demo in demos:
-                lines.append("  " + str(idx) + ". [" + item + " / " + demo["title"] + "](" + demo["path"] + ")\n")
+                if not item == "":
+                    lines.append("  " + str(idx) + ". [" + item + " / " + demo["title"] + "](" + demo["path"] + ")\n")
+                else:
+                    lines.append("  " + str(idx) + ". [" + demo["title"] + "](" + demo["path"] + ")\n")
                 idx += 1
 
         return lines
@@ -137,8 +142,6 @@ class Demo(object):
         Each line in a code block will be treated as a separate command.
         All other lines will be ignored
         """
-        self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
-
         if self.ui is None:
             raise Exception("Attempt to run a demo before ui is configured")
 
@@ -165,6 +168,9 @@ class Demo(object):
 
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
+        self.filename = self.env.get_script_file_name(self.script_dir)
+        self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
+        
         classified_lines = self.classify_lines()
         failed_tests, passed_tests = self.execute(classified_lines)
 
@@ -194,7 +200,7 @@ class Demo(object):
                         next_steps.append(line)
 
             if len(next_steps) > 0:
-                if self.is_prerequisite:
+                if self.parent_script_dir:
                     return
                 in_string = ""
                 in_value = 0
@@ -440,7 +446,7 @@ class Demo(object):
             self.ui.new_para()
             self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
 
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, True);
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir);
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
@@ -535,6 +541,7 @@ class Demo(object):
     def set_ui(self, ui):
         self.ui = ui
         ui.set_demo(self)
+        self.ui.get_shell().run_command("pushd " + self.script_dir)
 
     def get_bash_script(self):
         """Reads a README.md file in the indicated directoy and builds an
@@ -542,7 +549,6 @@ class Demo(object):
 
         """
         script = ""
-        env = Environment(self.script_dir, False).get()
         for key, value in env.items():
             script += key + "='" + value + "'\n"
 

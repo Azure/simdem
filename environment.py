@@ -17,6 +17,7 @@ class Environment(object):
         self.read_simdem_environment(directory)
         self.set("SIMDEM_VERSION", config.SIMDEM_VERSION)
         self.set("SIMDEM_CWD", directory)
+        self.set("SIMDEM_EXEC_DIR", os.getcwd())
         temp_dir = os.path.expanduser(config.SIMDEM_TEMP_DIR)
         self.set("SIMDEM_TEMP_DIR", temp_dir)
 
@@ -80,13 +81,13 @@ class Environment(object):
                 local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
-        filename = "/env.json"
+        filename = os.getcwd() + "env.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
                 local_env = self.process_env(json.load(env_file))
                 env.update(local_env)
 
-        filename = "env.local.json"
+        filename = os.getcwd() + "env.local.json"
         if os.path.isfile(filename):
             with open(filename) as env_file:
                 local_env = self.process_env(json.load(env_file))
@@ -105,14 +106,14 @@ class Environment(object):
                     script_env = self.process_env(json.load(env_file))
                     env.update(script_env)
 
-            filename = "env.test.json"
+            filename = os.getcwd() + "/env.test.json"
             if os.path.isfile(filename):
                 with open(filename) as env_file:
                     local_env = self.process_env(json.load(env_file))
                     env.update(local_env)
                 
         self.env.update(env)
-
+        
     def process_env(self, new_env):
         """
         Takes an environmetn definition and processes it for use.
@@ -144,3 +145,10 @@ class Environment(object):
         if not os.path.exists(script_dir + file_name):
             file_name = "script.md"
         return file_name
+
+    def dump_env(self):
+        """
+        Prints the environment to the console.
+        """
+        for item in self.env.items():
+            print(str(item))
