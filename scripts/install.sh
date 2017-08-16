@@ -33,18 +33,19 @@ function installLinuxDependencies() {
     fi
 }
 
-MAIN_FILE=main.py
-SYMLINK=simdem
-
 if [ -f /.dockerenv ]; then
     echo "Running in a Docker container"
     IS_DOCKER=true
-    INSTALL_DIR=~/bin/
+    BIN_DIR=~/bin
 else
     echo "Not running in a Docker container"
     IS_DOCKER=false
-    INSTALL_DIR=/usr/local/bin/
+    BIN_DIR=/usr/local/bin
 fi
+
+INSTALL_DIR=$BIN_DIR/simdem-dev/
+MAIN_FILE=main.py
+SYMLINK=simdem
 
 unameOut="$(uname -s)"
 case "${unameOut}" in
@@ -64,18 +65,22 @@ if [ "$IS_DOCKER" = true ]; then
     cp -r * $INSTALL_DIR
     chmod +x $INSTALL_DIR$MAIN_FILE
     
-    echo 'export PATH=$PATH:'$INSTALL_DIR >> ~/.bashrc
+    echo 'export PATH=$PATH:'$BIN_DIR >> ~/.bashrc
 
     if [ ! -L $INSTALL_DIR../$SYMLINK ]; then
 	ln -s $INSTALL_DIR$MAIN_FILE $INSTALL_DIR../$SYMLINK
     fi
 else
+    echo "Make install directory at $INSTALL_DIR"
     sudo mkdir -p $INSTALL_DIR
 
+    echo "Copy source into install dir"
     sudo cp -r * $INSTALL_DIR
+    echo "Make main file executable"
     sudo chmod +x $INSTALL_DIR$MAIN_FILE
 
     if [ ! -L $INSTALL_DIR../$SYMLINK ]; then
+	echo "Create symlink to main.py file"
 	sudo ln -s $INSTALL_DIR$MAIN_FILE $INSTALL_DIR../$SYMLINK
     fi
 fi
