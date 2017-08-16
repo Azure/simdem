@@ -184,7 +184,20 @@ need to install it manually at this time. Here's how..
 git clone https://github.com/Azure/simdem.git
 cd simdem
 ./scripts/install.sh
-simdem
+
+```
+
+Now that you have the code and enviornment setup you will first need
+to acivite the Python Virtual Environment.
+
+```
+source simdem-env/bin/activate
+```
+
+Now you can run the Simdem CLI:
+
+```
+simdem --version
 ```
 
 # Hacking Guide
