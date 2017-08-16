@@ -129,10 +129,18 @@ Test value for the test script
 # Setting new variables in script
 
 If a script sets a variable during execution this will be recorded in
-the SimDem environment.
+the SimDem environment. This includes setting to an empty string, this
+will prevent SimDem interactively requesting a value for the variable
+(or setting a dummt value in test mode).
 
 ```
-new_var=new_val
+new_var=""
+echo $new_var
+```
+
+Results:
+
+```
 ```
 
 # Capturing the output of commands

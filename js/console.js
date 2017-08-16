@@ -12,6 +12,11 @@ function init_console() {
 	$('#console').html('');
 	log("CONSOLE", "clear")
     });
+
+    socket.on('open_tab', function(url) {
+	open_tab(url)
+	log("CONSOLE", "Open tab for " + url)
+    });
 }
 
 
