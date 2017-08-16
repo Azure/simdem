@@ -178,13 +178,30 @@ python3 simdem.py --help
 ## Azure Cloud Shell
 
 The CLI version of SimDem works fine in Azure Cloud Shell, but you
-need to install it manually at this time. Here's how..
+need to install it manually at this time. Here's how.
+
+
+NOTE: in the current code (at the time of writing) the HEAD version
+does not work because of the need to install some dependencies that
+CloudShell does not like. We are therefore going to use an earlier
+version of SimDem, this means some of the more recent features will
+not be available. See issues https://github.com/Azure/simdem/issues/19
+and https://github.com/Azure/simdem/issues/20.
+
 
 ```
 git clone https://github.com/Azure/simdem.git
 cd simdem
-./scripts/install.sh
+git checkout tags/CloudShell
 
+pip install -r requirements.txt
+
+mkdir -p ~/bin/simdem-dev
+cp -r * ~/bin/simdem-dev
+chmod +x ~/bin/simdem-dev/main.py
+
+echo 'export PATH=$PATH:~/bin/simdem-dev' >> ~/.bashrc
+ln -s ~/bin/simdem-dev/main.py ~/bin/simdem
 ```
 
 Now that you have the code and enviornment setup you will first need
