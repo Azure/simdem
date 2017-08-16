@@ -11,6 +11,16 @@ function removeEarlier() {
 	sudo rm /usr/local/bin/simdem.py
 	sudo rm /usr/local/bin/simdem
     fi
+
+    if [ -f /.dockerenv ]; then
+	echo "Running in a Docker container"
+	IS_DOCKER=true
+	INSTALL_DIR=~/bin/simdem-dev/
+    else
+	echo "Not running in a Docker container"
+	IS_DOCKER=false
+	INSTALL_DIR=/usr/local/bin/simdem-dev/
+    fi
 }
 
 function installLinuxDependencies() {
@@ -49,7 +59,6 @@ source simdem-env/bin/activate
 pip3 install -r requirements.txt
 
 if [ "$IS_DOCKER" = true ]; then
-    rm -rf $INSTALL_DIR
     mkdir -p $INSTALL_DIR
     
     cp -r * $INSTALL_DIR
@@ -61,10 +70,6 @@ if [ "$IS_DOCKER" = true ]; then
 	ln -s $INSTALL_DIR$MAIN_FILE $INSTALL_DIR../$SYMLINK
     fi
 else
-    echo "Remove earlier install"
-    sudo rm -rf $INSTALL_DIR
-
-    echo "Create new install"
     sudo mkdir -p $INSTALL_DIR
 
     sudo cp -r * $INSTALL_DIR
