@@ -112,8 +112,9 @@ For example, this document offers next steps options.
 
 # Next Steps
 
-  1. [Configure your scripts through variables](../variables/README.md)
-  2. [Build a Hello World script](../tutorial/README.md)
-  3. [SimDem Index](../README.md)
-  4. [Write multi-part documents](../multipart/README.md)
-  5. [Use your documents as interactive tutorials or demos](../running/README.md)
+  1. [Special Commands](special_commands/README.md)
+  2. [Configure your scripts through variables](../variables/README.md)
+  3. [Build a Hello World script](../tutorial/README.md)
+  4. [SimDem Index](../README.md)
+  5. [Write multi-part documents](../multipart/README.md)
+  6. [Use your documents as interactive tutorials or demos](../running/README.md)

@@ -12,7 +12,7 @@ function removeEarlier() {
 	sudo rm /usr/local/bin/simdem
     fi
 }
-    
+
 function installLinuxDependencies() {
     if [ "$IS_DOCKER" = true ]; then
 	apt update
@@ -29,11 +29,11 @@ SYMLINK=simdem
 if [ -f /.dockerenv ]; then
     echo "Running in a Docker container"
     IS_DOCKER=true
-    INSTALL_DIR=~/bin/simdem-dev/
+    INSTALL_DIR=~/bin/
 else
     echo "Not running in a Docker container"
     IS_DOCKER=false
-    INSTALL_DIR=/usr/local/bin/simdem-dev/
+    INSTALL_DIR=/usr/local/bin/
 fi
 
 unameOut="$(uname -s)"
