@@ -63,6 +63,8 @@ if [ "$IS_DOCKER" = true ]; then
     
     cp -r * $INSTALL_DIR
     chmod +x $INSTALL_DIR$MAIN_FILE
+    
+    echo 'export PATH=$PATH:'$INSTALL_DIR >> ~/.bashrc
 
     if [ ! -L $INSTALL_DIR../$SYMLINK ]; then
 	ln -s $INSTALL_DIR$MAIN_FILE $INSTALL_DIR../$SYMLINK
