@@ -186,7 +186,7 @@ does not work because of the need to install some dependencies that
 CloudShell does not like. We are therefore going to use an earlier
 version of SimDem, this means some of the more recent features will
 not be available. See issues https://github.com/Azure/simdem/issues/19
-and https://github.com/Azure/simdem/issues/20.
+and https://github.com/Azure/simdem/issues/22.
 
 
 ```
