@@ -135,7 +135,7 @@ escape sequences (such as colors and text deocration) in the results
 section. SimDem automatically strips these when capturing the results.
 
 ```
-echo -e "Normal \e[4mUnderlined\e[24m Normal"
+printf "Normal \e[4mUnderlined\e[24m Normal"
 ```
 
 Results:
