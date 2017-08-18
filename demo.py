@@ -491,8 +491,7 @@ class Demo(object):
                 expected_similarity = line["expected_similarity"]
             elif (line["type"] != "result" and in_results):
                 # Finishing results section
-                ansi_escape = re.compile(r'\x1b[^m]*m')
-                if not self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity, True):
+                if not self.is_pass(expected_results, self.strip_ansi(actual_results), expected_similarity, True):
                     self.ui.log("debug", "expected results: '" + expected_results + "'")
                     self.ui.log("debug", "actual results: '" + actual_results + "'")
                     result = False
@@ -502,6 +501,11 @@ class Demo(object):
 
         return result
 
+    def strip_ansi(self, text):
+        """ Strip ANSI codes from a string."""
+        ansi_escape = re.compile(r'\x1b[^m]*m')
+        return ansi_escape.sub('', text)
+    
     def is_pass(self, expected_results, actual_results, expected_similarity = 0.66, is_silent = False):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within

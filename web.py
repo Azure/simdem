@@ -87,7 +87,7 @@ class WebUi(Ui):
 
     def results(self, text):
         """Display the results of a command execution"""
-        self._send_to_console(text, "results", True)
+        self._send_to_console(self.demo.strip_ansi(text), "results", True)
         
     def clear(self):
         """Clears the console and info panel ready for a new section of the script."""
