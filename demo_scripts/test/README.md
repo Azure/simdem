@@ -108,7 +108,12 @@ Tue Jun  6 15:23:53 UTC 2017
 
 # For Loop
 
+Because SimDem will interactively ask for values for undefined
+variables it is sometimes necessary to first declare a variable to
+prevent this action. For example:
+
 ```
+i=0
 for i in {0..10}; do echo "Welcome $i times"; done
 ```
 
@@ -144,7 +149,4 @@ Results:
 Normal Underlined Normal
 ```
 
-# Commands that do not work
 
-  * ping bing.com
-  * curl bing.com

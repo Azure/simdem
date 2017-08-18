@@ -208,16 +208,19 @@ to select it) and a title (to be displayed).
         otherwise returns False.
 
         """
+        orig_command = command
         if command.startswith("xdg-open "):
             self.warning("Since you are running in Web UI mode it is not possible to execute xdg-open commands.")
-            self.warning("Attempting to open a new browser window instead.")
+            self.warning("Attempting to open a new browser tab instead.")
+            self.warning("Note that this may break tests.")
 
+            command = self.expand_vars(command)
             url = command[9:]
+
             socketio.emit('open_tab',
                           url,
                           namespace='/console')
             
-            self.warning("Note that this may break tests.")
             return "<opened tab for " + url + ">"
         else:
             return False
