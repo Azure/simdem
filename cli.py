@@ -5,6 +5,7 @@ import os
 import pexpect
 import pexpect.replwrap
 import random
+import re
 import time
 import sys
 import colorama
@@ -250,6 +251,7 @@ to select it) and a title (to be displayed).
 
         self.log("debug", "Execute command: '" + command + "'")
         start_time = time.time()
+
         response = self.run_special_command(command)
         if response:
             pass
@@ -275,6 +277,7 @@ to select it) and a title (to be displayed).
         otherwise returns False.
 
         """
+        orig_command = command
         if command.startswith("xdg-open "):
             self.warning("Since you are running in headless CLI mode it is not possible to execute xdg-open commands.")
 
@@ -282,12 +285,28 @@ to select it) and a title (to be displayed).
             
             self.warning("Converting to `" + command + "`")
             self.warning("Note that this may break tests.")
-
+            
+        if orig_command != command:
+            self.log("INFO", "Running special command " + orig_command + " as " + command)
             response = self.get_shell().run_command(command)
             return response
         else:
             return False
-    
+
+    def expand_vars(self, command):
+        """Expand the variables in the supplied command by replacing them
+        with the value they carry in the Environment."""
+
+        self.log("debug", "Expanding vars in " + command)
+        var_pattern = re.compile(".*?(?<=\$)\(?{?(\w*)(?=[\W|\$|\s|\\\"]?)\)?(?!\$).*")
+        matches = var_pattern.findall(command)
+        if matches:
+            for var in matches:
+                value = self.demo.env.get(var)
+                self.log("Debug", "Expanding variable " + var + " to value " + value)
+                command = command.replace("$" + var, value)
+        return command
+        
     def get_help(self):
         help = []
         help.append("SimDem Help")

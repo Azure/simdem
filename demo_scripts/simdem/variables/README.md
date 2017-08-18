@@ -76,6 +76,27 @@ SimDem
 
 ```
 
+### Defining variables can be important
+
+Because SimDem will interactively ask for values for undefined
+variables it is sometimes necessary to first declare a variable to
+prevent this action. For example:
+
+```
+i=0
+for i in {0..4}; do echo "Welcome $i times"; done
+```
+
+Results:
+
+```
+Welcome 0 times
+Welcome 1 times
+Welcome 2 times
+Welcome 3 times
+Welcome 4 times
+```
+
 ## User provided environment
 
 Since it is helpful to provide configuration files in published

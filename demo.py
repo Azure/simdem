@@ -380,6 +380,8 @@ class Demo(object):
                 in_prerequisites = False
                 self.ui.heading(line["text"])
             elif line["type"] == "executable":
+                if line["text"].strip() == "":
+                    break
                 if not self.is_learning:
                     self.ui.prompt()
                     self.ui.check_for_interactive_command()

@@ -126,6 +126,31 @@ Results:
 Test value for the test script
 ```
 
+# Replacing variables in special commands
+
+Some commands cannot be run in headless mode, e.g. `xdg-open`. These
+commands will be replaced with an appropriate alternative,
+e.g. `curl`. Variables included in such commands will be expanded at
+execution time as expected.
+
+```
+url=http://bing.com
+xdg-open $url
+```
+
+Results: 
+
+```expected_similarity=0.2
+HTTP/1.1 405 Method Not Allowed
+Content-Length: 0
+Server: Microsoft-IIS/10.0
+X-MSEdge-Ref: Ref A: D6871D12117C436FAE3762BC8BCA0C29 Ref B: CO1EDGE0415 Ref C: 2017-08-17T15:37:59Z
+Date: Thu, 17 Aug 2017 15:37:58 GMT
+```
+
+Note: this test will only pass when running in headless mode as the
+`xdg-open` command will be executed in other environments.
+
 # Setting new variables in script
 
 If a script sets a variable during execution this will be recorded in
@@ -140,7 +165,7 @@ echo $new_var
 
 Results:
 
-```
+```expected_similarity=0.2
 ```
 
 # Capturing the output of commands
