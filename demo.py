@@ -454,13 +454,13 @@ class Demo(object):
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
 
     def run_if_validation_fails(self, mode = None):
-        self.ui.information("Validating pre-requisite...", True)
+        self.ui.information("Validating pre-requisite in '" + self.script_dir + "'", True)
         self.ui.new_para()
         lines = self.classify_lines()
         if self.validate(lines):
-            self.ui.information("Validation passed.", True)
+            self.ui.information("Validation passed for prerequiste '" + self.script_dir + "'", True)
         else:
-            self.ui.information("Validation failed. Let's run the pre-requisite script.", True)
+            self.ui.information("Validation failed for '" + self.script_dir + "'. Let's run the script.", True)
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)
