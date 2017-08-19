@@ -38,7 +38,27 @@ to achive the goal. In this mode no descriptive text is shown, instead
 when you press a key the next command is "typed", pressing another key
 will execute the command. The idea is that you describe what is
 happening as the application "types" the command for you. To run in
-demo mode use the `--style simulate` command line switch.
+demo mode use the `--style simulate` command line switch with any
+other mode. There is also a default demo mode configuration avilable
+with the `demo` command"
+
+```
+simdem demo
+```
+
+#### Preparation mode
+
+In this mode only the preparation (prerequisite) steps are
+executed. This is useful for setting up the environment for a
+demo. Next time the demo is run all prepration steps will be
+skipped. This means that steps that take a long time can be
+pre-baked.
+
+To use this mode use the command 'mode'
+
+```
+simdem prep
+```
 
 ## Test Mode
 
