@@ -32,6 +32,8 @@ def connect():
     while ui is None:
         time.sleep(0.25)
 
+    ui.clear()
+    
     if thread is None:
         thread = socketio.start_background_task(target=background_thread)
         ui.ready = True
