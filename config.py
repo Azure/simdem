@@ -23,6 +23,6 @@ port = 8080
 is_debug = False
 
 # Available modes of execution
-modes = [ "tutorial", "demo", "learn", "test", "script" ]
+modes = [ "tutorial", "demo", "learn", "test", "script", "prep" ]
 
 

@@ -70,7 +70,7 @@ date -u
 
 Results:
 
-```
+```expected_similarity=0.4
 Sat Mar 12 10:09:12 UTC 2016
 ```
 
@@ -94,9 +94,9 @@ The date command will prove this is running in real time.
 date
 ```
 
-Results: Expected similarity: 0.3
+Results:
 
-```
+```expected_similarity=0.4
 Sat Mar 12 08:59:01 UTC 2016
 ```
 
