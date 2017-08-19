@@ -144,7 +144,7 @@ class Demo(object):
         """
         if self.ui is None:
             raise Exception("Attempt to run a demo before ui is configured")
-
+        
         if mode is None:
             mode = self.ui.get_command(config.modes)
         self.mode = mode
@@ -190,7 +190,7 @@ class Demo(object):
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
-        if not self.is_simulation:
+        if not self.is_simulation and not self.is_testing:
             next_steps = []
             for line in classified_lines:
                 if line["type"] == "next_step" and len(line["text"].strip()) > 0:
@@ -221,7 +221,10 @@ class Demo(object):
                 self.set_script_dir(match.groups()[0], self.script_dir)
                 self.filename = match.groups()[1]
                 self.run(self.mode)
-            
+
+        if failed_tests > 0:
+            sys.exit("Test failures: " + str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+
     def classify_lines(self):
         lines = None
 
