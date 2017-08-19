@@ -158,7 +158,8 @@ to select it) and a title (to be displayed).
         
     def _send_to_console(self, text, css_class = "description", new_line = False):
         """ Send a string to the console. If new_line is set to true then also send a <br/> """
-        html = "<span class='" + css_class + "'>" + text + "</span>"
+        text = text.replace("\n", "<br/>")
+        html = "<span class='" + css_class + "'>" + text + "</spen>"
         if new_line:
             html += "<br/>"
             
