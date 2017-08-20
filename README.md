@@ -125,11 +125,25 @@ provided in the SimDem GitHub repository.
 #### Demo mode
 
 To run the same file as a demo (that is without explanatory text and
-with simulated typing)simply add a third paramater with the value
+with simulated typing) simply add a third paramater with the value
 `demo` as folows:
 
 ```
 ./scripts/run.sh cli demo_scripts/simdem demo
+```
+
+#### Preparation mode
+
+In this mode only the preparation (prerequisite) steps are
+executed. This is useful for setting up the environment for a
+demo. Next time the demo is run all prepration steps will be
+skipped. This means that steps that take a long time can be
+pre-baked.
+
+To use this mode:
+
+```
+./scripts/run.sh cli demo_scripts/simdem prep
 ```
 
 #### Test mode

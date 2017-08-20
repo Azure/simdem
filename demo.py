@@ -11,8 +11,19 @@ from cli import Ui
 import config
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None):
-        """Initialize variables"""
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False):
+        """
+        is_running_in_docker should be set to true is we are running inside a Docker container
+        script_dir is the location to look for scripts
+        filename is the filename of the script this demo represents
+        is_simulation should be set to true if we want to simulate a human running the commands
+        is_automated should be set to true if we don't want to wait for an operator to indicate it's time to execute the next command
+        is_testing is set to true if we want to compare actual results with expected results, by default execution will stop if any test fails (see is_fast_fail)
+        is_fast_fail should be set to true if we want to contnue running tests even after a failure
+        is_learning should be set to true if we want a human to type in the commands
+        parent_script_dir should be the directory of the script that calls this one, or None if this is the root script
+        is_prep_only should be set to true if we want to stop execution after all prerequisites are satsified
+        """
         self.mode = None
         self.is_docker = is_running_in_docker
         self.filename = filename
@@ -26,6 +37,7 @@ class Demo(object):
         self.current_command = ""
         self.current_description = ""
         self.last_command = ""
+        self.is_prep_only = is_prep_only
         self.parent_script_dir = parent_script_dir
         if self.parent_script_dir:
             self.env = Environment(self.parent_script_dir, is_test = self.is_testing)
@@ -161,6 +173,10 @@ class Demo(object):
             self.is_automated = True
         elif mode == "learn":
             self.is_learning = True
+        elif mode == "prep":
+            self.is_prep_only = True
+            self.is_testing = True
+            self.is_automated = True
         elif mode == "run" or mode == "tutorial":
             pass
         else:
@@ -174,7 +190,12 @@ class Demo(object):
         classified_lines = self.classify_lines()
         failed_tests, passed_tests = self.execute(classified_lines)
 
-        if self.is_testing:
+        if self.is_prep_only:
+            if failed_tests == 0:
+                self.ui.information("Preparation steps for '" + self.script_dir + "' complete", True)
+            else:
+                self.ui.error("Preparation steps for '" + self.script_dir + "' failed", True)
+        elif self.is_testing:
             self.ui.horizontal_rule()
             self.ui.heading("Test Results")
             if failed_tests > 0:
@@ -190,7 +211,7 @@ class Demo(object):
                 if self.is_fast_fail:
                     sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
-        if not self.is_simulation and not self.is_testing:
+        if not self.is_simulation and not self.is_testing and not self.is_prep_only:
             next_steps = []
             for line in classified_lines:
                 if line["type"] == "next_step" and len(line["text"].strip()) > 0:
@@ -380,6 +401,8 @@ class Demo(object):
             elif line["type"] != "prerequisites" and in_prerequisites:
                 self.ui.log("debug", "Got all prerequisites")
                 self.check_prerequisites(lines)
+                if self.is_prep_only:
+                    return failed_tests, passed_tests
                 in_prerequisites = False
                 self.ui.heading(line["text"])
             elif line["type"] == "executable":

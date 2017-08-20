@@ -120,7 +120,7 @@ def main():
         if cmd == "test":
             is_test = True
             is_auto = True
-        
+
     filename = "README.md"
     is_docker = os.path.isfile('/.dockerenv')
     demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail);
