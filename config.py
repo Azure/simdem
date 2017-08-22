@@ -1,4 +1,4 @@
-SIMDEM_VERSION = "0.8.2-dev"
+SIMDEM_VERSION = "0.8.1-dev"
 SIMDEM_TEMP_DIR = "~/.simdem/tmp"
 
 # When in demo mode we insert a small random delay between characters.
