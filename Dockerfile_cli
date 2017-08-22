@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 
 ENV HOME /home/simdem
+ENV TERM xterm
 WORKDIR $HOME
 
 RUN apt-get update
@@ -30,6 +31,7 @@ RUN mkdir -p $HOME/.ssh && chown -R 1984 $HOME/.ssh
 RUN mkdir -p $HOME/demo_scripts && chown -R 1984 $HOME/demo_scripts
 
 # SimDem
+COPY ./env.json $/env.json
 COPY ./requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 RUN mkdir /usr/local/bin/simdem_cli
