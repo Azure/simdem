@@ -52,8 +52,6 @@ else
     HOME="/home/simdem"
 fi
 
-source scripts/build.sh $FLAVOR
-
 VERSION=`grep SIMDEM_VERSION config.py | awk '{print $3}' | tr -d '"'`
 
 echo Running $REPOSITORY/$CONTAINER_NAME:$VERSION
