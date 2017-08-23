@@ -266,7 +266,9 @@ class Demo(object):
                         self.ui.log("debug", "Including " + line + " in tests.")
                         before = len(lines)
                         file = self.script_dir + line
+                        lines.append("START TEST FILE: " + line)
                         lines = lines + list(open(file))
+                        lines.append("END TEST FILE: " + line)
                         after = len(lines)
                         self.ui.log("debug", "Added " + str(after - before) + " lines.")
                         
@@ -285,10 +287,13 @@ class Demo(object):
                 elif not lines:
                     if self.parent_script_dir != "":
                         # If we have a parent then this is a preqiusite and therefore it should exist
+                        # if it doesn't then it may be that we are using relative paths
+                        # from the script location and that is different from self.script_dir
                         exit("Missing prerequisite script: " + self.filename + " in " + self.script_dir)
                     else:
                         lines = self.generate_toc()
-                
+
+        test_file_path = None
         in_code_block = False
         in_results_section = False
         in_next_steps = False
@@ -299,7 +304,17 @@ class Demo(object):
         classified_lines = []
 
         for line in lines:
-            if line.lower().startswith("results:"):
+            if line.startswith("START TEST FILE: "):
+                test_file_path = line[17:]
+                self.ui.log("debug", "Entering test file: " + test_file_path)
+                classified_lines.append({"type": "start_test_file",
+                                         "file": test_file_path})
+            elif line.startswith("END TEST FILE: "):
+                test_file_path = line[15:]
+                self.ui.log("debug", "Exiting test file: " + test_file_path)
+                classified_lines.append({"type": "end_test_file",
+                                         "file": test_file_path})
+            elif line.lower().startswith("results:"):
                 # Entering results section
                 in_results_section = True
             elif line.startswith("```") and not in_code_block:
@@ -373,6 +388,7 @@ class Demo(object):
         return classified_lines
 
     def execute(self, lines):
+        source_file_directory = None
         is_first_line = True
         in_results = False
         expected_results = ""
@@ -386,7 +402,11 @@ class Demo(object):
 
         self.ui.clear()
         for line in lines:
-            if line["type"] == "result":
+            if line["type"] == "start_test_file":
+                source_file_directory = os.path.dirname(line["file"])
+            elif line["type"] == "end_test_file":
+                test_file_directory = None
+            elif line["type"] == "result":
                 if not in_results:
                     in_results = True
                     expected_results = ""
@@ -410,7 +430,7 @@ class Demo(object):
                 in_prerequisites = True
             elif line["type"] != "prerequisites" and in_prerequisites:
                 self.ui.log("debug", "Got all prerequisites")
-                self.check_prerequisites(lines)
+                self.check_prerequisites(lines, source_file_directory)
                 if self.is_prep_only:
                     return failed_tests, passed_tests
                 in_prerequisites = False
@@ -448,13 +468,18 @@ class Demo(object):
 
         return failed_tests, passed_tests
     
-    def check_prerequisites(self, lines):
+    def check_prerequisites(self, lines, source_file_directory = None):
         """Check that all prerequisites have been satisfied by iterating
         through them and running the validation steps. If the
         validatin tests pass then move on, if they do not then execute
         the prerequisite script. If running in test mode assume that
         this is the case (pre-requisites should be handled in the
-        test_plan
+        test_plan).
+
+        When running in test mode the script_dir may be different from 
+        the location of the prerequisite script file. In these cases the 
+        'source_file_directory' should container the directory in which
+        the prequisite script is located.
         """
 
         steps = []
@@ -477,7 +502,10 @@ class Demo(object):
         for step in steps:
             path, filename = os.path.split(step["href"])
             if (step["href"].startswith(".")):
-                new_dir = self.script_dir + path
+                if source_file_directory is not None:
+                    new_dir = os.path.join(self.script_dir, source_file_directory, path)
+                else:
+                    new_dir = os.path.join(self.script_dir, path)
             else:
                 new_dir = path
 
