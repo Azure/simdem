@@ -316,6 +316,7 @@ class Demo(object):
                 # Finishing code block
                 in_code_block = False
                 in_results_section = False
+                in_validation_section = False
             elif in_results_section and in_code_block:
                 classified_lines.append({"type": "result",
                                          "expected_similarity": expected_similarity,
