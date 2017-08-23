@@ -184,6 +184,10 @@ class Demo(object):
 
         self.env = Environment(self.script_dir, is_test = self.is_testing)
 
+        if self.is_testing:
+            self.ui.information("Environment:", True)
+            self.ui.information(str(self.env))
+        
         self.filename = self.env.get_script_file_name(self.script_dir)
         self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
         

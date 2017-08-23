@@ -152,3 +152,10 @@ class Environment(object):
         """
         for item in self.env.items():
             print(str(item))
+
+    def __str__(self):
+        s = ""
+        for item in self.env.items():
+            s += str(item)
+            s += "\n"
+        return s
