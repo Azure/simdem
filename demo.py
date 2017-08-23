@@ -279,7 +279,11 @@ class Demo(object):
                 if not lines and os.path.isfile(file):
                     lines = list(open(file))
                 elif not lines:
-                    lines = self.generate_toc()
+                    if self.parent_script_dir != "":
+                        # If we have a parent then this is a preqiusite and therefore it should exist
+                        exit("Missing prerequisite script: " + self.filename + " in " + self.script_dir)
+                    else:
+                        lines = self.generate_toc()
                 
         in_code_block = False
         in_results_section = False
@@ -329,6 +333,7 @@ class Demo(object):
                     in_prerequisites = True
                 elif line.lower().strip().startswith("# validation"):
                     # Entering validation section
+                    self.ui.log("debug", "Entering Validation Section")
                     in_validation_section = True
                 else:
                     in_prerequisites = False
@@ -494,6 +499,10 @@ class Demo(object):
             self.ui.new_para
             
     def validate(self, lines):
+        """Run through the supplied lines, executing and testing any that are
+found in the validation section.
+
+        """
         result = True
         in_validation = False
         in_results = False
