@@ -344,7 +344,8 @@ to select it) and a title (to be displayed).
             elif key == 'b':
                 print("shell> ", end='')
                 command = input()
-                self.run_command(command)
+                if command != "":
+                    self.run_command(command)
                 self.prompt()
                 self.check_for_interactive_command()
             elif key == 'd':
