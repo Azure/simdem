@@ -80,7 +80,7 @@ class Demo(object):
                         if var == item:
                             have_value = True
                             break
-                if len(var) > 0 and not have_value and not '$(' + var + ')' in self.current_command:
+                if len(var) > 0 and not have_value and not '$(' + var in self.current_command:
                     value = self.ui.get_shell().run_command("echo $" + var).strip()
                     if len(value) == 0:
                         var_list.append(var)
