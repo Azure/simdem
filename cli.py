@@ -330,7 +330,6 @@ to select it) and a title (to be displayed).
         return help
     
     def check_for_interactive_command(self):
-
         """Wait for a key to be pressed.
 
         Most keys result in the script
