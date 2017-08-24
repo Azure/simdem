@@ -10,7 +10,7 @@ use cases (documentation, tutorial, demo, test and script).
 For example, lets take a look at the start of this file this file:
 
 ```
-head -n 25 $SIMDEM_CWD/README.md 
+head -n 25 README.md 
 ```
 
 # Prerequisites
