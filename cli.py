@@ -146,7 +146,7 @@ to select it) and a title (to be displayed).
 
         text = ""
         end_of_var = 0
-        current_command, var_list = self.demo.get_current_command()
+        current_command, undefined_var_list, defined_var_list = self.demo.get_current_command()
         for idx, char in enumerate(current_command):
             if char != "\n":
                 text += char
@@ -173,10 +173,10 @@ to select it) and a title (to be displayed).
         self.log("debug", "Simulating command: '" + self.demo.current_command + "'")
         if not self.demo.is_learning or self.demo.current_command.strip() == "clear":
             self.type_command()
-            _, var_list = self.demo.get_current_command()
+            _, undefined_var_list, defined_var_list = self.demo.get_current_command()
 
             # Get values for unknown variables
-            for var_name in var_list:
+            for var_name in undefined_var_list:
                 if (self.demo.is_testing):
                     var_value = "Dummy value for test"
                 else:
@@ -185,6 +185,14 @@ to select it) and a title (to be displayed).
                     self.demo.env.set(var_name, var_value)
                     self.run_command(var_name + '="' + var_value + '"')
 
+            # Log values if in debug mode
+            if config.is_debug:
+                self.information("\n")
+                for var_name in undefined_var_list:
+                    self.log("debug", "$" + var_name + " = " + self.demo.env.get(var_name))
+                for var_name in defined_var_list:
+                    self.log("debug", "$" + var_name + " = " + self.demo.env.get(var_name))
+                    
             output = self.run_command()
             self.demo.last_command = self.demo.current_command
             self.demo.current_command = ""
