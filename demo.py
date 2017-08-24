@@ -1,6 +1,7 @@
 # This class represents a Demo to be executed in SimDem.
 
 import difflib
+from itertools import tee, islice, zip_longest
 import os
 import re
 import sys
@@ -10,8 +11,13 @@ from environment import Environment
 from cli import Ui
 import config
 
+def get_next(some_iterable, window=1):
+    items, nexts = tee(some_iterable, 2)
+    nexts = islice(nexts, window, None)
+    return zip_longest(items, nexts)
+
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False):
         """
         is_running_in_docker should be set to true is we are running inside a Docker container
         script_dir is the location to look for scripts
@@ -23,6 +29,7 @@ class Demo(object):
         is_learning should be set to true if we want a human to type in the commands
         parent_script_dir should be the directory of the script that calls this one, or None if this is the root script
         is_prep_only should be set to true if we want to stop execution after all prerequisites are satsified
+        is_prerequisite indicates whether this is a prerequisite or not. It is used to decide behaviour with respect to simulation etc.
         """
         self.mode = None
         self.is_docker = is_running_in_docker
@@ -43,6 +50,7 @@ class Demo(object):
             self.env = Environment(self.parent_script_dir, is_test = self.is_testing)
         else:
             self.env = Environment(self.script_dir, is_test = self.is_testing)
+        self.is_prerequisite = is_prerequisite
             
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
@@ -405,7 +413,7 @@ class Demo(object):
         next_steps = []
 
         self.ui.clear()
-        for line in lines:
+        for line, next_line in get_next(lines):
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
             elif line["type"] == "end_test_file":
@@ -449,6 +457,8 @@ class Demo(object):
                 actual_results = self.ui.simulate_command()
                 executed_code_in_this_section = True
                 self.current_description = ""
+                if not self.is_automated and not next_line["type"] == "executable":
+                    self.ui.check_for_interactive_command()
             elif line["type"] == "heading":
                 if not is_first_line and not self.is_simulation:
                     self.ui.check_for_interactive_command()
@@ -516,30 +526,31 @@ class Demo(object):
             self.ui.new_para()
             self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
 
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir);
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
-
+            self.ui.check_for_interactive_command()
+            
     def run_if_validation_fails(self, mode = None):
         self.ui.information("Validating pre-requisite in '" + self.script_dir + "'", True)
         self.ui.new_para()
         lines = self.classify_lines()
         if self.validate(lines):
-            self.ui.information("Validation passed for prerequiste '" + self.script_dir + "'", True)
+            self.ui.information("Validation passed.", True)
         else:
-            self.ui.information("Validation failed for '" + self.script_dir + "'. Let's run the script.", True)
+            self.ui.information("Validation failed. Running prerequisite steps.", True)
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)
             self.ui.clear()
-            self.ui.new_para
             
     def validate(self, lines):
         """Run through the supplied lines, executing and testing any that are
 found in the validation section.
 
         """
+        self.ui.prompt()
         result = True
         in_validation = False
         in_results = False

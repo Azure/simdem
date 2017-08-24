@@ -96,7 +96,6 @@ to select it) and a title (to be displayed).
             self.simulate_command()
         else:        
             self.run_command("clear")
-        self.prompt()
         
     def display(self, text, color, new_line=False):
         """Display some text in a given color. Do not print a new line unless
@@ -331,7 +330,6 @@ to select it) and a title (to be displayed).
         return help
     
     def check_for_interactive_command(self):
-
         """Wait for a key to be pressed.
 
         Most keys result in the script

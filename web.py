@@ -227,3 +227,6 @@ to select it) and a title (to be displayed).
             return "<opened tab for " + url + ">"
         else:
             return False
+
+
+        
