@@ -57,7 +57,7 @@ class Demo(object):
     def get_current_command(self):
         """
         Return a tuple of the current command and a list of environment
-        variables that haven't been set.
+        variables that haven't been set and a list that have been set..
         """
 
         # If the command sets a variable put it in our env copy
@@ -71,7 +71,8 @@ class Demo(object):
         # Get all the vars, check to see if they are uninitialized
         var_pattern = re.compile(".*?(?<=\$)\(?{?(\w*)(?=[\W|\$|\s|\\\"]?)\)?(?!\$).*")
         matches = var_pattern.findall(self.current_command)
-        var_list = []
+        undefined_var_list = []
+        defined_var_list = []
         if matches:
             for var in matches:
                 have_value = False
@@ -79,12 +80,15 @@ class Demo(object):
                     for item in self.env.get():
                         if var == item:
                             have_value = True
+                            defined_var_list.append(var)
                             break
                 if len(var) > 0 and not have_value and not '$(' + var in self.current_command:
                     value = self.ui.get_shell().run_command("echo $" + var).strip()
                     if len(value) == 0:
-                        var_list.append(var)
-        return self.current_command, var_list
+                        undefined_var_list.append(var)
+                    else:
+                        defined_var_list.append(var)
+        return self.current_command, undefined_var_list, defined_var_list
 
     def get_scripts(self, directory):
         """
