@@ -533,7 +533,7 @@ class Demo(object):
             self.ui.check_for_interactive_command()
             
     def run_if_validation_fails(self, mode = None):
-        self.ui.information("Validating pre-requisite in '" + self.script_dir + "'", True)
+        self.ui.information("Validating pre-requisite in '" + self.filename + "' in '" + self.script_dir + "'", True)
         self.ui.new_para()
         lines = self.classify_lines()
         if self.validate(lines):
