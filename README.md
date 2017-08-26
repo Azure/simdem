@@ -155,6 +155,14 @@ of `test` as follows:
 ./scripts/run.sh cli demo_scripts/simdem test
 ```
 
+Test mode is very useful in a continuous integration environment. For
+example, you can configure your scripts to always use the latest
+versions of tooling they depend upon and get early warning when a
+change in one of those tools breaks your
+scripts. The
+[Azure Container Service demos GitHub repository](http://github.com/Azure/acs-demos) shows
+this technique in use.
+
 ### NoVNC Container
 
 When running in NoVNC mode a lightweight Linux desktop is run inside
