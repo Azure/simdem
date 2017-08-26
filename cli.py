@@ -279,6 +279,7 @@ to select it) and a title (to be displayed).
         handled diferently, these include:
 
         `xdg-open $URL` - intercepted and converted to a curl for headless CLI
+        `az acs create ...` - if we have a service principle set in environment variables 'SERVICE_PRINCIPAL_ID' and 'SERVICE_PRINCIPAL_SECRET_KEY' then add them to the command (assuming that we don't have a device login active)
 
         Returns the response from the command if it was handled by this function,
         otherwise returns False.
@@ -288,11 +289,16 @@ to select it) and a title (to be displayed).
         if command.startswith("xdg-open "):
             self.warning("Since you are running in headless CLI mode it is not possible to execute xdg-open commands.")
 
-            command = "curl -I " + command[9:]
+            command = "curl -I " + command[9:] + " -connect-timeout 90"
             
             self.warning("Converting to `" + command + "`")
             self.warning("Note that this may break tests.")
-            
+
+        if command.startswith('az acs create '):
+            if not "--service-principal" in command:
+                if os.getenv('SERVICE_PRINCIPAL_ID'):
+                    command += " --service-principal ${SERVICE_PRINCIPAL_ID} --client-secret ${SERVICE_PRINCIPAL_SECRET_KEY}" 
+
         if orig_command != command:
             self.log("INFO", "Running special command " + orig_command + " as " + command)
             response = self.get_shell().run_command(command)
