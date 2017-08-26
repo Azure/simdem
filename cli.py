@@ -295,7 +295,7 @@ to select it) and a title (to be displayed).
             self.warning("Note that this may break tests.")
 
         if command.startswith('az acs create '):
-            if not "--service-principal" in command:
+            if "--orchestrator-type=kubernetes" in command and not "--service-principal" in command:
                 if os.getenv('SERVICE_PRINCIPAL_ID'):
                     command += " --service-principal ${SERVICE_PRINCIPAL_ID} --client-secret ${SERVICE_PRINCIPAL_SECRET_KEY}" 
 
