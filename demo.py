@@ -263,7 +263,8 @@ class Demo(object):
     def classify_lines(self):
         lines = None
 
-        if self.is_testing:
+         # Only run through test plan for the first script
+        if self.is_testing and self.parent_script_dir is None:
             test_file = self.script_dir + "test_plan.txt"
             if os.path.isfile(test_file):
                 self.ui.log("info", "Executing test plan in " + test_file)
@@ -466,7 +467,8 @@ class Demo(object):
             else:
                 if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
                     # Descriptive text
-                    self.ui.description(line["text"])
+                    if not self.is_testing:
+                        self.ui.description(line["text"])
                     self.current_description += line["text"]
                 if line["type"] == "next_step" and not self.is_simulation:
                     pattern = re.compile('(.*)\[(.*)\]\(.*\).*')
@@ -522,7 +524,7 @@ class Demo(object):
                 new_dir = path
 
             self.ui.new_para()
-            self.ui.log("debug", "Validating prerequesite: " + filename + " in " + new_dir)
+            self.ui.log("debug", "Validating prerequesite: " + os.path.abspath(os.path.join(new_dir, filename)))
 
             demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
             demo.set_ui(self.ui)
@@ -531,7 +533,7 @@ class Demo(object):
             self.ui.check_for_interactive_command()
             
     def run_if_validation_fails(self, mode = None):
-        self.ui.information("Validating pre-requisite in '" + self.filename + "' in '" + self.script_dir + "'", True)
+        self.ui.information("Validating pre-requisite in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'")
         self.ui.new_para()
         lines = self.classify_lines()
         if self.validate(lines):
