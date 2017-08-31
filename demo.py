@@ -524,22 +524,23 @@ class Demo(object):
                 new_dir = path
 
             self.ui.new_para()
-            self.ui.log("debug", "Validating prerequesite: " + os.path.abspath(os.path.join(new_dir, filename)))
 
             demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
+            demo.mode = self.mode
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
             self.ui.check_for_interactive_command()
             
     def run_if_validation_fails(self, mode = None):
-        self.ui.information("Validating pre-requisite in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'")
+        self.ui.information("Validating pre-requisite of '" + self.parent_script_dir + "' in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'")
         self.ui.new_para()
         lines = self.classify_lines()
+        self.check_prerequisites(lines, self.script_dir)
         if self.validate(lines):
             self.ui.information("Validation passed.", True)
         else:
-            self.ui.information("Validation failed. Running prerequisite steps.", True)
+            self.ui.information("Validation failed. Running prerequisite steps in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'", True)
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)
@@ -631,6 +632,8 @@ found in the validation section.
         self.ui = ui
         ui.set_demo(self)
         self.ui.get_shell().run_command("pushd " + self.script_dir)
+        self.ui.log("debug", str(self))
+        print(str(self))
 
     def get_bash_script(self):
         """Reads a README.md file in the indicated directoy and builds an
