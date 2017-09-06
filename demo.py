@@ -1,7 +1,9 @@
 # This class represents a Demo to be executed in SimDem.
 
+import datetime
 import difflib
 from itertools import tee, islice, zip_longest
+import json
 import os
 import re
 import sys
@@ -17,7 +19,7 @@ def get_next(some_iterable, window=1):
     return zip_longest(items, nexts)
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False, output_format="log"):
         """
         is_running_in_docker should be set to true is we are running inside a Docker container
         script_dir is the location to look for scripts
@@ -51,7 +53,8 @@ class Demo(object):
         else:
             self.env = Environment(self.script_dir, is_test = self.is_testing)
         self.is_prerequisite = is_prerequisite
-            
+        self.output_format = output_format
+        
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -257,13 +260,54 @@ class Demo(object):
                 self.filename = match.groups()[1]
                 self.run(self.mode)
 
-        if failed_tests > 0:
-            sys.exit("Test failures: " + str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+
+        timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
+        test_name = "FIXME: test name"
+        test_type = "SimDem"
+        resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
+        region = self.env.get("SIMDEM_LOCATION")
+        orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
+        success = failed_tests == 0
+        if not success:
+            failure_message = "FIXME: record failure message"
+        else:
+            failure_message = ""
+
+        if self.output_format == "summary":
+            if success:
+                result = "Succeful test"
+            else:
+                result = "Failed test: " + failure_message
+
+            result += "\nTest Name: " + test_name
+            result += "\nOrchestrator: " + orchestrator
+            result += "\nResource Group: " + resource_group
+            result += "Region: " + region
+        elif self.output_format == "json":
+            meta = {
+                "TimeStampUTC": timestamp,
+                "TestName": test_name,
+                "TestType": test_type,
+                "ResourceGroup": resource_group,
+                "Region": region,
+                "Orchestrator": orchestrator,
+                "Success": success,
+                "FailureStr": failure_message
+            }
+            result = json.dumps(meta)
+        elif self.output_format != "log":
+            sys.exit("Invalid option for '--output', see 'simdem --help' for available options")
+        else:
+            result = "" # logs were output during execution
+            if failed_tests > 0:
+                sys.exit("Test failures: " + str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+
+        print(result)
 
     def classify_lines(self):
         lines = None
 
-         # Only run through test plan for the first script
+        # Only run through test plan for the first script
         if self.is_testing and self.parent_script_dir is None:
             test_file = self.script_dir + "test_plan.txt"
             if os.path.isfile(test_file):
@@ -399,6 +443,9 @@ class Demo(object):
         return classified_lines
 
     def execute(self, lines):
+        """Execute the script found in the lines. Return the number of failed
+           tests and the number of passed tests."""
+        
         source_file_directory = None
         is_first_line = True
         in_results = False
@@ -526,7 +573,7 @@ class Demo(object):
             self.ui.new_para()
             self.ui.log("debug", "Validating prerequesite: " + os.path.abspath(os.path.join(new_dir, filename)))
 
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True, output_format=self.output_format);
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution

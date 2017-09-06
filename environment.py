@@ -133,7 +133,10 @@ class Environment(object):
         """Returns a either a value for a supplied key or, if key is None, a
            dictionary containing the current environment"""
         if key:
-            return self.env[key]
+            if key not in self.env:
+                return "UNDEFINED"
+            else:
+                return self.env[key]
         else:
             return self.env
 
