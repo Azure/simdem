@@ -61,9 +61,7 @@ class Demo(object):
         elif base_dir is None:
             base_dir = ""
             
-        if not script_dir.endswith(os.sep):
-            script_dir += os.sep
-        self.script_dir = base_dir + script_dir
+        self.script_dir = os.path.abspath(os.path.join(base_dir,  script_dir))
         
     def get_current_command(self):
         """
@@ -201,7 +199,6 @@ class Demo(object):
 
         self.ui.log("debug", (str(self.env)))
         
-        self.filename = self.env.get_script_file_name(self.script_dir)
         self.ui.log("debug", "Running script called '" + self.filename + "' in '" + self.script_dir +"'")
         
         classified_lines = self.classify_lines()
@@ -309,7 +306,7 @@ class Demo(object):
 
         # Only run through test plan for the first script
         if self.is_testing and self.parent_script_dir is None:
-            test_file = self.script_dir + "test_plan.txt"
+            test_file = os.path.join(self.script_dir,  "test_plan.txt")
             if os.path.isfile(test_file):
                 self.ui.log("info", "Executing test plan in " + test_file)
                 plan_lines = list(open(test_file))
@@ -320,15 +317,15 @@ class Demo(object):
                         # not a comment or whitespace so should be a path to a script with tests
                         self.ui.log("debug", "Including " + line + " in tests.")
                         before = len(lines)
-                        file = self.script_dir + line
-                        lines.append("START TEST FILE: " + line)
+                        file = os.path.join(self.script_dir, line)
+                        lines.append("START TEST FILE: " + file)
                         lines = lines + list(open(file))
-                        lines.append("END TEST FILE: " + line)
+                        lines.append("END TEST FILE: " + file)
                         after = len(lines)
                         self.ui.log("debug", "Added " + str(after - before) + " lines.")
                         
         if lines is None:
-            file = self.script_dir + self.filename
+            file = os.path.join(self.script_dir, self.filename)
             self.ui.log("info", "Reading lines from " + file)
     
             if file.startswith("http"):
@@ -369,6 +366,7 @@ class Demo(object):
                 self.ui.log("debug", "Exiting test file: " + test_file_path)
                 classified_lines.append({"type": "end_test_file",
                                          "file": test_file_path})
+                test_file_path = None
             elif line.lower().startswith("results:"):
                 # Entering results section
                 in_results_section = True
@@ -421,8 +419,13 @@ class Demo(object):
                     classified_lines.append({"type": "next_step",
                                              "text": line})
                 elif in_prerequisites:
+                    if test_file_path:
+                        source_file_path = test_file_path
+                    else:
+                        source_file_path = os.path.join(self.script_dir, self.filename)
                     classified_lines.append({"type": "prerequisite",
-                                             "text": line})
+                                             "text": line,
+                                             "source_file_path": source_file_path})
                 elif in_validation_section:
                     classified_lines.append({"type": "validation",
                                              "text": line})
@@ -463,7 +466,7 @@ class Demo(object):
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
             elif line["type"] == "end_test_file":
-                test_file_directory = None
+                source_file_directory = None
             elif line["type"] == "result":
                 if not in_results:
                     in_results = True
@@ -547,21 +550,23 @@ class Demo(object):
         for line in lines:
             step = {}
             if line["type"] == "prerequisite" and len(line["text"].strip()) > 0:
-                self.ui.description(line["text"])
-                pattern = re.compile('.*\[(.*)\]\((.*)\).*')
-                match = pattern.match(line["text"])
-                if match:
-                    step["title"] = match.groups()[0].strip()
-                    href = match.groups()[1]
-                    if not href.endswith(".md"):
-                        if not href.endswith("/"):
-                            href = href + "/"
-                        href = href + "README.md"
-                    step["href"] = href
-                    steps.append(step)
+                if source_file_directory and line["source_file_path"].startswith(source_file_directory):
+                    self.ui.description(line["text"])
+                    pattern = re.compile('.*\[(.*)\]\((.*)\).*')
+                    match = pattern.match(line["text"])
+                    if match:
+                        step["title"] = match.groups()[0].strip()
+                        href = match.groups()[1]
+                        if not href.endswith(".md"):
+                            if not href.endswith("/"):
+                                href = href + "/"
+                            href = href + "README.md"
+                        step["href"] = href
+                        steps.append(step)
 
         for step in steps:
             path, filename = os.path.split(step["href"])
+            self.ui.log("debug", "Source file directory is " + source_file_directory)
             if (step["href"].startswith(".")):
                 if source_file_directory is not None:
                     new_dir = os.path.join(self.script_dir, source_file_directory, path)
@@ -571,22 +576,25 @@ class Demo(object):
                 new_dir = path
 
             self.ui.new_para()
-            self.ui.log("debug", "Validating prerequesite: " + os.path.abspath(os.path.join(new_dir, filename)))
 
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True, output_format=self.output_format);
+            self.ui.log("debug", "Execute prerequisite step in " + filename + " in " + new_dir)
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True, output_format=self.output_format)
+            demo.mode = self.mode
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
+            self.ui.get_shell().run_command("popd ") # set_ui runs pushd
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
             self.ui.check_for_interactive_command()
             
     def run_if_validation_fails(self, mode = None):
-        self.ui.information("Validating pre-requisite in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'")
+        self.ui.information("Validating pre-requisite of '" + self.parent_script_dir + "' in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'")
         self.ui.new_para()
         lines = self.classify_lines()
+        self.check_prerequisites(lines, self.script_dir)
         if self.validate(lines):
             self.ui.information("Validation passed.", True)
         else:
-            self.ui.information("Validation failed. Running prerequisite steps.", True)
+            self.ui.information("Validation failed. Running prerequisite steps in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'", True)
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)
@@ -678,6 +686,7 @@ found in the validation section.
         self.ui = ui
         ui.set_demo(self)
         self.ui.get_shell().run_command("pushd " + self.script_dir)
+        self.ui.log("debug", str(self))
 
     def get_bash_script(self):
         """Reads a README.md file in the indicated directoy and builds an
