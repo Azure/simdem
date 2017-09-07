@@ -137,15 +137,6 @@ class Environment(object):
         else:
             return self.env
 
-    def get_script_file_name(self, script_dir):
-        """
-        Backwards compatibility for old script.md - https://github.com/Azure/simdem/issues/5
-        """
-        file_name = "README.md"
-        if not os.path.exists(script_dir + file_name):
-            file_name = "script.md"
-        return file_name
-
     def dump_env(self):
         """
         Prints the environment to the console.
