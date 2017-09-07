@@ -223,7 +223,7 @@ class Demo(object):
             if failed_tests > 0:
                 self.ui.instruction("View failure reports in context in the above output.")
                 if self.is_fast_fail:
-                    sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
+                    self.output_results(False)
 
         if not self.is_simulation and not self.is_testing and not self.is_prep_only:
             next_steps = []
@@ -257,29 +257,30 @@ class Demo(object):
                 self.filename = match.groups()[1]
                 self.run(self.mode)
 
+        self.output_results(failed_tests == 0)
 
+    def output_results(self, is_success, failure_message = "UNDEFINED FAILURE MESSAGE"):
+        """Output the results of the run in the format requested. Note that
+if `--output` is `log` (or undefined) we will have been outputing the
+logs throughout execution."""
         timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
-        test_name = "FIXME: test name"
+        test_name = self.script_dir
         test_type = "SimDem"
         resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
         region = self.env.get("SIMDEM_LOCATION")
         orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
-        success = failed_tests == 0
-        if not success:
-            failure_message = "FIXME: record failure message"
-        else:
-            failure_message = ""
 
         if self.output_format == "summary":
-            if success:
+            if is_success:
                 result = "Succeful test"
             else:
-                result = "Failed test: " + failure_message
-
-            result += "\nTest Name: " + test_name
-            result += "\nOrchestrator: " + orchestrator
-            result += "\nResource Group: " + resource_group
-            result += "Region: " + region
+                result = "Failed test:\t" + failure_message
+            result += "\nTime (UTC):\t" + timestamp
+            result += "\nTest Name:\t" + test_name
+            result += "\nOrchestrator:\t" + orchestrator
+            result += "\nResource Group:\t" + resource_group
+            result += "\nRegion:\t\t" + region
+            result += "\n\n"
         elif self.output_format == "json":
             meta = {
                 "TimeStampUTC": timestamp,
@@ -296,10 +297,11 @@ class Demo(object):
             sys.exit("Invalid option for '--output', see 'simdem --help' for available options")
         else:
             result = "" # logs were output during execution
-            if failed_tests > 0:
-                sys.exit("Test failures: " + str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
         print(result)
+        
+        if not is_success:
+            sys.exit("Failed with: " + failure_message)
 
     def classify_lines(self):
         lines = None
