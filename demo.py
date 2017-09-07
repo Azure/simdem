@@ -1,9 +1,7 @@
 # This class represents a Demo to be executed in SimDem.
 
-import datetime
 import difflib
 from itertools import tee, islice, zip_longest
-import json
 import os
 import re
 import sys
@@ -19,7 +17,7 @@ def get_next(some_iterable, window=1):
     return zip_longest(items, nexts)
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False, output_format="log"):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False):
         """
         is_running_in_docker should be set to true is we are running inside a Docker container
         script_dir is the location to look for scripts
@@ -53,8 +51,7 @@ class Demo(object):
         else:
             self.env = Environment(self.script_dir, is_test = self.is_testing)
         self.is_prerequisite = is_prerequisite
-        self.output_format = output_format
-        
+            
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -223,7 +220,7 @@ class Demo(object):
             if failed_tests > 0:
                 self.ui.instruction("View failure reports in context in the above output.")
                 if self.is_fast_fail:
-                    self.output_results(False)
+                    sys.exit(str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
         if not self.is_simulation and not self.is_testing and not self.is_prep_only:
             next_steps = []
@@ -257,51 +254,8 @@ class Demo(object):
                 self.filename = match.groups()[1]
                 self.run(self.mode)
 
-        self.output_results(failed_tests == 0)
-
-    def output_results(self, is_success, failure_message = "UNDEFINED FAILURE MESSAGE"):
-        """Output the results of the run in the format requested. Note that
-if `--output` is `log` (or undefined) we will have been outputing the
-logs throughout execution."""
-        timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
-        test_name = self.script_dir
-        test_type = "SimDem"
-        resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
-        region = self.env.get("SIMDEM_LOCATION")
-        orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
-
-        if self.output_format == "summary":
-            if is_success:
-                result = "Succeful test"
-            else:
-                result = "Failed test:\t" + failure_message
-            result += "\nTime (UTC):\t" + timestamp
-            result += "\nTest Name:\t" + test_name
-            result += "\nOrchestrator:\t" + orchestrator
-            result += "\nResource Group:\t" + resource_group
-            result += "\nRegion:\t\t" + region
-            result += "\n\n"
-        elif self.output_format == "json":
-            meta = {
-                "TimeStampUTC": timestamp,
-                "TestName": test_name,
-                "TestType": test_type,
-                "ResourceGroup": resource_group,
-                "Region": region,
-                "Orchestrator": orchestrator,
-                "Success": success,
-                "FailureStr": failure_message
-            }
-            result = json.dumps(meta)
-        elif self.output_format != "log":
-            sys.exit("Invalid option for '--output', see 'simdem --help' for available options")
-        else:
-            result = "" # logs were output during execution
-
-        print(result)
-        
-        if not is_success:
-            sys.exit("Failed with: " + failure_message)
+        if failed_tests > 0:
+            sys.exit("Test failures: " + str(failed_tests) + " test failures. " + str(passed_tests) + " test passes.")
 
     def classify_lines(self):
         lines = None
@@ -448,9 +402,6 @@ logs throughout execution."""
         return classified_lines
 
     def execute(self, lines):
-        """Execute the script found in the lines. Return the number of failed
-           tests and the number of passed tests."""
-        
         source_file_directory = None
         is_first_line = True
         in_results = False
@@ -580,7 +531,7 @@ logs throughout execution."""
             self.ui.new_para()
 
             self.ui.log("debug", "Execute prerequisite step in " + filename + " in " + new_dir)
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True, output_format=self.output_format)
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
             demo.mode = self.mode
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
