@@ -54,6 +54,7 @@ class Demo(object):
             self.env = Environment(self.script_dir, is_test = self.is_testing)
         self.is_prerequisite = is_prerequisite
         self.output_format = output_format
+        self.all_results = []
         
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
@@ -223,7 +224,7 @@ class Demo(object):
             if failed_tests > 0:
                 self.ui.instruction("View failure reports in context in the above output.")
                 if self.is_fast_fail:
-                    self.output_results(False)
+                    self.output_results()
 
         if not self.is_simulation and not self.is_testing and not self.is_prep_only:
             next_steps = []
@@ -257,51 +258,73 @@ class Demo(object):
                 self.filename = match.groups()[1]
                 self.run(self.mode)
 
-        self.output_results(failed_tests == 0)
+        self.output_results()
 
-    def output_results(self, is_success, failure_message = "UNDEFINED FAILURE MESSAGE"):
+    def output_results(self):
         """Output the results of the run in the format requested. Note that
 if `--output` is `log` (or undefined) we will have been outputing the
 logs throughout execution."""
-        timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
-        test_name = self.script_dir
-        test_type = "SimDem"
-        resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
-        region = self.env.get("SIMDEM_LOCATION")
-        orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
-
-        if self.output_format == "summary":
+        passed = True
+        for result in self.all_results:
+            timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
+            test_name = os.path.join(self.script_dir, self.filename)
+            is_success = result["passed"]
             if is_success:
-                result = "Succeful test"
+                failure_message = None
             else:
-                result = "Failed test:\t" + failure_message
-            result += "\nTime (UTC):\t" + timestamp
-            result += "\nTest Name:\t" + test_name
-            result += "\nOrchestrator:\t" + orchestrator
-            result += "\nResource Group:\t" + resource_group
-            result += "\nRegion:\t\t" + region
-            result += "\n\n"
-        elif self.output_format == "json":
-            meta = {
-                "TimeStampUTC": timestamp,
-                "TestName": test_name,
-                "TestType": test_type,
-                "ResourceGroup": resource_group,
-                "Region": region,
-                "Orchestrator": orchestrator,
-                "Success": success,
-                "FailureStr": failure_message
-            }
-            result = json.dumps(meta)
-        elif self.output_format != "log":
-            sys.exit("Invalid option for '--output', see 'simdem --help' for available options")
-        else:
-            result = "" # logs were output during execution
+                failure_message = result
+            test_type = "SimDem"
+            resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
+            region = self.env.get("SIMDEM_LOCATION")
+            orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
+            if self.output_format == "json":
+                output = []
+            else:
+                output = ""
 
-        print(result)
-        
-        if not is_success:
-            sys.exit("Failed with: " + failure_message)
+            if self.output_format == "summary":
+                if is_success:
+                    meta = "Succesful test"
+                else:
+                    meta = "Failed test:\t" + json.dumps(failure_message)
+                meta += "\nTime (UTC):\t" + timestamp
+                meta += "\nTest Name:\t" + test_name
+                meta += "\nOrchestrator:\t" + orchestrator
+                meta += "\nResource Group:\t" + resource_group
+                meta += "\nRegion:\t\t" + region
+                meta += "\n\n"
+
+                output += meta
+            elif self.output_format == "json":
+                meta = {
+                    "TimeStampUTC": timestamp,
+                    "TestName": test_name,
+                    "TestType": test_type,
+                    "ResourceGroup": resource_group,
+                    "Region": region,
+                    "Orchestrator": orchestrator,
+                    "Success": is_success,
+                    "FailureStr": failure_message
+                }
+                output.append(meta)
+            elif self.output_format != "log":
+                sys.exit("Invalid option for '--output', see 'simdem --help' for available options")
+            else:
+                message = "" # logs were output during execution
+
+            if not is_success:
+                passed = False
+
+        if passed:
+            if self.output_format == "json":
+                print(json.dumps(output))
+            else:
+                print(output)
+        else:
+            if self.output_format == "json":
+                sys.exit(json.dumps(output))
+            else:
+                sys.exit(output)
 
     def classify_lines(self):
         lines = None
@@ -479,11 +502,14 @@ logs throughout execution."""
                 # Finishing results section
                 if self.is_testing:
                     ansi_escape = re.compile(r'\x1b[^m]*m')
-                    if self.is_pass(expected_results, ansi_escape.sub('', actual_results), expected_similarity):
+                    results = self.is_pass(expected_results, self.strip_ansi(actual_results), expected_similarity)
+                    self.ui.test_results(results)
+                    self.all_results.append(results)
+                    if results["passed"]:
                         passed_tests += 1
                     else:
                         failed_tests += 1
-                        if (self.is_fast_fail):
+                        if self.is_fast_fail:
                             break
                 expected_results = ""
                 actual_results = ""
@@ -631,9 +657,10 @@ found in the validation section.
                 expected_similarity = line["expected_similarity"]
             elif (line["type"] != "result" and in_results):
                 # Finishing results section
-                if not self.is_pass(expected_results, self.strip_ansi(actual_results), expected_similarity, True):
-                    self.ui.log("debug", "expected results: '" + expected_results + "'")
-                    self.ui.log("debug", "actual results: '" + actual_results + "'")
+                test_results = self.is_pass(expected_results, self.strip_ansi(actual_results), expected_similarity)
+                if not test_results["passed"]:
+                    self.ui.log("debug", "validation expected results: '" + expected_results + "'")
+                    self.ui.log("debug", "validation actual results: '" + actual_results + "'")
                     result = False
                 expected_results = ""
                 actual_results = ""
@@ -646,13 +673,20 @@ found in the validation section.
         ansi_escape = re.compile(r'\x1b[^m]*m')
         return ansi_escape.sub('', text)
     
-    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66, is_silent = False):
+    def is_pass(self, expected_results, actual_results, expected_similarity = 0.66):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within
         the expected similarity level then it's considered a pass.
 
-        If is_silent is set to True then error results will be
-        displayed.
+        Returns a dictionary containing the results:
+        {
+          "passed": boolean,
+          "command": "the command executed",
+          "results": "Results returned",
+          "expected_results": "Expected results",
+          "similarity": float,
+          "required_similarity": float
+        }
 
         """
         differ = difflib.Differ()
@@ -661,12 +695,19 @@ found in the validation section.
         seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results, expected_results)
 
         is_pass = seq.ratio() >= expected_similarity
-
+        
         self.ui.log("debug", "Similarity is: " + str(seq.ratio()))
 
-        if not is_pass and not is_silent:
-            self.ui.test_results(expected_results, actual_results, seq.ratio(), expected_similarity = 0.66)
-        return is_pass
+        message = {
+            "passed": is_pass,
+            "command": self.last_command,
+            "results": actual_results,
+            "expected_results": expected_results,
+            "similarity": seq.ratio(),
+            "required_similarity": expected_similarity
+        }
+
+        return message
                 
     def __str__( self ):
         s = "Demo directory: " + self.script_dir + "\n"

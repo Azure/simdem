@@ -433,26 +433,30 @@ to select it) and a title (to be displayed).
             fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
         return ret
 
-    def test_results(self, expected_results, actual_results, similarity, expected_similarity = 0.66):
+    def test_results(self, results):
         """Display the test results for a single test
         """
-        print("\n\n=============================\n\n")
-        print(colorama.Fore.RED + colorama.Style.BRIGHT)
-        print("FAILED")
-        print(colorama.Style.RESET_ALL)
-        print("Similarity ratio:    " + str(similarity))
-        print("Expected Similarity: " + str(expected_similarity))
-        print("\n\n=============================\n\n")
-        print("Expected results:")
-        print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
-        print(expected_results)
-        print(colorama.Style.RESET_ALL)
-        print("Actual results:")
-        print(colorama.Fore.RED + colorama.Style.BRIGHT)
-        print(actual_results)
-        print(colorama.Style.RESET_ALL)
-        print("\n\n=============================\n\n")
-        print(colorama.Style.RESET_ALL)
+        if results["passed"]:
+            return
+        else:
+            print("\n\n=============================\n\n")
+            print(colorama.Fore.RED + colorama.Style.BRIGHT)
+            print("FAILED")
+            print(colorama.Style.RESET_ALL)
+            print("Similarity ratio:    " + str(results["similarity"]))
+            print("Expected Similarity: " + str(results["required_similarity"]))
+            print("\n\n=============================\n\n")
+            print("Expected results:")
+            print(colorama.Fore.GREEN + colorama.Style.BRIGHT)
+            print(results["expected_results"])
+            print(colorama.Style.RESET_ALL)
+            print("Actual results:")
+            print(colorama.Fore.RED + colorama.Style.BRIGHT)
+            print(results["results"])
+            print(colorama.Style.RESET_ALL)
+
+            print("\n\n=============================\n\n")
+            print(colorama.Style.RESET_ALL)
 
     def get_command(self, commands):
         cmd = self.request_input("What mode do you want to run in? (default 'tutorial')")
