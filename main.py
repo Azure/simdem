@@ -74,6 +74,8 @@ def main():
                  help="Turn on debug logging by setting to True.")
     p.add_option('--webui', '-w', default="False",
                  help="If set to anything other than False will interact with the user through a Web UI rather than the CLI.")
+    p.add_option('--output', '-o', default="log",
+                 help="Format of the output. The default is `log` which will output all stdout data. Other options are `summary` which provides a summary of the execution status and `json`")
 
     options, arguments = p.parse_args()
 
@@ -123,7 +125,7 @@ def main():
 
     filename = "README.md"
     is_docker = os.path.isfile('/.dockerenv')
-    demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail);
+    demo = Demo(is_docker, script_dir, filename, simulate, is_automatic, is_test, is_fast_fail, output_format=options.output);
 
     if options.webui == "False":
         ui = Ui()
