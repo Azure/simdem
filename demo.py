@@ -55,7 +55,7 @@ class Demo(object):
         self.is_prerequisite = is_prerequisite
         self.output_format = output_format
         self.all_results = []
-        
+
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -257,7 +257,6 @@ class Demo(object):
                 self.set_script_dir(match.groups()[0], self.script_dir)
                 self.filename = match.groups()[1]
                 self.run(self.mode)
-
         self.output_results()
 
     def output_results(self):
