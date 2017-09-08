@@ -18,7 +18,6 @@ PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 class Ui(object):
     _shell = None
     demo = None
-    execution_log = ""
 
     def __init__(self):
         pass
@@ -40,7 +39,7 @@ class Ui(object):
     def heading(self, text):
         """Display a heading"""
         self.display(text, colorama.Fore.CYAN + colorama.Style.BRIGHT, True)
-        self.new_line()
+        print()
         
     def description(self, text):
         """Display some descriptive text. Usually this is text from the demo
@@ -85,10 +84,10 @@ to select it) and a title (to be displayed).
 
     def new_line(self):
         """Move to the next line"""
-        self.display("", colorama.Fore.WHITE, True)
+        print()
         
     def horizontal_rule(self):
-        self.display("\n\n============================================\n\n", colorama.Fore.WHITE)
+        print("\n\n============================================\n\n")
 
     def clear(self):
         """Clears the screen ready for  anew section of the script."""
@@ -103,22 +102,12 @@ to select it) and a title (to be displayed).
         new_line is set to True.
 
         """
-        self.execution_log += color
-        if self.demo.output_format == "log":
-            print(color, end="")
-        
-        self.execution_log += text
-        if self.demo.output_format == "log":
-            print(text, end="", flush=True)
-        
+        print(color, end="")
+        print(text, end="", flush=True)
         if new_line:
-            self.execution_log += colorama.Style.RESET_ALL + "\n"
-            if self.demo.output_format == "log":
-                print(colorama.Style.RESET_ALL)
+            print(colorama.Style.RESET_ALL)
         else:
-            self.execution_log += colorama.Style.RESET_ALL
-            if self.demo.output_format == "log":
-                print(colorama.Style.RESET_ALL, end="")
+            print(colorama.Style.RESET_ALL, end="")
 
     def log(self, level, text):
         if config.is_debug:

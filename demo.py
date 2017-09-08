@@ -1,9 +1,7 @@
 # This class represents a Demo to be executed in SimDem.
 
-import datetime
 import difflib
 from itertools import tee, islice, zip_longest
-import json
 import os
 import re
 import sys
@@ -19,7 +17,7 @@ def get_next(some_iterable, window=1):
     return zip_longest(items, nexts)
 
 class Demo(object):
-    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False, output_format="log"):
+    def __init__(self, is_running_in_docker, script_dir="demo_scripts", filename="README.md", is_simulation=True, is_automated=False, is_testing=False, is_fast_fail=True,is_learning = False, parent_script_dir = None, is_prep_only = False, is_prerequisite = False):
         """
         is_running_in_docker should be set to true is we are running inside a Docker container
         script_dir is the location to look for scripts
@@ -55,7 +53,7 @@ class Demo(object):
         self.is_prerequisite = is_prerequisite
         self.output_format = output_format
         self.all_results = []
-        
+
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -257,7 +255,6 @@ class Demo(object):
                 self.set_script_dir(match.groups()[0], self.script_dir)
                 self.filename = match.groups()[1]
                 self.run(self.mode)
-
         self.output_results()
 
     def output_results(self):
@@ -471,9 +468,6 @@ logs throughout execution."""
         return classified_lines
 
     def execute(self, lines):
-        """Execute the script found in the lines. Return the number of failed
-           tests and the number of passed tests."""
-        
         source_file_directory = None
         is_first_line = True
         in_results = False
@@ -606,7 +600,7 @@ logs throughout execution."""
             self.ui.new_para()
 
             self.ui.log("debug", "Execute prerequisite step in " + filename + " in " + new_dir)
-            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True, output_format=self.output_format)
+            demo = Demo(self.is_docker, new_dir, filename, self.is_simulation, self.is_automated, self.is_testing, self.is_fast_fail, self.is_learning, self.script_dir, is_prerequisite = True);
             demo.mode = self.mode
             demo.set_ui(self.ui)
             demo.run_if_validation_fails(self.mode)
