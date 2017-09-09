@@ -319,7 +319,7 @@ to select it) and a title (to be displayed).
 
     def expand_vars(self, command):
         """Expand the variables in the supplied command by replacing them
-        with the value they carry in the Environment."""
+        with the value they carry in the Environment. This is used by some special commands because the shell doesn't expand them (e.g. copying a $URL into a browser window using xdg-open)"""
 
         self.log("debug", "Expanding vars in " + command)
         var_pattern = re.compile(".*?(?<=\$)\(?{?(\w*)(?=[\W|\$|\s|\\\"]?)\)?(?!\$).*")
