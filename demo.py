@@ -437,13 +437,19 @@ logs throughout execution."""
                 # Heading in descriptive text, indicating a new section
                 if line.lower().strip().endswith("# next steps"):
                     in_next_steps = True
+                    in_prerequisites = False
+                    in_validation_section = False
                 elif line.lower().strip().endswith("# prerequisites"):
                     self.ui.log("debug", "Found a prerequisites section")
                     in_prerequisites = True
+                    in_validation_section = False
+                    in_next_steps = False
                 elif line.lower().strip().startswith("# validation"):
                     # Entering validation section
                     self.ui.log("debug", "Entering Validation Section")
                     in_validation_section = True
+                    in_prerequisites = False
+                    in_next_steps = False
                 else:
                     in_prerequisites = False
                     in_validation_section = False
