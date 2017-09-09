@@ -300,7 +300,7 @@ to select it) and a title (to be displayed).
         if command.startswith("xdg-open "):
             self.warning("Since you are running in headless CLI mode it is not possible to execute xdg-open commands.")
 
-            command = "curl -I " + command[9:] + " -connect-timeout 90"
+            command = "curl -I " + command[9:] + " --connect-timeout 90"
             
             self.warning("Converting to `" + command + "`")
             self.warning("Note that this may break tests.")
