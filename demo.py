@@ -263,7 +263,12 @@ class Demo(object):
         """Output the results of the run in the format requested. Note that
 if `--output` is `log` (or undefined) we will have been outputing the
 logs throughout execution."""
-        passed = True
+        passed = True            
+        if self.output_format == "json":
+            output = []
+        else:
+            output = ""
+            
         for result in self.all_results:
             timestamp = datetime.datetime.utcnow().strftime("%Y%m%d - %H:%M")
             test_name = os.path.join(self.script_dir, self.filename)
@@ -276,10 +281,6 @@ logs throughout execution."""
             resource_group = self.env.get("SIMDEM_RESOURCE_GROUP")
             region = self.env.get("SIMDEM_LOCATION")
             orchestrator = self.env.get("SIMDEM_ORCHESTRATOR")
-            if self.output_format == "json":
-                output = []
-            else:
-                output = ""
 
             if self.output_format == "summary":
                 if is_success:
@@ -314,11 +315,22 @@ logs throughout execution."""
             if not is_success:
                 passed = False
 
+        if len(output) == 0:
+            output = "Completed run succesfully"
+                
         if passed:
-            if self.output_format == "json":
-                print(json.dumps(output))
+            if self.parent_script_dir:
+                # This is a prereq script so we don't output summary results for this, but we'll log them
+                if self.output_format == "json":
+                    self.ui.log("debug", json.dumps(output))
+                else:
+                    self.ui.log("debug", output)
             else:
-                print(output)
+                if self.output_format == "json":
+                    print(json.dumps(output))
+                else:
+                    print(output)
+                
         else:
             if self.output_format == "json":
                 sys.exit(json.dumps(output))
