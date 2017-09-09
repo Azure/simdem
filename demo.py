@@ -460,7 +460,7 @@ logs throughout execution."""
                 if in_next_steps:
                     classified_lines.append({"type": "next_step",
                                              "text": line})
-                elif in_prerequisites:
+                elif in_prerequisites and len(line.strip()) > 0:
                     if test_file_path:
                         source_file_path = test_file_path
                     else:
