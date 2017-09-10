@@ -437,13 +437,19 @@ logs throughout execution."""
                 # Heading in descriptive text, indicating a new section
                 if line.lower().strip().endswith("# next steps"):
                     in_next_steps = True
+                    in_prerequisites = False
+                    in_validation_section = False
                 elif line.lower().strip().endswith("# prerequisites"):
                     self.ui.log("debug", "Found a prerequisites section")
                     in_prerequisites = True
+                    in_validation_section = False
+                    in_next_steps = False
                 elif line.lower().strip().startswith("# validation"):
                     # Entering validation section
                     self.ui.log("debug", "Entering Validation Section")
                     in_validation_section = True
+                    in_prerequisites = False
+                    in_next_steps = False
                 else:
                     in_prerequisites = False
                     in_validation_section = False
@@ -454,7 +460,7 @@ logs throughout execution."""
                 if in_next_steps:
                     classified_lines.append({"type": "next_step",
                                              "text": line})
-                elif in_prerequisites:
+                elif in_prerequisites and len(line.strip()) > 0:
                     if test_file_path:
                         source_file_path = test_file_path
                     else:
@@ -525,10 +531,10 @@ logs throughout execution."""
                 expected_results = ""
                 actual_results = ""
                 in_results = False
-            elif line["type"] == "prerequisite":
+            elif line["type"] == "prerequisite" and not in_prerequisites:
                 self.ui.log("debug", "Entering prerequisites")
                 in_prerequisites = True
-            elif line["type"] != "prerequisites" and in_prerequisites:
+            elif line["type"] != "prerequisites" and len(line["text"]) > 0 and in_prerequisites:
                 self.ui.log("debug", "Got all prerequisites")
                 self.check_prerequisites(lines, source_file_directory)
                 if self.is_prep_only:
@@ -584,12 +590,14 @@ logs throughout execution."""
         'source_file_directory' should container the directory in which
         the prequisite script is located.
         """
-
+        if source_file_directory is None:
+            source_file_directory = self.script_dir
         steps = []
         for line in lines:
             step = {}
             if line["type"] == "prerequisite" and len(line["text"].strip()) > 0:
                 if source_file_directory and line["source_file_path"].startswith(source_file_directory):
+                    self.ui.log("debug", "Looking for prereq file in line: " + line["text"])
                     self.ui.description(line["text"])
                     pattern = re.compile('.*\[(.*)\]\((.*)\).*')
                     match = pattern.match(line["text"])
