@@ -37,6 +37,11 @@ test files. The [prerequisite test script](./prerequisites/README.md)
 validates whether the file exists and, if it doesn't it will execute
 and create it.
 
+Each [prerequisite](./prerequisites/README.md) will only be run once,
+so even though this partucular prereq appears twice it will only
+execute once. This is important when building multi-part tutorials/
+demos where a prereq may be included in more than one part.
+
 ## Validate prerequisite ran
 
 The prerequisite script should have run and created a `prereq_ran`

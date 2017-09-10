@@ -55,7 +55,8 @@ class Demo(object):
         self.is_prerequisite = is_prerequisite
         self.output_format = output_format
         self.all_results = []
-
+        self.completed_validation_steps = []
+        
     def set_script_dir(self, script_dir, base_dir = None):
         if base_dir is not None and not base_dir.endswith(os.sep):
             base_dir += os.sep
@@ -610,6 +611,7 @@ logs throughout execution."""
                             href = href + "README.md"
                         step["href"] = href
                         steps.append(step)
+                        self.ui.log("debug", "Found prereq: " + str(step))
 
         for step in steps:
             path, filename = os.path.split(step["href"])
@@ -622,6 +624,12 @@ logs throughout execution."""
             else:
                 new_dir = path
 
+            new_dir = os.path.abspath(new_dir)
+            full_path = os.path.join(new_dir, filename)
+            if full_path in self.completed_validation_steps:
+                self.ui.log("debug", "Already validated " + new_dir)
+                return
+            
             self.ui.new_para()
 
             self.ui.log("debug", "Execute prerequisite step in " + filename + " in " + new_dir)
@@ -631,6 +639,8 @@ logs throughout execution."""
             demo.run_if_validation_fails(self.mode)
             self.ui.get_shell().run_command("popd ") # set_ui runs pushd
             self.ui.set_demo(self) # demo.set_ui(...) assigns new demo to ui, this reverts after prereq execution
+
+            self.completed_validation_steps.append(full_path)
             self.ui.check_for_interactive_command()
             
     def run_if_validation_fails(self, mode = None):
