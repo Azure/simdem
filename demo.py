@@ -499,7 +499,7 @@ logs throughout execution."""
         actual_results = ""
         failed_tests = 0
         passed_tests = 0
-        in_prerequisites = False
+        done_prerequisites = False
         in_validation = False
         executed_code_in_this_section = False
         next_steps = []
@@ -532,16 +532,12 @@ logs throughout execution."""
                 expected_results = ""
                 actual_results = ""
                 in_results = False
-            elif line["type"] == "prerequisite" and not in_prerequisites:
-                self.ui.log("debug", "Entering prerequisites")
-                in_prerequisites = True
-            elif line["type"] != "prerequisites" and len(line["text"]) > 0 and in_prerequisites:
-                self.ui.log("debug", "Got all prerequisites")
+            elif line["type"] == "prerequisite" and not done_prerequisites:
+                self.ui.heading(line["text"])
                 self.check_prerequisites(lines, source_file_directory)
                 if self.is_prep_only:
                     return failed_tests, passed_tests
-                in_prerequisites = False
-                self.ui.heading(line["text"])
+                done_prerequisites = True
             elif line["type"] == "executable":
                 if line["text"].strip() == "":
                     break
@@ -627,7 +623,7 @@ logs throughout execution."""
             new_dir = os.path.abspath(new_dir)
             full_path = os.path.join(new_dir, filename)
             if full_path in self.completed_validation_steps:
-                self.ui.log("debug", "Already validated " + new_dir)
+                self.ui.log("debug", "Already validated / executed script in  " + full_path)
                 return
             
             self.ui.new_para()
