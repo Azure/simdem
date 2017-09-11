@@ -15,8 +15,8 @@ echo $SIMDEM_VERSION
 
 Results:
 
-```
-0.8.1-dev
+```expected_similarity=0.8
+0.8.2-dev
 ```
 
 ## Clean test working files

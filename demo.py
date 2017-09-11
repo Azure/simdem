@@ -535,9 +535,9 @@ logs throughout execution."""
             elif line["type"] == "prerequisite" and not done_prerequisites:
                 self.ui.heading(line["text"])
                 self.check_prerequisites(lines, source_file_directory)
+                done_prerequisites = True
                 if self.is_prep_only:
                     return failed_tests, passed_tests
-                done_prerequisites = True
             elif line["type"] == "executable":
                 if line["text"].strip() == "":
                     break
