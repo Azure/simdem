@@ -655,12 +655,13 @@ found in the validation section.
         self.ui.prompt()
         result = True
         in_validation = False
+        has_validation_steps = False
         in_results = False
         expected_results = ""
-        failed_validation = False
         for line in lines:
             if line["type"] == "validation":
                 in_validation = True
+                has_validation_steps = True
             elif line["type"] == "heading":
                 in_validation = False
             elif in_validation and line["type"] == "executable":
@@ -685,7 +686,7 @@ found in the validation section.
                 actual_results = ""
                 in_results = False
 
-        return result
+        return result and has_validation_steps
 
     def strip_ansi(self, text):
         """ Strip ANSI codes from a string."""
