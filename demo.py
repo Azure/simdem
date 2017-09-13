@@ -754,7 +754,7 @@ found in the validation section.
         else:
             s += "Not running in a Docker container\n"
         s += "Simulation mode: {0}\n".format(self.is_simulation)
-        s += "Automotic mode: {0}\n".format(self.is_automated)
+        s += "Automatic mode: {0}\n".format(self.is_automated)
         s += "Learn mode: {0}\n".format(self.is_learning)
         s += "Test mode: {0}\n".format(self.is_testing)
         if self.is_testing:
