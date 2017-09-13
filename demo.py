@@ -508,7 +508,8 @@ logs throughout execution."""
         for line, next_line in get_next(lines):
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
-                self.ui.get_shell().run_command("pushd " + source_file_directory)                
+                self.ui.get_shell().run_command("pushd " + source_file_directory)
+                done_prerequisites = False
             elif line["type"] == "end_test_file":
                 source_file_directory = None
                 self.ui.get_shell().run_command("popd")
