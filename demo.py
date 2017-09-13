@@ -182,7 +182,10 @@ class Demo(object):
             print(self.get_bash_script())
             return
         elif mode == "demo":
-            self.is_simulation = True
+            # we automate the prereq steps so start in auto mode without simulation
+            # we'll switch these two values once prereqs are complete
+            self.is_simulation = False
+            self.is_automated = True 
         elif mode == "test":
             self.is_testing = True
             self.is_automated = True
@@ -541,6 +544,11 @@ logs throughout execution."""
                 done_prerequisites = True
                 if self.is_prep_only:
                     return failed_tests, passed_tests
+
+                if self.mode == "demo":
+                    # prereqs are now complete, so switch to simulated demo mode
+                    self.is_simulation = True
+                    self.is_automated = False
             elif line["type"] == "executable":
                 if line["text"].strip() == "":
                     break
