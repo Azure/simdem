@@ -508,8 +508,10 @@ logs throughout execution."""
         for line, next_line in get_next(lines):
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
+                self.ui.get_shell().run_command("pushd " + source_file_directory)                
             elif line["type"] == "end_test_file":
                 source_file_directory = None
+                self.ui.get_shell().run_command("popd")
             elif line["type"] == "result":
                 if not in_results:
                     in_results = True
