@@ -116,7 +116,7 @@ class Environment(object):
         
     def process_env(self, new_env):
         """
-        Takes an environmetn definition and processes it for use.
+        Takes an environment definition and processes it for use.
         For example, expand '~' to home directory.
         """
         for key in new_env:
