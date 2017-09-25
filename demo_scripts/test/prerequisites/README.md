@@ -5,9 +5,9 @@ executed as part of the root `script.md`. Therefore, because of this
 prerequisite there should be a file called `prereq_ran` and another
 called `nested_prereq_ran` in the temp directory.
 
-# Prerequisite
+# Prerequisites
 
-We should be able to run [nested prerequisites](nested_prereq.md).
+We should be able to run [nested prerequisites](./nested_prereq.md).
 
 # Create the test file
 
