@@ -538,17 +538,18 @@ logs throughout execution."""
                 expected_results = ""
                 actual_results = ""
                 in_results = False
-            elif line["type"] == "prerequisite" and not done_prerequisites:
-                self.ui.heading(line["text"])
-                self.check_prerequisites(lines, source_file_directory)
-                done_prerequisites = True
-                if self.is_prep_only:
-                    return failed_tests, passed_tests
+            elif line["type"] == "prerequisite":
+                if not done_prerequisites:
+                    self.ui.heading(line["text"])
+                    self.check_prerequisites(lines, source_file_directory)
+                    done_prerequisites = True
+                    if self.is_prep_only:
+                        return failed_tests, passed_tests
 
-                if self.mode == "demo":
-                    # prereqs are now complete, so switch to simulated demo mode
-                    self.is_simulation = True
-                    self.is_automated = False
+                    if self.mode == "demo":
+                        # prereqs are now complete, so switch to simulated demo mode
+                        self.is_simulation = True
+                        self.is_automated = False
             elif line["type"] == "executable":
                 if line["text"].strip() == "":
                     break
