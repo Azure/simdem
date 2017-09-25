@@ -636,7 +636,7 @@ logs throughout execution."""
             full_path = os.path.join(new_dir, filename)
             if full_path in self.completed_validation_steps:
                 self.ui.log("debug", "Already validated / executed script in  " + full_path)
-                return
+                continue
             
             self.ui.new_para()
 
