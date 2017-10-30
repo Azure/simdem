@@ -194,7 +194,7 @@ more install Python 3 and pip, then type the following commands:
 
 ```
 sudo pip3 install -r requirements.txt
-python3 simdem.py --help
+python3 main.py --help
 ```
 
 ## Azure Cloud Shell
