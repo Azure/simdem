@@ -72,7 +72,7 @@ There are two containers available, the 'cli' version and the 'novnc'
 version. The first is command line only, the latter provides a browser
 based Linux desktop envirnment in which the CLI is availale. The NoVNC
 version makes it easy to do demo's with browser based steps without
-having to install any softare (other than Docker) on your client.
+having to install any software (other than Docker) on your client.
 
 We provide scripts that make it easy to run the container and to load
 custom scripts into it.
