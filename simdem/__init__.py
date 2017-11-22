@@ -1,1 +1,1 @@
-from .core import start,run_cmd,run_doc
+from .core import Core

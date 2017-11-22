@@ -9,15 +9,17 @@ class SimDemTestSuite(unittest.TestCase):
     """Advanced test cases."""
 
     test_file = '/tmp/foo'
+    simdem = None
 
     def setUp(self):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
+        self.simdem = simdem.Core()
 
     def test_init(self):
-        self.assertIsNone(simdem.start())
+        self.assertIsNone(self.simdem.start())
     
     def test_run_cmd(self):
-        self.assertEquals("foobar\r\n", simdem.run_cmd('echo foobar'))
+        self.assertEquals("foobar\r\n", self.simdem.run_cmd('echo foobar'))
     
     def test_run_doc(self):
         doc = """this is text
@@ -26,7 +28,7 @@ touch %(file)s```
 more text""" % { 'file' : self.test_file }
         
         self.assertFalse(os.path.exists(self.test_file))
-        simdem.run_doc(doc)
+        self.simdem.run_doc(doc)
         self.assertTrue(os.path.exists(self.test_file))
 
 
