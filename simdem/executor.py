@@ -19,6 +19,7 @@ class Executor(object):
         start_time = time.time()
         response = self.get_shell().run_command(command)
         end_time = time.time()
+        print("Response: '" + response + "'")
         return response
 
     def get_shell(self):

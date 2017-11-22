@@ -5,9 +5,12 @@ from .render import demo
 
 class Core(object):
 
-    def start(self):
-        exe = executor.Executor()
-        sh = exe.get_shell()
+    rend = None
+    lexer = None
+
+    def __init__(self):
+        self.rend = demo.Demo()
+        self.lexer = mistune.BlockLexer()
 
     def run_code_block(self, cmd):
         # In the future, we'll want to split a code segment into individual lines
@@ -15,16 +18,26 @@ class Core(object):
         return self.run_cmd(cmd)
 
     def run_cmd(self, cmd):
-        rend = demo.Demo()
-        return rend.run_cmd(cmd)
+        return self.rend.run_cmd(cmd)
+
+    def process_file(self, file_path):
+        content = self.get_file_contents(file_path)
+        result = self.run_doc(content)
+        return result
+
+    def get_file_contents(self, file_path):
+        f = open(file_path, 'r')
+        try:
+            content = f.read()
+        finally:
+            f.close()
+        return content
 
     def parse_doc(self, text):
-        blockLexer = mistune.BlockLexer()
-        return blockLexer.parse(text)
+        return self.lexer.parse(text)
 
     def run_doc(self, text):
         blocks = self.parse_doc(text)
         for block in blocks:
-            print(block)
             if block['type'] == 'code' and block['lang'] == 'shell':
                 self.run_code_block(block['text'])

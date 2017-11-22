@@ -10,4 +10,5 @@ class Demo(object):
         pass
 
     def run_cmd(self, cmd):
-        return self.exe.run_cmd(cmd)
+        res = self.exe.run_cmd(cmd)
+        return res

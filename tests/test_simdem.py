@@ -15,9 +15,6 @@ class SimDemTestSuite(unittest.TestCase):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
         self.simdem = simdem.Core()
 
-    def test_init(self):
-        self.assertIsNone(self.simdem.start())
-    
     def test_run_cmd(self):
         self.assertEquals("foobar\r\n", self.simdem.run_cmd('echo foobar'))
     
