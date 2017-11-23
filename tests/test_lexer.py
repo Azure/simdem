@@ -34,13 +34,5 @@ more text""")
             {'lang': 'shell', 'text': 'echo $FOO', 'type': 'code'},
             {'text': 'more text', 'type': 'paragraph'}])
 
-    '''
-    Haven't figured this out yet.
-    def test_inline_lexer(self):
-        inlineLexer = mistune.InlineLexer()
-        res = inlineLexer.parse('I am using **mistune markdown parser**')
-        self.assertEquals(res, [{'type': 'paragraph', 'text': 'I am using **mistune markdown parser**'}])
-    '''
-
 if __name__ == '__main__':
     unittest.main()

@@ -21,7 +21,7 @@ class SimDemTestSuite(unittest.TestCase):
         self.simdem = simdem.Core(config, demo.Demo(), mistune.BlockLexer())
 
     def test_run_cmd(self):
-        self.assertEquals("foobar\r\n", self.simdem.run_cmd('echo foobar'))
+        self.assertEquals("foobar\n", self.simdem.run_cmd('echo foobar'))
     
     def test_run_doc(self):
         doc = """this is text
@@ -32,11 +32,6 @@ more text""" % { 'file' : self.test_file }
         self.assertFalse(os.path.exists(self.test_file))
         self.simdem.run_doc(doc)
         self.assertTrue(os.path.exists(self.test_file))
-
-    def test_process_file(self):
-        res = self.simdem.process_file("./content/simple/README.md")
-        self.assertTrue("$ echo foobar\nfoobar\n")
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,4 @@
+#!/usr/local/bin/python3
 from simdem import core
 from simdem.render import demo
 import os

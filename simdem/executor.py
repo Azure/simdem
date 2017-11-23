@@ -20,6 +20,10 @@ class Executor(object):
         start_time = time.time()
         response = self.get_shell().run_command(command)
         end_time = time.time()
+        # https://pexpect.readthedocs.io/en/stable/overview.html#find-the-end-of-line-cr-lf-conventions
+        # Because pexpect respects TTY (which uses CRLF) instead of UNIX, we must swap out.  This might get tricky if we start supporting windows
+        # This is because to easily write expected testcase output files, most unix-ish text editors write with \n
+        response = response.replace("\r\n", "\n")
         logging.debug("Response: '" + response + "'")
         return response
 

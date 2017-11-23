@@ -31,4 +31,4 @@ class Demo(object):
         print("", flush=True)
 
     def display_result(self, res):
-        print(res)
+        print(res, end="", flush=True)
