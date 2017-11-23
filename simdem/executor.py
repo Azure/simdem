@@ -1,5 +1,6 @@
 import pexpect
 import time
+import logging
 from pexpect import replwrap
 
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
@@ -15,11 +16,11 @@ class Executor(object):
 
     def run_cmd(self, command=None):
         command = command.strip()
-        print("Execute command: '" + command + "'")
+        logging.debug("Execute command: '" + command + "'")
         start_time = time.time()
         response = self.get_shell().run_command(command)
         end_time = time.time()
-        print("Response: '" + response + "'")
+        logging.debug("Response: '" + response + "'")
         return response
 
     def get_shell(self):

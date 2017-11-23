@@ -1,6 +1,6 @@
-from simdem import core
+from simdem import core,config
 import os
-import config
+import logging
 import optparse
 
 def main():
@@ -13,6 +13,8 @@ def main():
     if validate_error:
         print(validate_error)
         exit(1)
+
+    logging.basicConfig(filename=config.LOG_FILE,level=config.LOG_LEVEL)
 
     simdem = core.Core()
 
