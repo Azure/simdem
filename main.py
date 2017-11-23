@@ -23,7 +23,7 @@ def main():
 
     setup_logging(config, options)
 
-    simdem = core.Core()
+    simdem = core.Core(config)
 
     file_path = arguments[0]
     simdem.process_file(file_path)
