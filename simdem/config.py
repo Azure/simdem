@@ -4,6 +4,7 @@ SIMDEM_VERSION = "2.0.0"
 import logging
 LOG_FILE = "simdem.log"
 LOG_LEVEL = logging.DEBUG
+LOG_FORMAT = "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
 
 # When in demo mode we insert a small random delay between characters.
 # TYPING DELAY is the upper bound of this delay.
