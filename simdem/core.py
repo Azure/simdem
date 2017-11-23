@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from . import helpers,executor
-import mistune
-from .render import demo
 
 class Core(object):
 
@@ -9,10 +7,10 @@ class Core(object):
     lexer = None
     config = None
 
-    def __init__(self, config):
+    def __init__(self, config, rend, lexer):
         self.config = config
-        self.rend = demo.Demo()
-        self.lexer = mistune.BlockLexer()
+        self.rend = rend
+        self.lexer = lexer
 
     def run_code_block(self, cmd):
         # In the future, we'll want to split a code segment into individual lines

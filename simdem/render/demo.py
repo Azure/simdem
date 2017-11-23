@@ -23,7 +23,6 @@ class Demo(object):
         """
 
         print(config.CONSOLE_PROMPT, end="", flush=True)
-        text = ""
         for idx, char in enumerate(cmd):
             if char != "\n":
                 delay = random.uniform(0.02, config.TYPING_DELAY)

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem
+from .context import simdem, demo
 
 import unittest
 import os.path
 import configparser
+import mistune
 
 class SimDemTestSuite(unittest.TestCase):
     """Advanced test cases."""
@@ -17,7 +18,7 @@ class SimDemTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("../content/config/demo.ini")
 
-        self.simdem = simdem.Core(config)
+        self.simdem = simdem.Core(config, demo.Demo(), mistune.BlockLexer())
 
     def test_run_cmd(self):
         self.assertEquals("foobar\r\n", self.simdem.run_cmd('echo foobar'))

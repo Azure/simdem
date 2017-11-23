@@ -1,6 +1,8 @@
 from simdem import core
+from simdem.render import demo
 import os
 import sys
+import mistune
 import logging
 import optparse
 import configparser
@@ -11,6 +13,10 @@ def main():
                  help="Turn on logging to console")
     p.add_option('--config-file', '-f', default="content/config/demo.ini",
                  help="Config file to use")
+    p.add_option('--render', '-r', default="demo",
+                 help="Render class to use")
+    p.add_option('--lexer', '-l', default="mistune.BlockLexer",
+                 help="Lexer class to use")
     options, arguments = p.parse_args()
 
     validate_error = validate(options, arguments)
@@ -23,7 +29,7 @@ def main():
 
     setup_logging(config, options)
 
-    simdem = core.Core(config)
+    simdem = core.Core(config, get_render(options), get_lexer(options))
 
     file_path = arguments[0]
     simdem.process_file(file_path)
@@ -34,11 +40,24 @@ def validate(options, arguments):
 
     file_path = arguments[0]
     if not os.path.isfile(file_path):
-        return "Unable to find file " + file_path
+        return "Unable to find file: " + file_path
 
     if not os.path.isfile(options.config_file):
-        return "Unable to find config file " + options.config_file
+        return "Unable to find config file: " + options.config_file
 
+    if options.render not in ['demo']:
+        return "Unknown Render: " + options.render
+    
+    if options.lexer not in ['mistune.BlockLexer']:
+        return "Unknown Lexer: " + options.lexer
+
+def get_render(options):
+    if options.render == 'demo':
+        return demo.Demo()
+
+def get_lexer(options):
+    if options.lexer == 'mistune.BlockLexer':
+        return mistune.BlockLexer()
 
 def setup_logging(config, options):
     logFormatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
