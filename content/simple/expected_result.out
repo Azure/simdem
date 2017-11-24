@@ -1,2 +1,4 @@
-$ echo foobar
-foobar
+$ echo foo
+foo
+$ echo bar
+bar

@@ -12,10 +12,11 @@ class Core(object):
         self.rend = rend
         self.lexer = lexer
 
-    def run_code_block(self, cmd):
+    def run_code_block(self, cmd_block):
         # In the future, we'll want to split a code segment into individual lines
         # For now, assume just one command in a block
-        return self.run_cmd(cmd)
+        for cmd in cmd_block.split("\n"):
+            self.run_cmd(cmd)
 
     def run_cmd(self, cmd):
         return self.rend.run_cmd(cmd)

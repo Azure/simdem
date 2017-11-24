@@ -1,6 +1,7 @@
 this is text
 
 ```shell
-echo foobar```
+echo foo
+echo bar```
 
 more text
