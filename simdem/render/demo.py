@@ -2,12 +2,13 @@ import time
 import random
 
 from .. import helpers,executor
-from .. import config
 
 class Demo(object):
     exe = None
+    config = None
 
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.exe = executor.Executor()
         pass
 
@@ -22,11 +23,14 @@ class Demo(object):
         Displays the command on the screen
         """
 
-        print(config.CONSOLE_PROMPT, end="", flush=True)
+        # Must add ' ' when typing command because whitespaces are removed from configparser
+        # https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
+        print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ', end="", flush=True)
         for idx, char in enumerate(cmd):
             if char != "\n":
-                if config.TYPING_DELAY:
-                    delay = random.uniform(0.02, config.TYPING_DELAY)
+                typing_delay = float(self.config.get('RENDER', 'TYPING_DELAY'))
+                if typing_delay:
+                    delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)
                 print(char, end="", flush=True)
         print("", flush=True)

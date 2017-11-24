@@ -17,9 +17,8 @@ class SimDemSystemTestSuite(unittest.TestCase):
     def setUp(self):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
         config = configparser.ConfigParser()
-        config.read("../content/config/unit_test.ini")
-
-        self.simdem = simdem.Core(config, demo.Demo(), mistune.BlockLexer())
+        config.read("content/config/unit_test.ini")
+        self.simdem = simdem.Core(config, demo.Demo(config), mistune.BlockLexer())
 
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
     def test_process_file(self):

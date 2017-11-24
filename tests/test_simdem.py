@@ -16,9 +16,9 @@ class SimDemTestSuite(unittest.TestCase):
     def setUp(self):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
         config = configparser.ConfigParser()
-        config.read("../content/config/demo.ini")
+        config.read("content/config/unit_test.ini")
 
-        self.simdem = simdem.Core(config, demo.Demo(), mistune.BlockLexer())
+        self.simdem = simdem.Core(config, demo.Demo(config), mistune.BlockLexer())
 
     def test_run_cmd(self):
         self.assertEquals("foobar\n", self.simdem.run_cmd('echo foobar'))

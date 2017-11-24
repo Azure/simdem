@@ -30,7 +30,7 @@ def main():
 
     setup_logging(config, options)
 
-    simdem = core.Core(config, get_render(options), get_lexer(options))
+    simdem = core.Core(config, get_render(options, config), get_lexer(options))
 
     file_path = arguments[0]
     simdem.process_file(file_path)
@@ -52,9 +52,9 @@ def validate(options, arguments):
     if options.lexer not in ['mistune.BlockLexer']:
         return "Unknown Lexer: " + options.lexer
 
-def get_render(options):
+def get_render(options, config):
     if options.render == 'demo':
-        return demo.Demo()
+        return demo.Demo(config)
 
 def get_lexer(options):
     if options.lexer == 'mistune.BlockLexer':
