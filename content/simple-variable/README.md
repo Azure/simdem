@@ -1,6 +1,9 @@
 this is text
 
 ```shell
-echo blarg```
+FOO=bar```
+
+```shell
+echo $FOO```
 
 more text

@@ -1,2 +1,3 @@
-$ echo blarg
-blarg
+$ FOO=bar
+$ echo $FOO
+bar

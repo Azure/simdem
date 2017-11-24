@@ -25,8 +25,9 @@ class Demo(object):
         print(config.CONSOLE_PROMPT, end="", flush=True)
         for idx, char in enumerate(cmd):
             if char != "\n":
-                delay = random.uniform(0.02, config.TYPING_DELAY)
-                time.sleep(delay)
+                if config.TYPING_DELAY:
+                    delay = random.uniform(0.02, config.TYPING_DELAY)
+                    time.sleep(delay)
                 print(char, end="", flush=True)
         print("", flush=True)
 
