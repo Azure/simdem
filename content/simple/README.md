@@ -4,4 +4,9 @@ this is text
 echo foo
 echo bar```
 
-more text
+more text 
+
+```shell
+echo baz```
+
+even more text
