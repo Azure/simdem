@@ -28,8 +28,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
         rootLogger.addHandler(fileHandler)
 
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
-#    @data('simple', 'simple-variable', 'results-block', 'results-block)
-    @data( 'results-block-fail')
+    @data('simple', 'simple-variable', 'results-block', 'results-block-fail')
     def test_process(self, dir):
         self.simdem.process_file('./content/' + dir + '/README.md')
         res = sys.stdout.getvalue()
