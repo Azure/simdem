@@ -5,6 +5,7 @@ from .context import simdem, demo
 import unittest
 import configparser
 import mistune
+import logging
 import sys
 from ddt import ddt,data
 
@@ -19,8 +20,16 @@ class SimDemSystemTestSuite(unittest.TestCase):
         config.read("content/config/unit_test.ini")
         self.simdem = simdem.Core(config, demo.Demo(config), mistune.BlockLexer())
 
+        logFormatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
+        rootLogger = logging.getLogger()
+        rootLogger.setLevel(config.get('LOG', 'LEVEL'))
+        fileHandler = logging.FileHandler(config.get('LOG', 'FILE'))
+        fileHandler.setFormatter(logFormatter)
+        rootLogger.addHandler(fileHandler)
+
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
-    @data('simple', 'simple-variable')
+#    @data('simple', 'simple-variable', 'results-block', 'results-block)
+    @data( 'results-block-fail')
     def test_process(self, dir):
         self.simdem.process_file('./content/' + dir + '/README.md')
         res = sys.stdout.getvalue()

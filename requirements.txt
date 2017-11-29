@@ -2,3 +2,4 @@ nose
 mistune
 pexpect
 ddt
+difflib
