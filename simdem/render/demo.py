@@ -1,7 +1,7 @@
 import time
 import random
 
-from .. import helpers,executor
+from .. import executor
 
 class Demo(object):
     exe = None

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from . import helpers,executor
+from . import executor
 import difflib
 import logging
 
