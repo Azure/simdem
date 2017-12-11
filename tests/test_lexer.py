@@ -24,6 +24,22 @@ class LexerTestSuite(unittest.TestCase):
         res = blockLexer.parse("```php\necho $foo```")
         self.assertEquals(res, [{'lang': 'php', 'text': 'echo $foo', 'type': 'code'}])
 
+    def test_block_lexer_prerequisite(self):
+        blockLexer = mistune.BlockLexer()
+        res = blockLexer.parse("""foo
+# Prerequisites
+We should be able to run [nested prerequisites](./nested_prereq.md).
+
+# Do stuff here
+```echo foo
+```""")
+        self.assertEquals(res, 
+            [{'text': 'foo', 'type': 'paragraph'},
+            {'level': 1, 'text': 'Prerequisites', 'type': 'heading'},
+            {'text': 'We should be able to run [nested prerequisites](./nested_prereq.md).', 'type': 'paragraph'},
+            {'level': 1, 'text': 'Do stuff here', 'type': 'heading'},
+            {'text': '```echo foo\n```', 'type': 'paragraph'}])
+
     def test_block_lexer_multiline(self):
         blockLexer = mistune.BlockLexer()
         res = blockLexer.parse("""this is text

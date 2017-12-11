@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
-from . import executor
+from . import executor,parser
 import difflib
 import logging
+import re
 
 class Core(object):
 
     rend = None
     lexer = None
     config = None
+    parser = None
 
-    def __init__(self, config, rend, lexer):
+    def __init__(self, config, rend, lexer, parser):
         self.config = config
         self.rend = rend
         self.lexer = lexer
+        self.parser = parser
 
     def run_code_block(self, cmd_block):
         # In the future, we'll want to split a code segment into individual lines
@@ -29,7 +32,8 @@ class Core(object):
 
     def process_file(self, file_path):
         content = self.get_file_contents(file_path)
-        result = self.run_doc(content)
+        blocks = self.parse_doc(content)
+        result = self.run_blocks(blocks)
         return result
 
     def get_file_contents(self, file_path):
@@ -43,32 +47,24 @@ class Core(object):
     def parse_doc(self, text):
         return self.lexer.parse(text)
 
-    def run_doc(self, text):
-        blocks = self.parse_doc(text)
+    def run_blocks(self, blocks):
         results_latest = None
         for idx in range(len(blocks)):
-            if self.is_result_block(blocks, idx):
+            if self.parser.is_prerequisite_block(blocks[idx]):
+                # TODO:  We need to skip processing the next block if it's a preqreq.
+                # we might need to refactor the looping mechanism to do so.  Fight for a different day
+                preqreq_file = parse_ref_from_text(blocks[idx+1]['text'])
+                if preqreq_file:
+                    self.process_file(prereq_file)
+            if self.parser.is_result_block(blocks, idx):
                 is_passable = self.is_result_passable(blocks[idx]['text'], results_latest)
                 if not is_passable:
                     logging.error("Result did not pass")
                     return
-            elif self.is_runable_block(blocks[idx]):
+            elif self.parser.is_runable_block(blocks[idx]):
                 results_latest = self.run_code_block(blocks[idx]['text'])
-   
-    def is_runable_block(self, block):
-        if block['type'] == 'code' and block['lang'] == 'shell':
-            return True
-        return False
+
     
-    def is_result_block(self, blocks, idx):
-        block = blocks[idx]
-        block_prev = blocks[idx-1]
-        if block['type'] == 'code' and block['lang'] == 'shell' and \
-            block_prev['type'] == 'paragraph' and block_prev['text'].lower().startswith('results:'):
-            return True
-        return False
-
-
     def is_result_passable(self, expected_results, actual_results, expected_similarity = 1.0):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within

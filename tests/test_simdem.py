@@ -18,19 +18,20 @@ class SimDemTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
-        self.simdem = simdem.Core(config, demo.Demo(config), mistune.BlockLexer())
+        self.simdem = simdem.Core(config, demo.Demo(config), mistune.BlockLexer(), simdem.Parser())
 
     def test_run_cmd(self):
         self.assertEquals("foobar\n", self.simdem.run_cmd('echo foobar'))
     
-    def test_run_doc(self):
+    def test_run_blocks(self):
         doc = """this is text
 ```shell
 touch %(file)s```
 more text""" % { 'file' : self.test_file }
         
         self.assertFalse(os.path.exists(self.test_file))
-        self.simdem.run_doc(doc)
+        blocks = self.simdem.parse_doc(doc)
+        self.simdem.run_blocks(blocks)
         self.assertTrue(os.path.exists(self.test_file))
 
 if __name__ == '__main__':
