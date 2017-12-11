@@ -7,14 +7,12 @@ import re
 class Core(object):
 
     rend = None
-    lexer = None
     config = None
     parser = None
 
-    def __init__(self, config, rend, lexer, parser):
+    def __init__(self, config, rend, parser):
         self.config = config
         self.rend = rend
-        self.lexer = lexer
         self.parser = parser
 
     def run_code_block(self, cmd_block):
@@ -31,21 +29,20 @@ class Core(object):
         return self.rend.run_cmd(cmd)
 
     def process_file(self, file_path):
-        content = self.get_file_contents(file_path)
-        blocks = self.parse_doc(content)
+        content = self.parser.get_file_contents(file_path)
+        blocks = self.parser.parse_doc(content)
+        self.process_prereqs(blocks)
         result = self.run_blocks(blocks)
         return result
 
-    def get_file_contents(self, file_path):
-        f = open(file_path, 'r')
-        try:
-            content = f.read()
-        finally:
-            f.close()
-        return content
-
-    def parse_doc(self, text):
-        return self.lexer.parse(text)
+    def process_prereqs(self, blocks):
+        prereqs = self.parser.get_prereqs(blocks)
+        for prereq in prereqs:
+            prereq_content = self.get_file_contents(prereq)
+            preqreq_blocks = self.parse.parse_doc(prereq_content)
+            preqreq_validation = self.parser.get_validation_block(preqreq_blocks)
+            if not self.is_prereq_required(preqreq_validation):
+                self.process_file(prereq)
 
     def run_blocks(self, blocks):
         results_latest = None

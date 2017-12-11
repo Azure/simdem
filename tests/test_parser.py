@@ -18,7 +18,7 @@ class SimDemTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
-        self.parser = simdem.Parser()
+        self.parser = simdem.Parser(mistune.BlockLexer())
 
     def test_parse_ref_from_text(self):
         self.assertEquals('./nested_prereq.md', self.parser.parse_ref_from_text('We should be able to run [nested prerequisites](./nested_prereq.md).'))

@@ -3,6 +3,11 @@ import logging
 
 class Parser(object):
 
+    lexer = None
+    
+    def __init__(self, lexer):
+        self.lexer = lexer
+
     def is_prerequisite_block(self, block):
         # Example: {'level': 1, 'text': 'Prerequisites', 'type': 'heading'}
         if 'prerequisite' in block['text'].lower() and block['type'] == 'heading':
@@ -33,4 +38,24 @@ class Parser(object):
             logging.debug("Found prereq: " + href)
             return href
         return None
+
+    def get_prereqs(self, blocks):
+        # WTF:  Filter changed b/w python 2 -> 3?  Returns an object now?   There's no stack overflow on this plane
+        res = []
+        for block in blocks:
+            if self.is_prerequisite_block(block):
+                res.append(block)
+#        pre_reqs = filter(lambda(block): self.is_prerequisite_block(block), blocks)
+        return res
+
+    def get_file_contents(self, file_path):
+        f = open(file_path, 'r')
+        try:
+            content = f.read()
+        finally:
+            f.close()
+        return content
+
+    def parse_doc(self, text):
+        return self.lexer.parse(text)
 
