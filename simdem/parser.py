@@ -4,7 +4,7 @@ import logging
 class Parser(object):
 
     lexer = None
-    
+
     def __init__(self, lexer):
         self.lexer = lexer
 
@@ -41,21 +41,30 @@ class Parser(object):
 
     def get_prereqs(self, blocks):
         # WTF:  Filter changed b/w python 2 -> 3?  Returns an object now?   There's no stack overflow on this plane
+#        logging.debug("get_prereqs: " + str(blocks))
         res = []
-        for block in blocks:
+        #  Is there a better way to do this?  Probably so.  I'm on a plane and can't research
+        for idx in range(len(blocks)):
+            block = blocks[idx]
             if self.is_prerequisite_block(block):
-                res.append(block)
+                # We want the text block after the prereq heading
+                res.append(blocks[idx+1]['text'])
 #        pre_reqs = filter(lambda(block): self.is_prerequisite_block(block), blocks)
+#        logging.debug("get_prereqs: res= " + str(res))
         return res
 
     def get_file_contents(self, file_path):
+#        logging.debug("get_file_contents: " + file_path)
         f = open(file_path, 'r')
-        try:
-            content = f.read()
-        finally:
-            f.close()
+        content = f.read()
+        f.close()
         return content
 
     def parse_doc(self, text):
-        return self.lexer.parse(text)
-
+#        logging.debug("parse_doc: text=" + text)
+        # https://github.com/lepture/mistune/issues/147
+        # Stoopid non-idempotent parser.
+        self.lexer.tokens = []
+        res = self.lexer.parse(text)
+        logging.debug("parse_doc: res=" + str(res))
+        return res

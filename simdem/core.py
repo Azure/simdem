@@ -29,36 +29,39 @@ class Core(object):
         return self.rend.run_cmd(cmd)
 
     def process_file(self, file_path):
+        logging.info("process_file():file_path=" + file_path)
         content = self.parser.get_file_contents(file_path)
+        logging.info("process_file():content=" + str(content))
         blocks = self.parser.parse_doc(content)
+        logging.info("process_file():blocks=" + str(blocks))
         self.process_prereqs(blocks)
+        logging.info("process_file():completed process_prereqs()")
         result = self.run_blocks(blocks)
         return result
 
     def process_prereqs(self, blocks):
         prereqs = self.parser.get_prereqs(blocks)
-        for prereq in prereqs:
-            prereq_content = self.get_file_contents(prereq)
-            preqreq_blocks = self.parse.parse_doc(prereq_content)
-            preqreq_validation = self.parser.get_validation_block(preqreq_blocks)
-            if not self.is_prereq_required(preqreq_validation):
-                self.process_file(prereq)
+        logging.info("process_preqreqs():" + str(prereqs))
+        for prereq_file in prereqs:
+#            prereq_content = self.parser.get_file_contents(prereq_file)
+#            preqreq_blocks = self.parser.parse_doc(prereq_content)
+#            preqreq_validation = self.parser.get_validation_block(preqreq_blocks)
+#            if not self.is_prereq_required(preqreq_validation):
+            self.process_file(prereq_file)
 
     def run_blocks(self, blocks):
+        logging.info("run_blocks():blocks=" + str(blocks))
         results_latest = None
         for idx in range(len(blocks)):
-            if self.parser.is_prerequisite_block(blocks[idx]):
-                # TODO:  We need to skip processing the next block if it's a preqreq.
-                # we might need to refactor the looping mechanism to do so.  Fight for a different day
-                preqreq_file = parse_ref_from_text(blocks[idx+1]['text'])
-                if preqreq_file:
-                    self.process_file(prereq_file)
+            logging.info("run_blocks():processing " + str(blocks[idx]))
             if self.parser.is_result_block(blocks, idx):
+                logging.info("run_blocks():is_result_block")
                 is_passable = self.is_result_passable(blocks[idx]['text'], results_latest)
                 if not is_passable:
                     logging.error("Result did not pass")
                     return
             elif self.parser.is_runable_block(blocks[idx]):
+                logging.info("run_blocks():is_runable_block")
                 results_latest = self.run_code_block(blocks[idx]['text'])
 
     
