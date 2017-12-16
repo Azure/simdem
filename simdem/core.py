@@ -54,15 +54,17 @@ class Core(object):
         results_latest = None
         for idx in range(len(blocks)):
             logging.info("run_blocks():processing " + str(blocks[idx]))
-            if self.parser.is_result_block(blocks, idx):
+            block = blocks[idx]
+            block_prev = blocks[idx-1]
+            if self.parser.is_result_block(block, block_prev):
                 logging.info("run_blocks():is_result_block")
-                is_passable = self.is_result_passable(blocks[idx]['text'], results_latest)
+                is_passable = self.is_result_passable(block['text'], results_latest)
                 if not is_passable:
                     logging.error("Result did not pass")
                     return
-            elif self.parser.is_runable_block(blocks[idx]):
+            elif self.parser.is_command_block(block):
                 logging.info("run_blocks():is_runable_block")
-                results_latest = self.run_code_block(blocks[idx]['text'])
+                results_latest = self.run_code_block(block['text'])
 
     
     def is_result_passable(self, expected_results, actual_results, expected_similarity = 1.0):

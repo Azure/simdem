@@ -14,14 +14,12 @@ class Parser(object):
             return True
         return False
 
-    def is_runable_block(self, block):
+    def is_command_block(self, block):
         if block['type'] == 'code' and block['lang'] == 'shell':
             return True
         return False
     
-    def is_result_block(self, blocks, idx):
-        block = blocks[idx]
-        block_prev = blocks[idx-1]
+    def is_result_block(self, block, block_prev):
         if block['type'] == 'code' and block['lang'] == 'shell' and \
             block_prev['type'] == 'paragraph' and block_prev['text'].lower().startswith('results:'):
             return True
@@ -40,7 +38,6 @@ class Parser(object):
         return None
 
     def get_prereqs(self, blocks):
-        # WTF:  Filter changed b/w python 2 -> 3?  Returns an object now?   There's no stack overflow on this plane
 #        logging.debug("get_prereqs: " + str(blocks))
         res = []
         #  Is there a better way to do this?  Probably so.  I'm on a plane and can't research
@@ -48,10 +45,11 @@ class Parser(object):
             block = blocks[idx]
             if self.is_prerequisite_block(block):
                 # We want the text block after the prereq heading
-                res.append(blocks[idx+1]['text'])
-#        pre_reqs = filter(lambda(block): self.is_prerequisite_block(block), blocks)
+                for line in blocks[idx+1]['text'].split("\n"):
+                    res.append(line)
 #        logging.debug("get_prereqs: res= " + str(res))
         return res
+
 
     def get_file_contents(self, file_path):
 #        logging.debug("get_file_contents: " + file_path)
@@ -60,11 +58,39 @@ class Parser(object):
         f.close()
         return content
 
+    def parse_doc2(self, text):
+#        logging.debug("parse_doc: text=" + text)
+        # https://github.com/lepture/mistune/issues/147
+        # Stoopid non-idempotent parser.
+        self.lexer.tokens = []
+        blocks = self.lexer.parse(text)
+        return {
+            'prerequisites': self.get_prereqs(blocks),
+            'commands': self.get_commands(blocks)
+        }
+
+    def get_commands(self, blocks):
+        res = []
+        for idx in range(len(blocks)):
+            logging.debug("get_commands():processing " + str(blocks[idx]))
+            block = blocks[idx]
+            block_prev = blocks[idx-1]
+            if self.is_result_block(block, block_prev):
+                logging.debug("get_commands():is_result_block")
+            elif self.is_command_block(block):
+                logging.debug("get_commands():is_command_block")
+                for line in block['text'].split("\n"):
+                    res.append(line)
+            else:
+                logging.debug("get_commands():unknown_block")
+        return res
+
     def parse_doc(self, text):
 #        logging.debug("parse_doc: text=" + text)
         # https://github.com/lepture/mistune/issues/147
         # Stoopid non-idempotent parser.
         self.lexer.tokens = []
         res = self.lexer.parse(text)
+
         logging.debug("parse_doc: res=" + str(res))
         return res

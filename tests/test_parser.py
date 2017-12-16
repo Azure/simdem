@@ -22,6 +22,30 @@ class SimDemTestSuite(unittest.TestCase):
 
     def test_parse_ref_from_text(self):
         self.assertEquals('./nested_prereq.md', self.parser.parse_ref_from_text('We should be able to run [nested prerequisites](./nested_prereq.md).'))
-        
+
+    def test_parse_doc2(self):
+        doc = """foo
+# Prerequisites
+
+prereq.md
+prereq-2.md
+
+# Do stuff here
+```shell
+echo foo
+echo bar
+```
+
+# Do more stuff here
+```shell
+echo baz
+```"""
+        exp_res = {
+            'prerequisites': ['prereq.md', 'prereq-2.md'],
+            'commands': ['echo foo', 'echo bar', 'echo baz']
+        }
+        res = self.parser.parse_doc2(doc)
+        self.assertEquals(res, exp_res)
+
 if __name__ == '__main__':
     unittest.main()
