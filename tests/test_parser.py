@@ -39,10 +39,21 @@ echo bar
 # Do more stuff here
 ```shell
 echo baz
-```"""
+```
+
+Results:
+```result
+baz
+```
+
+
+"""
         exp_res = {
             'prerequisites': ['prereq.md', 'prereq-2.md'],
-            'commands': ['echo foo', 'echo bar', 'echo baz']
+            'commands': [
+                { 'command': 'echo foo' },
+                { 'command': 'echo bar' },
+                { 'command': 'echo baz', 'expected_result': 'baz' } ]
         }
         res = self.parser.parse_doc2(doc)
         self.assertEquals(res, exp_res)

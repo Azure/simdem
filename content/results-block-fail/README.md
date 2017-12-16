@@ -6,7 +6,7 @@ echo bar```
 
 Results:
 
-```shell
+```result
 barr```
 
 After this, we should not pass

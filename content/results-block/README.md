@@ -6,7 +6,7 @@ echo bar```
 
 Results:
 
-```shell
+```result
 bar```
 
 even more text

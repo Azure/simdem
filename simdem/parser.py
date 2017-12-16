@@ -19,9 +19,10 @@ class Parser(object):
             return True
         return False
     
-    def is_result_block(self, block, block_prev):
-        if block['type'] == 'code' and block['lang'] == 'shell' and \
-            block_prev['type'] == 'paragraph' and block_prev['text'].lower().startswith('results:'):
+    def is_result_block(self, block):
+        #  This is different than previous SimDem because it didn't require a language for the result.
+        #  I believe this approach is more declarative.
+        if block['type'] == 'code' and block['lang'] == 'result':
             return True
         return False
 
@@ -74,15 +75,15 @@ class Parser(object):
         for idx in range(len(blocks)):
             logging.debug("get_commands():processing " + str(blocks[idx]))
             block = blocks[idx]
-            block_prev = blocks[idx-1]
-            if self.is_result_block(block, block_prev):
+            if self.is_result_block(block):
                 logging.debug("get_commands():is_result_block")
+                res[len(res) - 1]['expected_result'] = block['text']
             elif self.is_command_block(block):
                 logging.debug("get_commands():is_command_block")
                 for line in block['text'].split("\n"):
-                    res.append(line)
+                    res.append({ 'command': line })
             else:
-                logging.debug("get_commands():unknown_block")
+                logging.info("get_commands():unknown_block.  Ignoring")
         return res
 
     def parse_doc(self, text):

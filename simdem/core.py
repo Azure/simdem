@@ -56,7 +56,7 @@ class Core(object):
             logging.info("run_blocks():processing " + str(blocks[idx]))
             block = blocks[idx]
             block_prev = blocks[idx-1]
-            if self.parser.is_result_block(block, block_prev):
+            if self.parser.is_result_block(block):
                 logging.info("run_blocks():is_result_block")
                 is_passable = self.is_result_passable(block['text'], results_latest)
                 if not is_passable:
