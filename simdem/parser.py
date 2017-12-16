@@ -59,7 +59,7 @@ class Parser(object):
         f.close()
         return content
 
-    def parse_doc2(self, text):
+    def parse_doc(self, text):
 #        logging.debug("parse_doc: text=" + text)
         # https://github.com/lepture/mistune/issues/147
         # Stoopid non-idempotent parser.
@@ -84,14 +84,4 @@ class Parser(object):
                     res.append({ 'command': line })
             else:
                 logging.info("get_commands():unknown_block.  Ignoring")
-        return res
-
-    def parse_doc(self, text):
-#        logging.debug("parse_doc: text=" + text)
-        # https://github.com/lepture/mistune/issues/147
-        # Stoopid non-idempotent parser.
-        self.lexer.tokens = []
-        res = self.lexer.parse(text)
-
-        logging.debug("parse_doc: res=" + str(res))
         return res

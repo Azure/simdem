@@ -32,7 +32,7 @@ more text""" % { 'file' : self.test_file }
         
         self.assertFalse(os.path.exists(self.test_file))
         blocks = self.parser.parse_doc(doc)
-        self.simdem.run_blocks(blocks)
+        self.simdem.run_blocks(blocks['commands'])
         self.assertTrue(os.path.exists(self.test_file))
 
 if __name__ == '__main__':

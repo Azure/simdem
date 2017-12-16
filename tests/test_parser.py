@@ -7,14 +7,12 @@ import os.path
 import configparser
 import mistune
 
-class SimDemTestSuite(unittest.TestCase):
+class SimDemParserTestSuite(unittest.TestCase):
     """Advanced test cases."""
 
-    test_file = '/tmp/foo'
     parser = None
 
     def setUp(self):
-        os.remove(self.test_file) if os.path.exists(self.test_file) else None
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
@@ -31,17 +29,25 @@ prereq.md
 prereq-2.md
 
 # Do stuff here
+
+We want to execute this because the code type is shell
+
 ```shell
 echo foo
 echo bar
 ```
 
 # Do more stuff here
+
 ```shell
 echo baz
 ```
 
-Results:
+# Results
+
+The only thing that makes it a result is the code type is result.
+We assume the result is for the last command of the last code block
+
 ```result
 baz
 ```
@@ -55,7 +61,7 @@ baz
                 { 'command': 'echo bar' },
                 { 'command': 'echo baz', 'expected_result': 'baz' } ]
         }
-        res = self.parser.parse_doc2(doc)
+        res = self.parser.parse_doc(doc)
         self.assertEquals(res, exp_res)
 
 if __name__ == '__main__':

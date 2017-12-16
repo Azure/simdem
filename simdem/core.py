@@ -34,40 +34,31 @@ class Core(object):
         logging.info("process_file():content=" + str(content))
         blocks = self.parser.parse_doc(content)
         logging.info("process_file():blocks=" + str(blocks))
-        self.process_prereqs(blocks)
+        self.process_prereqs(blocks['prerequisites'])
         logging.info("process_file():completed process_prereqs()")
-        result = self.run_blocks(blocks)
+        result = self.run_blocks(blocks['commands'])
         return result
 
-    def process_prereqs(self, blocks):
-        prereqs = self.parser.get_prereqs(blocks)
+    def process_prereqs(self, prereqs):
         logging.info("process_preqreqs():" + str(prereqs))
         for prereq_file in prereqs:
-#            prereq_content = self.parser.get_file_contents(prereq_file)
-#            preqreq_blocks = self.parser.parse_doc(prereq_content)
-#            preqreq_validation = self.parser.get_validation_block(preqreq_blocks)
-#            if not self.is_prereq_required(preqreq_validation):
             self.process_file(prereq_file)
 
-    def run_blocks(self, blocks):
-        logging.info("run_blocks():blocks=" + str(blocks))
+    def run_blocks(self, commands):
+        logging.info("run_blocks():blocks=" + str(commands))
         results_latest = None
-        for idx in range(len(blocks)):
-            logging.info("run_blocks():processing " + str(blocks[idx]))
-            block = blocks[idx]
-            block_prev = blocks[idx-1]
-            if self.parser.is_result_block(block):
-                logging.info("run_blocks():is_result_block")
-                is_passable = self.is_result_passable(block['text'], results_latest)
-                if not is_passable:
+        for command in commands:
+            logging.info("run_blocks():processing " + str(command))
+            result = self.run_code_block(command['command'])
+            if 'expected_result' in command:
+                if self.is_result_valid(command['expected_result'], result):
+                    logging.info("Result passed")
+                else:
                     logging.error("Result did not pass")
                     return
-            elif self.parser.is_command_block(block):
-                logging.info("run_blocks():is_runable_block")
-                results_latest = self.run_code_block(block['text'])
 
     
-    def is_result_passable(self, expected_results, actual_results, expected_similarity = 1.0):
+    def is_result_valid(self, expected_results, actual_results, expected_similarity = 1.0):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within
         the expected similarity level then it's considered a pass.
@@ -78,22 +69,22 @@ class Core(object):
         """
 
         if not actual_results:
-            logging.error("is_result_passable(): actual_results is empty.")
+            logging.error("is_result_valid(): actual_results is empty.")
             return False
 
-        logging.debug("is_result_passable(" + expected_results + "," + actual_results + "," + str(expected_similarity) + ")")
+        logging.debug("is_result_valid(" + expected_results + "," + actual_results + "," + str(expected_similarity) + ")")
 
         expected_results_str = expected_results.rstrip()
         actual_results_str = actual_results.rstrip()
-        logging.debug("is_result_passable(" + expected_results_str + "," + actual_results_str + "," + str(expected_similarity) + ")")
+        logging.debug("is_result_valid(" + expected_results_str + "," + actual_results_str + "," + str(expected_similarity) + ")")
         seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results_str, expected_results_str)
 
         is_pass = seq.ratio() >= expected_similarity
 
         if is_pass:
-            logging.info("is_result_passable passed")
+            logging.info("is_result_valid passed")
         else:
-            logging.error("is_result_passable failed")
+            logging.error("is_result_valid failed")
             logging.error("actual_results = " + actual_results)
             logging.error("expected_results = " + expected_results)
 

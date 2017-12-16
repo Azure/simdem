@@ -7,7 +7,7 @@ import mistune
 import unittest
 
 
-class LexerTestSuite(unittest.TestCase):
+class SimDemLexerTestSuite(unittest.TestCase):
     """Lexer test cases."""
 
     def test_mistune(self):
