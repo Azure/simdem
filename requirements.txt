@@ -1,5 +1,0 @@
-colorama
-flask
-flask-socketio
-pexpect
-
