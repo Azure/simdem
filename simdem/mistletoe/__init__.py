@@ -1,1 +1,1 @@
-from .parser import MistletoeParser
+from .renderer import SimdemMistletoeRenderer

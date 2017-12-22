@@ -8,12 +8,12 @@ class Core(object):
 
     rend = None
     config = None
-    parser = None
+    markdown_parser = None
 
-    def __init__(self, config, rend, parser):
+    def __init__(self, config, rend, markdown_parser):
         self.config = config
         self.rend = rend
-        self.parser = parser
+        self.markdown_parser = markdown_parser
 
     def run_code_block(self, cmd_block):
         # In the future, we'll want to split a code segment into individual lines
@@ -29,10 +29,11 @@ class Core(object):
         return self.rend.run_cmd(cmd)
 
     def process_file(self, file_path):
-        blocks = self.parser.parse_file(file_path)
+        blocks = self.markdown_parser.render_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
-        self.process_prereqs(blocks['prerequisites'])
-        logging.info("process_file():completed process_prereqs()")
+        if 'prerequisites' in blocks:
+            self.process_prereqs(blocks['prerequisites'])
+            logging.info("process_file():completed process_prereqs()")
         result = self.run_blocks(blocks['commands'])
         return result
 

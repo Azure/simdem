@@ -12,21 +12,21 @@ class SimDemTestSuite(unittest.TestCase):
 
     test_file = 'scratch/foo'
     simdem = None
-    parser = None
+    markdown_parser = None
 
     def setUp(self):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
-        self.parser = simdem.mistletoe.MistletoeParser()
-        self.simdem = simdem.Core(config, demo.Demo(config), self.parser)
+        self.markdown_parser = simdem.mistletoe.SimdemMistletoeRenderer()
+        self.simdem = simdem.Core(config, demo.Demo(config), self.markdown_parser)
 
     def test_run_cmd(self):
         self.assertEquals("foobar\n", self.simdem.run_cmd('echo foobar'))
     
     def test_run_blocks(self):
         self.assertFalse(os.path.exists(self.test_file))
-        blocks = self.parser.parse_file('content/create-file/README.md')
+        blocks = self.markdown_parser.render_file('content/create-file/README.md')
         self.simdem.run_blocks(blocks['commands'])
         self.assertTrue(os.path.exists(self.test_file))
 

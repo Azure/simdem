@@ -1,8 +1,9 @@
 # Prerequisites
 
-* [prereq-1](prereq.md)
-* [prereq-2](prereq-2.md)
-
+```prerequisites
+prereq.md
+prereq-2.md
+```
 # Do stuff here
 
 We want to execute this because the code type is shell

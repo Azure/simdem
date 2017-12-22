@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem, parser
+from .context import simdem, renderer
 
 import unittest
 import os.path
 import configparser
-import mistune
 
 class MistletoeParserTestSuite(unittest.TestCase):
     """Advanced test cases."""
 
-    parser = None
+    renderer = None
 
     def setUp(self):
         self.maxDiff = None
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
-        self.parser = parser.MistletoeParser()
+        self.renderer = renderer.SimdemMistletoeRenderer()
 
     def test_full(self):
         file_path = 'content/complete-features/README.md'
-        res = self.parser.parse_file(file_path)
+        res = self.renderer.render_file(file_path)
         exp_res = {
             'prerequisites': ['prereq.md', 'prereq-2.md'],
             'commands': [
