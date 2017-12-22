@@ -27,7 +27,7 @@ class MistletoeParserTestSuite(unittest.TestCase):
             'commands': [
                 { 'command': 'echo foo' },
                 { 'command': 'echo bar' },
-                { 'command': 'echo baz', 'expected_result': 'baz\n' } ]
+                { 'command': 'echo baz', 'expected_result': 'baz' } ]
         }
 
         self.assertEqual(res, exp_res)

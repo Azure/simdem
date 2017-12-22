@@ -1,9 +1,11 @@
 this is text
 
 ```shell
-FOO=bar```
+FOO=bar
+```
 
 ```shell
-echo $FOO```
+echo $FOO
+```
 
 more text

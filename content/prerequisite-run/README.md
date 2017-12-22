@@ -1,6 +1,6 @@
 # Prerequisite
 
-content/prerequisite-run/prereq.md
+* [prereq-1](content/prerequisite-run/prereq.md)
 
 # Main
 

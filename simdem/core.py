@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from . import executor,parser
+from . import executor
 import difflib
 import logging
 import re
@@ -29,10 +29,7 @@ class Core(object):
         return self.rend.run_cmd(cmd)
 
     def process_file(self, file_path):
-        logging.info("process_file():file_path=" + file_path)
-        content = self.parser.get_file_contents(file_path)
-        logging.info("process_file():content=" + str(content))
-        blocks = self.parser.parse_doc(content)
+        blocks = self.parser.parse_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
         self.process_prereqs(blocks['prerequisites'])
         logging.info("process_file():completed process_prereqs()")

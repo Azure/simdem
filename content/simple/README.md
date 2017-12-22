@@ -2,11 +2,13 @@ this is text
 
 ```shell
 echo foo
-echo bar```
+echo bar
+```
 
 more text 
 
 ```shell
-echo baz```
+echo baz
+```
 
 even more text
