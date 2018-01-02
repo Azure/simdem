@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem, renderer
+from .context import simdem, codeblock
 
 import unittest
 import os.path
@@ -16,11 +16,11 @@ class MistletoeParserTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
-        self.renderer = renderer.SimdemMistletoeRenderer()
+        self.renderer = codeblock.CodeBlock()
 
     def test_full(self):
         file_path = 'content/complete-features/README.md'
-        res = self.renderer.render_file(file_path)
+        res = self.renderer.parse_file(file_path)
         exp_res = {
             'prerequisites': ['prereq.md', 'prereq-2.md'],
             'commands': [

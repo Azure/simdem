@@ -5,7 +5,7 @@ import logging
 
 # Inspired by: https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
 
-class SimdemMistletoeRenderer(BaseRenderer):
+class CodeBlock(BaseRenderer):
     def __init__(self):
         super().__init__()
         self.output = defaultdict(list)
@@ -29,8 +29,8 @@ class SimdemMistletoeRenderer(BaseRenderer):
     def __getattr__(self, name):
         return lambda token: ''
 
-    def render_file(self, file_path):
+    def parse_file(self, file_path):
         with open(file_path, 'r') as fin:
-            with SimdemMistletoeRenderer() as renderer:
+            with CodeBlock() as renderer:
                 rendered = renderer.render(Document(fin))
         return rendered

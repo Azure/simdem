@@ -20,7 +20,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
 
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
-        self.simdem = simdem.Core(config, demo.Demo(config), simdem.mistletoe.SimdemMistletoeRenderer())
+        self.simdem = simdem.Core(config, demo.Demo(config), simdem.parser.CodeBlock())
 
         logFormatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
         rootLogger = logging.getLogger()

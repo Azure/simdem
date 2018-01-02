@@ -29,7 +29,7 @@ class Core(object):
         return self.rend.run_cmd(cmd)
 
     def process_file(self, file_path):
-        blocks = self.markdown_parser.render_file(file_path)
+        blocks = self.markdown_parser.parse_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
         if 'prerequisites' in blocks:
             self.process_prereqs(blocks['prerequisites'])
