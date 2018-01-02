@@ -4,8 +4,6 @@ import configparser
 import os.path
 import unittest
 
-import mistune
-
 from .context import bash, codeblock, demo, simdem
 
 

@@ -8,6 +8,10 @@ PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
 PEXPECT_CONTINUATION_PROMPT = u'[PEXPECT_PROMPT+'
 
 class BashExecutor(object):
+    """ This class is used to execute Bash commands
+        Required functions: run_cmd()
+    """
+    
     _shell = None
     _env = None
 
@@ -16,11 +20,12 @@ class BashExecutor(object):
 
 
     def run_cmd(self, command):
+        """ Runs the command passed in the shell
+        """
+        
         command = command.strip()
         logging.debug("Execute command: '" + command + "'")
-        start_time = time.time()
         response = self.get_shell().run_command(command)
-        end_time = time.time()
         # https://pexpect.readthedocs.io/en/stable/overview.html#find-the-end-of-line-cr-lf-conventions
         # Because pexpect respects TTY (which uses CRLF) instead of UNIX, we must swap out.  This might get tricky if we start supporting windows
         # This is because to easily write expected testcase output files, most unix-ish text editors write with \n
@@ -32,6 +37,7 @@ class BashExecutor(object):
         """Gets or creates the shell in which to run commands for the
         supplied demo
         """
+        
         if self._shell == None:
             #  Should we use spawn or spawnu?
             child = pexpect.spawnu('/bin/bash', env=self._env, echo=False, timeout=None)

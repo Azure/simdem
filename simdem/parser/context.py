@@ -1,14 +1,21 @@
+""" This module hosts the ContextParser
+"""
+
 import logging
-import pprint
-import re
 
 import mistletoe.ast_renderer as renderer
 import mistletoe.block_token as token
 
 
 class ContextParser(object):
+    """ This class parses the human readable markdown using a defined syntax to 
+        know how to create the SimDem Execution Object
+        and uses the code block language to know which type of execution it is
+    """
 
     def is_command_block(self, block):
+        """ Expects a code block with a shell command in it
+        """
         if block['type'] == 'BlockCode' and block['language'] == 'shell':
             return True
         return False
@@ -20,14 +27,14 @@ class ContextParser(object):
             return True
         return False
 
-    """
-    I'm not a fan of denoting prerequisites by using a header title, but that will suffice for now
-    Will look like this coming out of AST
-    {'children': [{'children': [{'content': 'Prerequisites', 'type': 'RawText'}],
-               'level': 1,
-               'type': 'Heading'},
-    """
     def is_prerequisite_block(self, block):
+        """
+        I'm not a fan of denoting prerequisites by using a header title, but that will suffice for now
+        Will look like this coming out of AST
+        {'children': [{'children': [{'content': 'Prerequisites', 'type': 'RawText'}],
+                'level': 1,
+                'type': 'Heading'},
+        """
         if 'children' in block and len(block['children']) and 'content' in block['children'][0] \
             and 'prerequisite' in block['children'][0]['content'].lower() and block['type'].lower() == 'heading':
             return True
