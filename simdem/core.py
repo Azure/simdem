@@ -6,14 +6,14 @@ import re
 
 class Core(object):
 
-    rend = None
+    renderer = None
     config = None
-    markdown_parser = None
+    parser = None
 
-    def __init__(self, config, rend, markdown_parser):
+    def __init__(self, config, renderer, parser):
         self.config = config
-        self.rend = rend
-        self.markdown_parser = markdown_parser
+        self.renderer = renderer
+        self.parser = parser
 
     def run_code_block(self, cmd_block):
         # In the future, we'll want to split a code segment into individual lines
@@ -26,10 +26,10 @@ class Core(object):
         return result_latest
 
     def run_cmd(self, cmd):
-        return self.rend.run_cmd(cmd)
+        return self.renderer.run_cmd(cmd)
 
     def process_file(self, file_path):
-        blocks = self.markdown_parser.parse_file(file_path)
+        blocks = self.parser.parse_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
         if 'prerequisites' in blocks:
             self.process_prereqs(blocks['prerequisites'])
