@@ -18,7 +18,7 @@ class SimDemTestSuite(unittest.TestCase):
         os.remove(self.test_file) if os.path.exists(self.test_file) else None
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
-        self.markdown_parser = simdem.parser.CodeBlock()
+        self.markdown_parser = simdem.parser.CodeBlockParser()
         self.simdem = simdem.Core(config, demo.Demo(config), self.markdown_parser)
 
     def test_run_cmd(self):

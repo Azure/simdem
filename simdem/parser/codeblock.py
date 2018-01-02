@@ -5,7 +5,7 @@ import logging
 
 # Inspired by: https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
 
-class CodeBlock(BaseRenderer):
+class CodeBlockParser(BaseRenderer):
     def __init__(self):
         super().__init__()
         self.output = defaultdict(list)
@@ -31,6 +31,6 @@ class CodeBlock(BaseRenderer):
 
     def parse_file(self, file_path):
         with open(file_path, 'r') as fin:
-            with CodeBlock() as renderer:
+            with CodeBlockParser() as renderer:
                 rendered = renderer.render(Document(fin))
         return rendered

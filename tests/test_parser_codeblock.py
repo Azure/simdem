@@ -16,10 +16,10 @@ class MistletoeParserTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
 
-        self.renderer = codeblock.CodeBlock()
+        self.renderer = codeblock.CodeBlockParser()
 
     def test_full(self):
-        file_path = 'content/complete-features/README.md'
+        file_path = 'content/complete-features/codeblock.md'
         res = self.renderer.parse_file(file_path)
         exp_res = {
             'prerequisites': ['prereq.md', 'prereq-2.md'],
