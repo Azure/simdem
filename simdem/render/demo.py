@@ -1,22 +1,12 @@
 import time
 import random
 
-from .. import executor
-
 class Demo(object):
-    exe = None
     config = None
 
     def __init__(self, config):
         self.config = config
-        self.exe = executor.Executor()
         pass
-
-    def run_cmd(self, cmd):
-        self.type_command(cmd)
-        res = self.exe.run_cmd(cmd)
-        self.display_result(res)
-        return res
 
     def type_command(self, cmd):
         """

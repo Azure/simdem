@@ -7,3 +7,4 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import simdem
 from simdem.render import demo
 from simdem.parser import codeblock,context
+from simdem.executor import bash

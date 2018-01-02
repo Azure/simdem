@@ -9,11 +9,13 @@ class Core(object):
     renderer = None
     config = None
     parser = None
+    executor = None
 
-    def __init__(self, config, renderer, parser):
+    def __init__(self, config, renderer, parser, executor):
         self.config = config
         self.renderer = renderer
         self.parser = parser
+        self.executor = executor
 
     def run_code_block(self, cmd_block):
         # In the future, we'll want to split a code segment into individual lines
@@ -26,7 +28,10 @@ class Core(object):
         return result_latest
 
     def run_cmd(self, cmd):
-        return self.renderer.run_cmd(cmd)
+        self.renderer.type_command(cmd)
+        res = self.executor.run_cmd(cmd)
+        self.renderer.display_result(res)
+        return res
 
     def process_file(self, file_path):
         blocks = self.parser.parse_file(file_path)
