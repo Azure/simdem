@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem, demo, bash, codeblock
-
-import unittest
-import os.path
 import configparser
+import os.path
+import unittest
+
 import mistune
+
+from .context import bash, codeblock, demo, simdem
+
 
 class SimDemTestSuite(unittest.TestCase):
     """Advanced test cases."""

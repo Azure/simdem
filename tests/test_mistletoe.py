@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import mistletoe
 import unittest
 
-import mistletoe.block_token as token
+import mistletoe
 import mistletoe.ast_renderer as renderer
+import mistletoe.block_token as token
+
 
 class SimDemMistletoeTestSuite(unittest.TestCase):
     """Lexer test cases."""

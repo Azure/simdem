@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from . import executor
 import difflib
 import logging
 import re
+
+from . import executor
+
 
 class Core(object):
 

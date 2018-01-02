@@ -1,8 +1,10 @@
-import re
 import logging
+import pprint
+import re
+
 import mistletoe.ast_renderer as renderer
 import mistletoe.block_token as token
-import pprint
+
 
 class ContextParser(object):
 

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem, demo
-
-import unittest
-import os
 import configparser
-import mistune
 import logging
+import os
 import sys
-from ddt import ddt,data
+import unittest
+
+import mistune
+from ddt import data, ddt
+
+from .context import demo, simdem
+
 
 @ddt
 class SimDemSystemTestSuite(unittest.TestCase):

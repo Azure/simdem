@@ -1,6 +1,7 @@
-import pexpect
-import time
 import logging
+import time
+
+import pexpect
 from pexpect import replwrap
 
 PEXPECT_PROMPT = u'[PEXPECT_PROMPT>'
@@ -39,4 +40,3 @@ class BashExecutor(object):
             prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
             self._shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
         return self._shell
-

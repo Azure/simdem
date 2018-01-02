@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from .context import simdem, codeblock
-
-import unittest
-import os.path
 import configparser
+import os.path
+import unittest
+
+from .context import codeblock, simdem
+
 
 class MistletoeParserTestSuite(unittest.TestCase):
     """Advanced test cases."""

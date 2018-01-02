@@ -1,5 +1,6 @@
-import time
 import random
+import time
+
 
 class Demo(object):
     config = None
