@@ -6,11 +6,11 @@ Currently, there are two implementation of Markdown syntax supported.
 
 This is similar to SimDem v1's syntax.
 
-[../content/complete-features/context.md](Example Context Based Document)
+[Example Context Based Document](../content/complete-features/context.md)
 
 ## Codeblock Based
 
-[../content/complete-features/codeblock.md](Example Codeblock Document)
+[Example Codeblock Document](../content/complete-features/codeblock.md)
 
 ## Features
 
