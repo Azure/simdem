@@ -2,11 +2,19 @@
 
 Currently, there are two implementation of Markdown syntax supported.
 
-## Context Based
+## Context Based (default)
 
 This is similar to SimDem v1's syntax.
 
 [Example Context Based Document](../content/complete-features/context.md)
+
+Feature | Implementation 
+--- | --- 
+Command | \```shell 
+Prerequisite | `# Prerequisite` followed by list of links 
+Validation | `# Validation` followed by code block 
+Result | `# Result` followed by a code block with the result 
+
 
 ## Codeblock Based
 
@@ -16,9 +24,9 @@ This is similar to SimDem v1's syntax.
 
 The only sections processed are code blocks and all features are determined by the code block type.  
 
-Feature | Context Based | Codeblock Based
---- | --- | ---
-Command | \```shell | \```shell
-Prerequisite | `# Prerequisite` followed by list of links | \```prerequisite
-Validation | `# Validation` followed by code block | \```validation
-Result | `# Result` followed by a code block with the result | \```result
+Feature |  Implementation
+--- | --- 
+Command | \```shell
+Prerequisite | \```prerequisite
+Validation | \```validation
+Result | \```result
