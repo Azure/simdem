@@ -27,6 +27,15 @@ class ContextParser(object):
             return True
         return False
 
+    def is_next_step_block(self, block):
+        """ This block is similiar to "choose your own adventure" games 
+            This feature allows you to determine which document you want to process after you complete the current one
+        """
+        if 'children' in block and len(block['children']) and 'content' in block['children'][0] \
+            and 'next step' in block['children'][0]['content'].lower() and block['type'].lower() == 'heading':
+            return True
+        return False
+
     def is_prerequisite_block(self, block):
         """
         I'm not a fan of denoting prerequisites by using a header title, but that will suffice for now
@@ -74,6 +83,17 @@ class ContextParser(object):
                 for line in block['children'][0]['content'].split("\n"):
                     if line: 
                         res['commands'].append({ 'command': line })
+
+            elif self.is_next_step_block(block):
+                logging.debug("parse_file():is_next_step_block")
+                block = blocks[idx]
+                # Fast-forward to find the list block inside this header block.
+                # Maybe we should also test to verify we haven't gone past the header block?
+                while 'List' not in block['type'] and idx < len(blocks):
+                    idx = idx + 1
+                    block = blocks[idx]
+                print(block)
+                res['next_steps'] = [{'target': x['target'], 'title': x['children'][0]['content']} for x in block['children'][0]['children'] if x['type'] == 'Link']
 
             else:
                 logging.info("get_commands():unknown_block.  Ignoring")

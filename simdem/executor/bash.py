@@ -1,5 +1,4 @@
 import logging
-import time
 
 import pexpect
 from pexpect import replwrap

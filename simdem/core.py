@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import difflib
 import logging
-import re
-
-from . import executor
-
 
 class Core(object):
 
@@ -51,7 +47,6 @@ class Core(object):
 
     def run_blocks(self, commands):
         logging.info("run_blocks():blocks=" + str(commands))
-        results_latest = None
         for command in commands:
             logging.info("run_blocks():processing " + str(command))
             result = self.run_code_block(command['command'])

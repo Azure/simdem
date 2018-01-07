@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from mistletoe import Document
 from mistletoe.base_renderer import BaseRenderer
+import logging
 
 # Inspired by: https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
 
