@@ -1,3 +1,5 @@
+""" This file contains the BashExecutor object """
+
 import logging
 
 import pexpect
@@ -40,10 +42,12 @@ class BashExecutor(object):
         """
 
         if self._shell is None:
-            #  Should we use spawn or spawnu?
+            # Should we use spawn or spawnu?
+            # The prompts used to be u'\[\]', but pylint prefers r'\[\]'.
+            # Noting just in case this bites us later
             child = pexpect.spawnu('/bin/bash', env=self._env, echo=False, timeout=None)
-            ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
-            ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
+            ps1 = PEXPECT_PROMPT[:5] + r'\[\]' + PEXPECT_PROMPT[5:]
+            ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + r'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
             prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
-            self._shell = pexpect.replwrap.REPLWrapper(child, u'\$', prompt_change)
+            self._shell = replwrap.REPLWrapper(child, r'\$', prompt_change)
         return self._shell

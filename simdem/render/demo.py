@@ -1,13 +1,17 @@
+"""Demo (default) renderer for SimDem"""
+
 import random
 import time
 
 
 class Demo(object):
+    """ This class is used to render the output of the commands into something
+        that looks like you're typing
+    """
     config = None
 
     def __init__(self, config):
         self.config = config
-        pass
 
     def type_command(self, cmd):
         """
@@ -17,7 +21,7 @@ class Demo(object):
         # Must add ' ' when typing command because whitespaces are removed from configparser
         # https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
         print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ', end="", flush=True)
-        for idx, char in enumerate(cmd):
+        for _, char in enumerate(cmd):
             if char != "\n":
                 typing_delay = float(self.config.get('RENDER', 'TYPING_DELAY'))
                 if typing_delay:

@@ -33,12 +33,14 @@ class Core(object):
         return result_latest
 
     def run_cmd(self, cmd):
+        """ prints out the command, runs it and then displays the results """
         self.renderer.type_command(cmd)
         res = self.executor.run_cmd(cmd)
         self.renderer.display_result(res)
         return res
 
     def process_file(self, file_path):
+        """ Parses the file and then runs any prerequisites """
         blocks = self.parser.parse_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
         if 'prerequisites' in blocks:
@@ -48,11 +50,13 @@ class Core(object):
         return result
 
     def process_prereqs(self, prereqs):
+        """ Loops through each of the prerequisites """
         logging.info("process_preqreqs():" + str(prereqs))
         for prereq_file in prereqs:
             self.process_file(prereq_file)
 
     def run_blocks(self, commands):
+        """ For each block, run and validate the output """
         logging.info("run_blocks():blocks=" + str(commands))
         for command in commands:
             logging.info("run_blocks():processing " + str(command))
