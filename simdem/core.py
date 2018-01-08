@@ -68,6 +68,13 @@ class Core(object):
                     logging.error("Result did not pass")
                     return
 
+    def show_next_steps(self, steps):
+        """ If there's any next steps to take, let the renderer process them """
+        logging.info("run_blocks():steps=" + str(steps))
+        step_request_target = self.renderer.get_next_step(steps)
+        if step_request_target:
+            self.process_file(step_request_target)
+
     @staticmethod
     def is_result_valid(expected_results, actual_results, expected_similarity=1.0):
         """Checks to see if a command execution passes.

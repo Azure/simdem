@@ -34,3 +34,18 @@ class Demo(object):
     def display_result(res):
         """Demo specific implementation of displaying to the screen"""
         print(res, end="", flush=True)
+
+    @staticmethod
+    def show_next_steps(steps):
+        """ Is there a good way to test this that doesn't involve lots of test code + expect?
+        """
+        idx = 1
+        if steps:
+            print("Next steps available:")
+            for step in steps:
+                print(idx + ".) " + step['title'])
+                idx += 1
+            step_request = input("Which step do you want to take next?")
+            if step_request:
+                return steps[step_request+1]['target']
+        return

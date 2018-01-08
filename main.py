@@ -1,26 +1,35 @@
 #!/usr/local/bin/python3
-from simdem import core
-from simdem.render import demo
-import os
-import sys
-import mistune
-import logging
-import optparse
+""" Entrypoint to Simdem """
 import configparser
+import logging
+import argparse
+import os
+
+from simdem import core
+from simdem.executor import bash
+from simdem.parser import codeblock, context
+from simdem.render import demo
+
 
 def main():
-    p = optparse.OptionParser("%prog <options> file", version="%prog 1.0")
-    p.add_option('--debug', '-d', action="store_true",
-                 help="Turn on logging to console")
-    p.add_option('--config-file', '-f', default="content/config/demo.ini",
-                 help="Config file to use")
-    p.add_option('--render', '-r', default="demo",
-                 help="Render class to use")
-    p.add_option('--lexer', '-l', default="mistune.BlockLexer",
-                 help="Lexer class to use")
-    options, arguments = p.parse_args()
-
-    validate_error = validate(options, arguments)
+    """ Main execution function """
+    argp = argparse.ArgumentParser()
+    argp.add_argument('file', metavar='file',
+                      help='file to process')
+    argp.add_argument('--debug', '-d', action="store_true",
+                      help="Turn on logging to console")
+    argp.add_argument('--config-file', '-c', default="content/config/demo.ini",
+                      help="Config file to use")
+    argp.add_argument('--renderer', '-r', default="demo",
+                      help="Render class to use", choices=['demo'])
+    argp.add_argument('--parser', '-p', default="context",
+                      help="Parser class to use", choices=['context', 'codeblock'])
+    argp.add_argument('--executor', '-e', default="bash",
+                      help="Executor class to use", choices=['bash'])
+    options = argp.parse_args()
+    print(options)
+    file_path = options.file
+    validate_error = validate(options, file_path)
     if validate_error:
         print(validate_error)
         exit(1)
@@ -30,48 +39,49 @@ def main():
 
     setup_logging(config, options)
 
-    simdem = core.Core(config, get_render(options, config), get_lexer(options))
+    simdem = core.Core(config, get_render(options, config),
+                       get_parser(options), get_executor(options))
 
-    file_path = arguments[0]
     simdem.process_file(file_path)
 
-def validate(options, arguments):
-    if len(arguments) != 1:
-        return "Must provide one and only one argument: " + str(arguments)
-
-    file_path = arguments[0]
+def validate(options, file_path):
+    """ validate all passed in arguments """
     if not os.path.isfile(file_path):
         return "Unable to find file: " + file_path
 
     if not os.path.isfile(options.config_file):
         return "Unable to find config file: " + options.config_file
 
-    if options.render not in ['demo']:
-        return "Unknown Render: " + options.render
-    
-    if options.lexer not in ['mistune.BlockLexer']:
-        return "Unknown Lexer: " + options.lexer
-
 def get_render(options, config):
-    if options.render == 'demo':
+    """ Returns correct renderer object """
+    if options.renderer == 'demo':
         return demo.Demo(config)
 
-def get_lexer(options):
-    if options.lexer == 'mistune.BlockLexer':
-        return mistune.BlockLexer()
+def get_parser(options):
+    """ Returns correct parser object """
+    if options.parser == 'codeblock':
+        return codeblock.CodeBlockParser()
+    elif options.parser == 'context':
+        return context.ContextParser()
+
+def get_executor(options):
+    """ Returns correct executor object """
+    if options.executor == 'bash':
+        return bash.BashExecutor()
 
 def setup_logging(config, options):
-    logFormatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
-    rootLogger = logging.getLogger()
-    rootLogger.setLevel(config.get('LOG', 'LEVEL'))
+    """ Establishes logging level and format """
+    log_formatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
+    root_logger = logging.getLogger()
+    root_logger.setLevel(config.get('LOG', 'LEVEL'))
 
-    fileHandler = logging.FileHandler(config.get('LOG', 'FILE'))
-    fileHandler.setFormatter(logFormatter)
-    rootLogger.addHandler(fileHandler)
+    file_handler = logging.FileHandler(config.get('LOG', 'FILE'))
+    file_handler.setFormatter(log_formatter)
+    root_logger.addHandler(file_handler)
 
     if options.debug:
-        consoleHandler = logging.StreamHandler()
-        consoleHandler.setFormatter(logFormatter)
-        rootLogger.addHandler(consoleHandler)
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(log_formatter)
+        root_logger.addHandler(console_handler)
 
 main()
