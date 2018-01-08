@@ -28,3 +28,11 @@ We assume the result is for the last command of the last code block
 baz
 ```
 
+# Process these steps nexts
+
+The list inside this block are steps that could be followed when performing an interactive tutorial
+
+```next_steps
+step-1.md
+step-2.md
+```

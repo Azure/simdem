@@ -30,6 +30,10 @@ class CodeBlockParser(BaseRenderer):
             self.output['commands'][-1]['expected_result'] = lines[0]
         elif 'shell' in token.language:
             self.output['commands'].extend({'command': line} for line in lines)
+        elif 'next_steps' in token.language:
+            self.output['next_steps'].extend({'title': line, 'target': line}
+                                             for line in lines
+                                             if line != '```')
         else:
             logging.info("get_commands():unknown_block.  Ignoring")
         return ''
