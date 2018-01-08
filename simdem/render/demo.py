@@ -26,5 +26,7 @@ class Demo(object):
                 print(char, end="", flush=True)
         print("", flush=True)
 
-    def display_result(self, res):
+    @staticmethod
+    def display_result(res):
+        """Demo specific implementation of displaying to the screen"""
         print(res, end="", flush=True)

@@ -19,40 +19,48 @@ class ContextParser(object):
         if block['type'] == 'BlockCode' and block['language'] == 'shell':
             return True
         return False
-    
+
     def is_result_block(self, block):
-        #  This is different than previous SimDem because it didn't require a language for the result.
-        #  I believe this approach is more declarative.
+        """ This is different than previous SimDem because it didn't require
+            a language for the result.
+            I believe this approach is more declarative.
+        """
         if block['type'] == 'BlockCode' and block['language'] == 'result':
             return True
         return False
 
     def is_next_step_block(self, block):
-        """ This block is similiar to "choose your own adventure" games 
-            This feature allows you to determine which document you want to process after you complete the current one
+        """ This block is similiar to "choose your own adventure" games
+            This feature allows you to determine which document you want to process
+            after you complete the current one
         """
-        if 'children' in block and len(block['children']) and 'content' in block['children'][0] \
-            and 'next step' in block['children'][0]['content'].lower() and block['type'].lower() == 'heading':
+        if 'children' in block and len(block['children']) \
+            and 'content' in block['children'][0] \
+            and 'next step' in block['children'][0]['content'].lower() \
+            and block['type'].lower() == 'heading':
             return True
         return False
 
     def is_prerequisite_block(self, block):
         """
-        I'm not a fan of denoting prerequisites by using a header title, but that will suffice for now
+        I'm not a fan of denoting prerequisites by using a header title,
+        but that will suffice for now
         Will look like this coming out of AST
         {'children': [{'children': [{'content': 'Prerequisites', 'type': 'RawText'}],
                 'level': 1,
                 'type': 'Heading'},
         """
-        if 'children' in block and len(block['children']) and 'content' in block['children'][0] \
-            and 'prerequisite' in block['children'][0]['content'].lower() and block['type'].lower() == 'heading':
+        if 'children' in block and len(block['children']) \
+            and 'content' in block['children'][0] \
+            and 'prerequisite' in block['children'][0]['content'].lower() \
+            and block['type'].lower() == 'heading':
             return True
         return False
 
     def parse_file(self, file_path):
         with open(file_path, 'r') as fin:
             ast = renderer.get_ast(token.Document(fin))
-        
+
         res = {
             'prerequisites': [],
             'commands': []
@@ -64,10 +72,11 @@ class ContextParser(object):
         while idx < len(blocks):
             block = blocks[idx]
             logging.debug("parse_file():processing " + str(block))
-            
+
             if self.is_prerequisite_block(block):
                 logging.debug("parse_file():found preqreq block")
-                res['prerequisites'] = [x['children'][0]['target'] for x in blocks[idx+1]['children']]
+                res['prerequisites'] = \
+                    [x['children'][0]['target'] for x in blocks[idx+1]['children']]
                 #  No need to process the next block since that's the prereqs
                 idx = idx + 1
 
@@ -81,8 +90,8 @@ class ContextParser(object):
             elif self.is_command_block(block):
                 logging.debug("parse_file():is_command_block")
                 for line in block['children'][0]['content'].split("\n"):
-                    if line: 
-                        res['commands'].append({ 'command': line })
+                    if line:
+                        res['commands'].append({'command': line})
 
             elif self.is_next_step_block(block):
                 logging.debug("parse_file():is_next_step_block")
@@ -93,7 +102,9 @@ class ContextParser(object):
                     idx = idx + 1
                     block = blocks[idx]
                 print(block)
-                res['next_steps'] = [{'target': x['target'], 'title': x['children'][0]['content']} for x in block['children'][0]['children'] if x['type'] == 'Link']
+                res['next_steps'] = [{'target': x['target'], 'title': x['children'][0]['content']}
+                                     for x in block['children'][0]['children']
+                                     if x['type'] == 'Link']
 
             else:
                 logging.info("get_commands():unknown_block.  Ignoring")

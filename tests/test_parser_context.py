@@ -18,6 +18,7 @@ class MistletoeParserTestSuite(unittest.TestCase):
         self.parser = context.ContextParser()
 
     def test_full(self):
+        """Test parsing a document with all features in it"""
         file_path = 'content/complete-features/context.md'
         res = self.parser.parse_file(file_path)
         exp_res = {

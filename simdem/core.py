@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+"""Contains only core SimDem object"""
+
 import difflib
 import logging
 
 class Core(object):
+    """The core glue for SimDem is here.  It uses dependency injection so that the
+       implementation of the renderer, parser and executor are left to the classes passed in.
+    """
 
     renderer = None
     config = None
@@ -16,10 +21,12 @@ class Core(object):
         self.executor = executor
 
     def run_code_block(self, cmd_block):
-        # In the future, we'll want to split a code segment into individual lines
-        # For now, assume just one command in a block
-        # Returning the latest result so we can validate the result.
-        # We might want to validate the result of the entire block, but for now, validate just the last run command
+        """In the future, we'll want to split a code segment into individual lines
+           For now, assume just one command in a block
+           Returning the latest result so we can validate the result.
+           We might want to validate the result of the entire block, but for now,
+           validate just the last run command
+        """
         result_latest = None
         for cmd in cmd_block.split("\n"):
             result_latest = self.run_cmd(cmd)
@@ -57,8 +64,8 @@ class Core(object):
                     logging.error("Result did not pass")
                     return
 
-    
-    def is_result_valid(self, expected_results, actual_results, expected_similarity = 1.0):
+    @staticmethod
+    def is_result_valid(expected_results, actual_results, expected_similarity=1.0):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within
         the expected similarity level then it's considered a pass.
@@ -72,12 +79,16 @@ class Core(object):
             logging.error("is_result_valid(): actual_results is empty.")
             return False
 
-        logging.debug("is_result_valid(" + expected_results + "," + actual_results + "," + str(expected_similarity) + ")")
+        logging.debug("is_result_valid(" + expected_results + "," + actual_results + \
+            "," + str(expected_similarity) + ")")
 
         expected_results_str = expected_results.rstrip()
         actual_results_str = actual_results.rstrip()
-        logging.debug("is_result_valid(" + expected_results_str + "," + actual_results_str + "," + str(expected_similarity) + ")")
-        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r", actual_results_str, expected_results_str)
+        logging.debug("is_result_valid(" + expected_results_str + "," + actual_results_str + \
+            "," + str(expected_similarity) + ")")
+        seq = difflib.SequenceMatcher(lambda x: x in " \t\n\r",
+                                      actual_results_str,
+                                      expected_results_str)
 
         is_pass = seq.ratio() >= expected_similarity
 
@@ -88,4 +99,4 @@ class Core(object):
             logging.error("actual_results = " + actual_results)
             logging.error("expected_results = " + expected_results)
 
-        return is_pass 
+        return is_pass

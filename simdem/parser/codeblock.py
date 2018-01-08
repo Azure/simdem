@@ -1,11 +1,10 @@
 """ This module hosts the CodeBlockParser
 """
 
+import logging
 from collections import defaultdict
-
 from mistletoe import Document
 from mistletoe.base_renderer import BaseRenderer
-import logging
 
 # Inspired by: https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
 
@@ -47,7 +46,8 @@ class CodeBlockParser(BaseRenderer):
         """
         return lambda token: ''
 
-    def parse_file(self, file_path):
+    @staticmethod
+    def parse_file(file_path):
         """ Implemented as part of SimDem interface
             Renders the contents of the file path using this object as a Mistletoe renderer
         """
