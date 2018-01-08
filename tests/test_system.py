@@ -40,9 +40,9 @@ class SimDemSystemTestSuite(unittest.TestCase):
             this allows us to test each of them easily
         """
         self.simdem.process_file('./content/' + directory + '/README.md')
-        # TODO:  Unsure why Pylint complains that 'TextIOWrapper' has no 'getvalue' member.
+        # Unsure why Pylint complains that 'TextIOWrapper' has no 'getvalue' member.
         # I'm not Python smart enough yet to know why this works, but Pylint says it shouldn't.
-        res = sys.stdout.getvalue()
+        res = sys.stdout.getvalue() # pylint: disable=E1101
         exp_res = open('./content/' + directory + '/expected_result.out', 'r').read()
         self.assertEqual(exp_res, res)
 
