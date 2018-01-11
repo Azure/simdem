@@ -46,7 +46,7 @@ class Core(object):
         if 'prerequisites' in blocks:
             self.process_prereqs(blocks['prerequisites'])
             logging.info("process_file():completed process_prereqs()")
-        result = self.run_blocks(blocks['commands'])
+        result = self.run_command_blocks(blocks['commands'])
         return result
 
     def process_prereqs(self, prereqs):
@@ -55,11 +55,11 @@ class Core(object):
         for prereq_file in prereqs:
             self.process_file(prereq_file)
 
-    def run_blocks(self, commands):
+    def run_command_blocks(self, commands):
         """ For each block, run and validate the output """
-        logging.info("run_blocks():blocks=" + str(commands))
+        logging.info("run_command_blocks():blocks=" + str(commands))
         for command in commands:
-            logging.info("run_blocks():processing " + str(command))
+            logging.info("run_command_blocks():processing " + str(command))
             result = self.run_code_block(command['command'])
             if 'expected_result' in command:
                 if self.is_result_valid(command['expected_result'], result):

@@ -32,7 +32,7 @@ class SimDemTestSuite(unittest.TestCase):
         """ Validate running a document that creates a file actually creates it """
         self.assertFalse(os.path.exists(self.test_file))
         blocks = self.markdown_parser.parse_file('content/create-file/README.md')
-        self.simdem.run_blocks(blocks['commands'])
+        self.simdem.run_command_blocks(blocks['commands'])
         self.assertTrue(os.path.exists(self.test_file))
 
 if __name__ == '__main__':
