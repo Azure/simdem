@@ -22,6 +22,7 @@ class DemoMode(object):
         print("*** Processing " + file_path + " ***")
         steps = self.parser.parse_file(file_path)
         self.process(steps)
+        print("*** Completed Processing " + file_path + " ***")
 
     def process(self, steps):
         last_command_result = None
@@ -32,9 +33,12 @@ class DemoMode(object):
             elif step['type'] == 'text':
                 self.process_text(step)
             elif step['type'] == 'commands':
-                self.process_commands(step)
+                last_command_result = self.process_commands(step)
             elif step['type'] == 'result':
-                self.process_result(step)
+                if self.is_result_valid(step['content'], last_command_result):
+                    print('***VALIDATION PASSED***')
+                else:
+                    print('***VALIDATION FAILED***')
             elif step['type'] == 'prerequisites':
                 for prereq_file in step['content']:
                     self.process_file(prereq_file)
@@ -42,11 +46,9 @@ class DemoMode(object):
                 last_command_result = self.process_commands(step)
             elif step['type'] == 'validation_result':
                 if self.is_result_valid(step['content'], last_command_result):
-                    logging.info("Result passed")
                     print('***VALIDATION PASSED***')
                     return
                 else:
-                    logging.error("Result did not pass")
                     print('***VALIDATION FAILED***')
 
 
@@ -66,8 +68,8 @@ class DemoMode(object):
         print()
         return results
 
-    def process_result(self, step):
-        print('CHECKING RESULT')
+    def process_result(self, ):
+        print('***CHECKING RESULT***')
         print('RES= ' + step['content'])
         print()
 
