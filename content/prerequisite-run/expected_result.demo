@@ -1,0 +1,16 @@
+# Prerequisites
+
+ * prereq
+
+This text should be run
+
+$ echo running-prereq
+running-prereq
+
+End running text
+
+# Main
+
+$ echo post-prereq-run
+post-prereq-run
+

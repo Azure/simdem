@@ -11,9 +11,10 @@ Results:
 barr
 ```
 
-After this, we should not pass
+In demo mode, we will continue processing.
+
 ```shell
-echo YOU SHALL NOT PASS!
+echo post_result_block_fail
 ```
 
 even more text

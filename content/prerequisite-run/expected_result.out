@@ -1,4 +1,0 @@
-$ echo running-prereq
-running-prereq
-$ echo post-prereq-run
-post-prereq-run

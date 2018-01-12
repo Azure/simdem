@@ -1,8 +1,6 @@
-# Prerequisite
+# Prerequisites
 
-```prerequisites
-content/prerequisite-run/prereq.md
-```
+* [prereq](content/prerequisite-run/prereq.md)
 
 # Main
 

@@ -5,12 +5,9 @@ import logging
 import argparse
 import os
 
-from simdem import core
 from simdem.executor import bash
 from simdem.parser import ast, simdem1
-from simdem.render import demo as demo_r
-from simdem.mode import demo as demo_m
-from simdem.mode import debug as debug_m
+from simdem.mode import demo, dump
 
 
 def main():
@@ -25,7 +22,7 @@ def main():
     argp.add_argument('--renderer', '-r', default="demo",
                       help="Render class to use", choices=['demo'])
     argp.add_argument('--mode', '-m', default="demo",
-                      help="Mode to use", choices=['demo', 'debug'])
+                      help="Mode to use", choices=['demo', 'dump'])
     argp.add_argument('--parser', '-p', default="simdem1",
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
@@ -43,10 +40,8 @@ def main():
 
     setup_logging(config, options)
 
-#    simdem = core.Core(config, get_render(options, config),
-#                       get_parser(options), get_executor(options), get_mode(options, config))
-    simdem = get_mode(options, config)
-    simdem.process_file(file_path)
+    mode = get_mode(options, config)
+    mode.process_file(file_path)
 
 def validate(options, file_path):
     """ validate all passed in arguments """
@@ -56,18 +51,13 @@ def validate(options, file_path):
     if not os.path.isfile(options.config_file):
         return "Unable to find config file: " + options.config_file
 
-def get_render(options, config):
-    """ Returns correct renderer object """
-    if options.renderer == 'demo':
-        return demo_r.Demo(config)
-
 def get_mode(options, config):
     """ Returns correct renderer object """
     if options.mode == 'demo':
-        return demo_m.DemoMode(config, get_executor(options), get_parser(options))
+        return demo.DemoMode(config, get_parser(options), get_executor(options))
 
-    if options.mode == 'debug':
-        return debug_m.DebugMode(config, get_parser(options))
+    if options.mode == 'dump':
+        return dump.DumpMode(config, get_parser(options))
 
 def get_parser(options):
     """ Returns correct parser object """

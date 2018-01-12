@@ -1,0 +1,14 @@
+this is text
+
+$ echo foo
+foo
+$ echo bar
+bar
+
+In demo mode, we will continue processing.
+
+$ echo post_result_block_fail
+post_result_block_fail
+
+even more text
+

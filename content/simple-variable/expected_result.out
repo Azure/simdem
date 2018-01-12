@@ -1,3 +1,0 @@
-$ FOO=bar
-$ echo $FOO
-bar

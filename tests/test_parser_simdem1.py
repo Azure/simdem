@@ -4,7 +4,7 @@
 import configparser
 import unittest
 import pprint
-from .context import simdem1
+from simdem.parser import simdem1
 
 class SimDem1ParserTestSuite(unittest.TestCase):
     """Advanced test cases."""
@@ -19,45 +19,43 @@ class SimDem1ParserTestSuite(unittest.TestCase):
 
     def test_full(self):
         """Test parsing a document with all features in it"""
-        self.maxDiff = None
+        #self.maxDiff = None
         file_path = 'content/simdem1/README.md'
         res = self.parser.parse_file(file_path)
 
-        exp_res = [{'content': 'Prerequisites', 'level': 1, 'type': 'heading'},
+        # This is pretty brittle.  It might be valuable to have a test document with less content
+        exp_resl = [{'content': 'Prerequisites', 'level': 1, 'type': 'heading'},
                     {'content': 'This is the prerequisite section.  SimDem looks for a set of '
                                 'links to extract and run through first',
-                    'type': 'text'},
-                    {'content': ' * prereq-validation-pass', 'type': 'text'},
-                    {'content': ['prereq-validaiton-pass.md'], 'type': 'prerequisite'},
+                     'type': 'text'},
+                    {'content': ' * prereq-ignored', 'type': 'text'},
+                    {'content': ['content/simdem1/prereq-ignored.md'], 'type': 'prerequisites'},
                     {'content': "They don't even need to be in the same list", 'type': 'text'},
-                    {'content': ' * prereq-validation-fail', 'type': 'text'},
-                    {'content': ['prereq-validaiton-fail.md'], 'type': 'prerequisite'},
+                    {'content': ' * prereq-processed', 'type': 'text'},
+                    {'content': ['content/simdem1/prereq-processed.md'], 'type': 'prerequisites'},
                     {'content': 'By this point, the prerequisites have either run or have passed '
                                 'their validation',
-                    'type': 'text'},
+                     'type': 'text'},
+                    {'content': 'Did our prerequisites run?', 'level': 1, 'type': 'heading'},
+                    {'content': ['echo prereq_ignored = $prereq_ignored',
+                                 'echo prereq_processed = $prereq_processed'],
+                     'type': 'commands'},
                     {'content': 'Do stuff here', 'level': 1, 'type': 'heading'},
                     {'content': 'We want to execute this because the code type is shell',
-                    'type': 'text'},
-                    {'content': ['echo foo', 'echo bar', 'var=foo'], 'type': 'commands'},
-                    {'content': 'Validation', 'level': 1, 'type': 'heading'},
-                    {'content': 'This is a validation section.  If this validation section '
-                                'passes, we stop processing this file',
-                    'type': 'text'},
-                    {'content': 'Results:', 'type': 'text'},
+                     'type': 'text'},
+                    {'content': ['echo foo', 'var=bar'], 'type': 'commands'},
                     {'content': 'Do more stuff here', 'level': 1, 'type': 'heading'},
-                    {'content': ['echo baz'], 'type': 'commands'},
-                    {'content': 'Results', 'level': 1, 'type': 'heading'},
-                    {'content': 'The only thing that makes it a result is the code type is '
-                                'result. We assume the result is for the last command of the last '
-                                'code block',
-                    'type': 'text'},
-                    {'content': 'baz', 'type': 'result'},
+                    {'content': 'We assume the result is for the last command of the last code '
+                                'block',
+                     'type': 'text'},
+                    {'content': ['echo baz', 'echo $var'], 'type': 'commands'},
+                    {'content': 'bar', 'type': 'result'},
                     {'content': 'Next Steps', 'level': 1, 'type': 'heading'},
                     {'content': 'The list inside this block are steps that could be followed when '
                                 'performing an interactive tutorial',
-                    'type': 'text'}]
+                     'type': 'text'}]
         pprint.pprint(res)
-        self.assertEqual(res, exp_res)
+        self.assertEqual(res, exp_resl)
 
 
 if __name__ == '__main__':

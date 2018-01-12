@@ -1,0 +1,9 @@
+this is text
+
+$ FOO=bar
+
+$ echo $FOO
+bar
+
+more text
+

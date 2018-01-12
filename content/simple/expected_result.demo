@@ -1,6 +1,14 @@
+this is text
+
 $ echo foo
 foo
 $ echo bar
 bar
+
+more text
+
 $ echo baz
 baz
+
+even more text
+

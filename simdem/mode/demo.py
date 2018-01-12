@@ -1,4 +1,4 @@
-"""Demo (default) renderer for SimDem"""
+"""Demo (default) mode for SimDem"""
 
 import random
 import time
@@ -6,27 +6,31 @@ import logging
 import difflib
 
 class DemoMode(object):
-    """ This class is used to render the output of the commands into something
-        that looks like you're typing
+    """ This class is the default SimDem file processor.
+        It's designed for running files in a demo-able mode that looks like a human is typing it
     """
     config = None
     executor = None
     parser = None
 
-    def __init__(self, config, executor, parser):
+    def __init__(self, config, parser, executor):
         self.config = config
-        self.executor = executor
         self.parser = parser
+        self.executor = executor
 
     def process_file(self, file_path):
-        print("*** Processing " + file_path + " ***")
+        """ Parses the file and starts processing it """
+        #print("*** Processing " + file_path + " ***")
         steps = self.parser.parse_file(file_path)
         self.process(steps)
-        print("*** Completed Processing " + file_path + " ***")
+        #print("*** Completed Processing " + file_path + " ***")
 
     def process(self, steps):
+        """ Parses the file and starts processing it """
         last_command_result = None
 
+        """ I'd like to use a dispatcher for this; however, we need to exit processing
+            if the validation fails. """
         for step in steps:
             if step['type'] == 'heading':
                 self.process_heading(step)
@@ -34,11 +38,11 @@ class DemoMode(object):
                 self.process_text(step)
             elif step['type'] == 'commands':
                 last_command_result = self.process_commands(step)
-            elif step['type'] == 'result':
-                if self.is_result_valid(step['content'], last_command_result):
-                    print('***VALIDATION PASSED***')
-                else:
-                    print('***VALIDATION FAILED***')
+#            elif step['type'] == 'result':
+#                if self.is_result_valid(step['content'], last_command_result):
+#                    print('***VALIDATION PASSED***')
+#                else:
+#                    print('***VALIDATION FAILED***')
             elif step['type'] == 'prerequisites':
                 for prereq_file in step['content']:
                     self.process_file(prereq_file)
@@ -46,32 +50,31 @@ class DemoMode(object):
                 last_command_result = self.process_commands(step)
             elif step['type'] == 'validation_result':
                 if self.is_result_valid(step['content'], last_command_result):
-                    print('***VALIDATION PASSED***')
+#                    print('***VALIDATION PASSED***')
                     return
-                else:
-                    print('***VALIDATION FAILED***')
+#                else:
+#                    print('***VALIDATION FAILED***')
 
-
-    def process_heading(self, step):
+    @staticmethod
+    def process_heading(step):
+        """ Print out the heading exactly as we found it """
         print(step['level'] * '#' + ' ' + step['content'])
         print()
 
-    def process_text(self, step):
+    @staticmethod
+    def process_text(step):
+        """ Print out the text exactly as we found it """
         print(step['content'])
         print()
 
     def process_commands(self, step):
+        """ Pretend to type the command, run it and then display the output """
         for cmd in step['content']:
             self.type_command(cmd)
             results = self.executor.run_cmd(cmd)
             self.display_result(results)
         print()
         return results
-
-    def process_result(self, ):
-        print('***CHECKING RESULT***')
-        print('RES= ' + step['content'])
-        print()
 
     def type_command(self, cmd):
         """ Displays the command on the screen """
@@ -129,3 +132,18 @@ class DemoMode(object):
             logging.error("expected_results = " + expected_results)
 
         return is_pass
+
+    @staticmethod
+    def process_next_steps(steps):
+        """ Is there a good way to test this that doesn't involve lots of test code + expect?
+        """
+        idx = 1
+        if steps:
+            print("Next steps available:")
+            for step in steps:
+                print(idx + ".) " + step['title'])
+                idx += 1
+            step_request = input("Which step do you want to take next?")
+            if step_request:
+                return steps[step_request+1]['target']
+        return
