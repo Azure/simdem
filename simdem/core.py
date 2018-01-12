@@ -13,12 +13,14 @@ class Core(object):
     config = None
     parser = None
     executor = None
+    processor = None
 
-    def __init__(self, config, renderer, parser, executor):
+    def __init__(self, config, renderer, parser, executor, processor):
         self.config = config
         self.renderer = renderer
         self.parser = parser
         self.executor = executor
+        self.processor = processor
 
     def run_code_block(self, cmd_block):
         """In the future, we'll want to split a code segment into individual lines
@@ -43,11 +45,7 @@ class Core(object):
         """ Parses the file and then runs any prerequisites """
         blocks = self.parser.parse_file(file_path)
         logging.info("process_file():blocks=" + str(blocks))
-        if 'prerequisites' in blocks:
-            self.process_prereqs(blocks['prerequisites'])
-            logging.info("process_file():completed process_prereqs()")
-        result = self.run_command_blocks(blocks['commands'])
-        return result
+        return self.processor.process(blocks)
 
     def process_prereqs(self, prereqs):
         """ Loops through each of the prerequisites """
