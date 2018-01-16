@@ -91,7 +91,7 @@ class SimDem1Parser(object):
     def parse_paragraph(self, token, res):
         """ Parse Paragraph """
         logging.debug("parse_paragraph()")
-        if token['children']:
+        if 'content' in token['children'][0]:
             content = token['children'][0]['content']
             # Result Paragraph
             if content == 'Results:':
