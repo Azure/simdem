@@ -1,5 +1,9 @@
+this is text
+
 $ echo foo
 foo
 $ echo bar
 bar
+
+even more text
 
