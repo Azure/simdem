@@ -7,7 +7,7 @@ import os
 
 from simdem.executor import bash
 from simdem.parser import ast, simdem1
-from simdem.mode import demo, dump
+from simdem.mode import demo, dump, automated, tutorial
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     argp.add_argument('--renderer', '-r', default="demo",
                       help="Render class to use", choices=['demo'])
     argp.add_argument('--mode', '-m', default="demo",
-                      help="Mode to use", choices=['demo', 'dump'])
+                      help="Mode to use", choices=['demo', 'dump', 'automated', 'tutorial'])
     argp.add_argument('--parser', '-p', default="simdem1",
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
@@ -53,11 +53,21 @@ def validate(options, file_path):
 
 def get_mode(options, config):
     """ Returns correct renderer object """
+
+    parser = get_parser(options)
+    executor = get_executor(options)
+
     if options.mode == 'demo':
-        return demo.DemoMode(config, get_parser(options), get_executor(options))
+        return demo.DemoMode(config, parser, executor)
 
     if options.mode == 'dump':
-        return dump.DumpMode(config, get_parser(options))
+        return dump.DumpMode(config, parser, executor)
+
+    if options.mode == 'automated':
+        return automated.AutomatedMode(config, parser, executor)
+
+    if options.mode == 'tutorial':
+        return tutorial.TutorialMode(config, parser, executor)
 
 def get_parser(options):
     """ Returns correct parser object """
@@ -86,4 +96,6 @@ def setup_logging(config, options):
         console_handler.setFormatter(log_formatter)
         root_logger.addHandler(console_handler)
 
+print("***MAIN")
 main()
+print("***END MAIN")

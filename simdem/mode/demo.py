@@ -22,27 +22,11 @@ class DemoMode(ModeCommon):
         """ I'd like to use a dispatcher for this; however, we need to exit processing
             if the validation fails. """
         for step in steps:
-            if step['type'] == 'heading':
-                self.process_heading(step)
-            elif step['type'] == 'text':
-                self.process_text(step)
-            elif step['type'] == 'commands':
+            if step['type'] == 'commands':
                 self.process_commands(step)
             elif step['type'] == 'prerequisites':
                 for prereq_file in step['content']:
                     self.process_file(prereq_file)
-
-    @staticmethod
-    def process_heading(step):
-        """ Print out the heading exactly as we found it """
-        print(step['level'] * '#' + ' ' + step['content'])
-        print()
-
-    @staticmethod
-    def process_text(step):
-        """ Print out the text exactly as we found it """
-        print(step['content'])
-        print()
 
     def process_commands(self, step):
         """ Pretend to type the command, run it and then display the output """
