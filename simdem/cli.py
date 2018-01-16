@@ -95,7 +95,3 @@ def setup_logging(config, options):
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
         root_logger.addHandler(console_handler)
-
-print("***MAIN")
-main()
-print("***END MAIN")
