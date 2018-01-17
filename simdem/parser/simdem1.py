@@ -78,13 +78,15 @@ class SimDemMistletoeRenderer(BaseRenderer):
         """ Render raw text.  The only thing to look for is the result text indicator """
         if token.content == 'Results:':
             self.set_block('results')
+            return ''
         return token.content
 
     def render_paragraph(self, token):
         """ Render for Paragraph """
         inner = self.render_inner(token)
-        body = {'type': 'text', 'content': inner}
-        self.append_body(body)
+        if inner:
+            body = {'type': 'text', 'content': inner}
+            self.append_body(body)
         return ''
 
     def render_block_code(self, token):
@@ -100,9 +102,13 @@ class SimDemMistletoeRenderer(BaseRenderer):
             else:
                 self.append_validation_command(content)
         else:
-            # Assume this is a normal code block to run block
-            content = {'type': 'commands', 'content': content.splitlines()}
-            self.append_body(content)
+            if self.block == 'results':
+                # Assume that the last body item is the command we're expecting results for
+                self.output['body'][-1]['expected_result'] = content
+            else:
+                # Assume this is a normal code block to run block
+                content = {'type': 'commands', 'content': content.splitlines()}
+                self.append_body(content)
 
         inner = self.render_inner(token)
         # After this code block, reset the block type (e.g. No longer a "Result block")
