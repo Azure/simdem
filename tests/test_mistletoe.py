@@ -20,7 +20,7 @@ class SimDemMistletoeTestSuite(unittest.TestCase):
         exp_res = {'children': [{'children': [{'content': 'Simple', 'type': 'RawText'}],
                                  'level': 1,
                                  'type': 'Heading'},
-                                {'children': [{'content': 'echo foo\n',
+                                {'children': [{'content': 'echo foo\necho bar\n',
                                                'type': 'RawText'}],
                                  'language': 'shell',
                                  'type': 'BlockCode'}],
