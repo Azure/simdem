@@ -12,7 +12,7 @@ class SimDemMistletoeTestSuite(unittest.TestCase):
 
     def test_ast(self):
         """Verify we understand how the Mistletoe AST parsers work"""
-        self.maxDiff = None
+        #self.maxDiff = None
 
         file_path = 'content/simple/README.md'
         with open(file_path, 'r') as fin:

@@ -19,7 +19,7 @@ class SimDem1ParserTestSuite(unittest.TestCase):
 
     def test_full(self):
         """Test parsing a document with all features in it"""
-        #self.maxDiff = None
+        self.maxDiff = None
         file_path = 'content/simdem1/README.md'
         res = self.parser.parse_file(file_path)
 

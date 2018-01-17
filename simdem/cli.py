@@ -19,9 +19,7 @@ def main():
                       help="Turn on logging to console")
     argp.add_argument('--config-file', '-c', default="content/config/demo.ini",
                       help="Config file to use")
-    argp.add_argument('--renderer', '-r', default="demo",
-                      help="Render class to use", choices=['demo'])
-    argp.add_argument('--mode', '-m', default="demo",
+    argp.add_argument('--mode', '-m', default="tutorial",
                       help="Mode to use", choices=['demo', 'dump', 'automated', 'tutorial'])
     argp.add_argument('--parser', '-p', default="simdem1",
                       help="Parser class to use", choices=['simdem1', 'ast'])
