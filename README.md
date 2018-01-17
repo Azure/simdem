@@ -12,11 +12,9 @@ SimDem supports the following features:
 
 Details on the complete feature list can be found in the [feature documentation](docs/features.md).
 
-# Syntax
+# Getting Started
 
-Currently, SimDem supports Markdown as the source document.  Details on how to compose Markdown documents can be found in the [syntax documentation](docs/syntax.md).
-
-# Installation
+## Installation
 
 Currently, it's only available for installation in development mode:
 
@@ -24,6 +22,18 @@ Currently, it's only available for installation in development mode:
 git clone git@github.com:Azure/simdem.git
 pip3 install -v -e .
 ```
+
+## Running
+
+A great place to start working on SimDem is to run SimDem on its own documentation
+
+```
+simdem docs/README.md
+```
+
+# Syntax
+
+Currently, SimDem supports Markdown as the source document.  Details on how to compose Markdown documents can be found in the [syntax documentation](docs/syntax.md).
 
 # Development
 

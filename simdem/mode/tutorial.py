@@ -12,24 +12,20 @@ class TutorialMode(ModeCommon):
         """ Parses the file and starts processing it """
         #print("*** Processing " + file_path + " ***")
         steps = self.parser.parse_file(file_path)
-        self.process(steps)
-        #print("*** Completed Processing " + file_path + " ***")
-
-    def process(self, steps):
-        """ Parses the file and starts processing it """
 
         """ I'd like to use a dispatcher for this; however, we need to exit processing
             if the validation fails. """
-        for step in steps:
+        if 'prerequisites' in steps:
+            for prereq_file in steps['prerequisites']:
+                self.process_file(prereq_file)
+
+        for step in steps['body']:
             if step['type'] == 'heading':
                 self.process_heading(step)
             elif step['type'] == 'text':
                 self.process_text(step)
             elif step['type'] == 'commands':
                 self.process_commands(step)
-            elif step['type'] == 'prerequisites':
-                for prereq_file in step['content']:
-                    self.process_file(prereq_file)
 
     @staticmethod
     def process_heading(step):

@@ -1,16 +1,17 @@
+# Inside prereq.md
+
+$ prereq_run=true
+$ echo $prereq_run
+true
+
+Completed running prereq.md
+
 # Prerequisites
 
- * prereq
-
-This text should be run
-
-$ echo running-prereq
-running-prereq
-
-End running text
+This is a prereq
 
 # Main
 
-$ echo post-prereq-run
-post-prereq-run
+$ echo $prereq_run
+true
 

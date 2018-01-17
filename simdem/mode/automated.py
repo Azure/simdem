@@ -15,28 +15,25 @@ class AutomatedMode(ModeCommon):
         """ Parses the file and starts processing it """
         #print("*** Processing " + file_path + " ***")
         steps = self.parser.parse_file(file_path)
-        self.process(steps)
-        #print("*** Completed Processing " + file_path + " ***")
 
-    def process(self, steps):
-        """ Parses the file and starts processing it """
         last_command_result = None
+
+        if 'prerequisites' in steps:
+            for prereq_file in steps['prerequisites']:
+                self.process_file(prereq_file)
+        if 'validation_command' in steps:
+            last_command_result = self.process_commands(steps['validation_command'])
+        if 'validation_result' in steps:
+            if not self.is_result_valid(steps['validation_result'], last_command_result):
+                return
 
         """ I'd like to use a dispatcher for this; however, we need to exit processing
             if the validation fails. """
-        for step in steps:
+        for step in steps['body']:
             if step['type'] == 'commands':
                 last_command_result = self.process_commands(step)
             elif step['type'] == 'result':
                 self.is_result_valid(step['content'], last_command_result)
-            elif step['type'] == 'prerequisites':
-                for prereq_file in step['content']:
-                    self.process_file(prereq_file)
-            elif step['type'] == 'validation_command':
-                last_command_result = self.process_commands(step)
-            elif step['type'] == 'validation_result':
-                if not self.is_result_valid(step['content'], last_command_result):
-                    return
 
 
     def process_commands(self, step):

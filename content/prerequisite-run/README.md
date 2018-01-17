@@ -1,9 +1,9 @@
 # Prerequisites
 
-* [prereq](content/prerequisite-run/prereq.md)
+This is a [prereq](content/prerequisite-run/prereq.md)
 
 # Main
 
 ```shell
-echo post-prereq-run
+echo $prereq_run
 ```

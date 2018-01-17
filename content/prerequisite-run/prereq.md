@@ -1,7 +1,8 @@
-This text should be run
+# Inside prereq.md
 
 ```shell
-echo running-prereq
+prereq_run=true
+echo $prereq_run
 ```
 
-End running text
+Completed running prereq.md
