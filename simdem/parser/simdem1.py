@@ -23,7 +23,6 @@ class SimDem1Parser(object): # pylint: disable=R0903
 
 class SimDemMistletoeRenderer(BaseRenderer):
     """ Based off of https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62 """
-    links = []
     section = None
     block = None
 
@@ -123,7 +122,6 @@ class SimDemMistletoeRenderer(BaseRenderer):
 
     def reset_section(self):
         """ If we encounter a new section, reset everything we know """
-        self.links = []
         self.section = None
         self.block = None
 
