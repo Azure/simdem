@@ -32,42 +32,6 @@ class SimDemMistletoeRenderer(BaseRenderer):
         self.output = defaultdict(list)
         self.reset_section()
 
-    def reset_section(self):
-        """ If we encounter a new section, reset everything we know """
-        self.links = []
-        self.section = None
-        self.block = None
-
-    def set_section(self, section):
-        """ Set the section to the section name.  Duh """
-        logging.debug('set_section(' + str(section) + ')')
-        self.section = section
-
-    def set_block(self, block):
-        """ Set the block to the block name.  Duh """
-        logging.debug('set_block(' + str(block) + ')')
-        self.block = block
-
-    def append_validation_command(self, cmd):
-        """ Assuming validation commands should be a list """
-        logging.debug('append_validation(' + str(cmd) + ')')
-        self.output['validation_command'].append(cmd)
-
-    def append_validation_result(self, result):
-        """ Assuming validation results should be a list """
-        logging.debug('append_validation(' + str(result) + ')')
-        self.output['validation_expected_result'].append(result)
-
-    def append_body(self, body):
-        """ Adding the meat of the work to the dict """
-        logging.debug('append_body(' + str(body) + ')')
-        self.output['body'].append(body)
-
-    def append_prereq(self, target):
-        """ Set Prereqs """
-        logging.debug('append_prereq(' + target + ')')
-        self.output['prerequisites'].append(target)
-
     def render_heading(self, token):
         """ Render for Heading: # """
         inner = self.render_inner(token)
@@ -154,3 +118,41 @@ class SimDemMistletoeRenderer(BaseRenderer):
 
     def __getattr__(self, name):
         return lambda token: ''
+
+    # Everything below here is boring setters
+
+    def reset_section(self):
+        """ If we encounter a new section, reset everything we know """
+        self.links = []
+        self.section = None
+        self.block = None
+
+    def set_section(self, section):
+        """ Set the section to the section name.  Duh """
+        logging.debug('set_section(' + str(section) + ')')
+        self.section = section
+
+    def set_block(self, block):
+        """ Set the block to the block name.  Duh """
+        logging.debug('set_block(' + str(block) + ')')
+        self.block = block
+
+    def append_validation_command(self, cmd):
+        """ Assuming validation commands should be a list """
+        logging.debug('append_validation(' + str(cmd) + ')')
+        self.output['validation_command'].append(cmd)
+
+    def append_validation_result(self, result):
+        """ Assuming validation results should be a list """
+        logging.debug('append_validation(' + str(result) + ')')
+        self.output['validation_expected_result'].append(result)
+
+    def append_body(self, body):
+        """ Adding the meat of the work to the dict """
+        logging.debug('append_body(' + str(body) + ')')
+        self.output['body'].append(body)
+
+    def append_prereq(self, target):
+        """ Set Prereqs """
+        logging.debug('append_prereq(' + target + ')')
+        self.output['prerequisites'].append(target)
