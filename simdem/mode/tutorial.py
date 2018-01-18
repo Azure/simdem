@@ -1,5 +1,6 @@
 """ Tutorial mode for SimDem"""
 
+import logging
 from simdem.mode.common import ModeCommon
 
 class TutorialMode(ModeCommon):
@@ -8,16 +9,25 @@ class TutorialMode(ModeCommon):
         of the tutorial and pauses at code blocks to allow user interaction.
     """
 
-    def process_file(self, file_path):
+    def process_file(self, file_path, is_prereq=False):
         """ Parses the file and starts processing it """
-        #print("*** Processing " + file_path + " ***")
+        logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         steps = self.parser.parse_file(file_path)
 
-        """ I'd like to use a dispatcher for this; however, we need to exit processing
-            if the validation fails. """
+        #  Begin prereq body
         if 'prerequisites' in steps:
             for prereq_file in steps['prerequisites']:
-                self.process_file(prereq_file)
+                self.process_file(prereq_file, is_prereq=True)
+        if is_prereq and 'validation' in steps:
+            last_command_result = self.process_commands(steps['validation']['commands'])
+            if 'expected_result' in steps['validation']:
+                if self.is_result_valid(steps['validation']['expected_result'],
+                                        last_command_result):
+                    print('***PREREQUISITE VALIDATION PASSED***')
+                    return
+                else:
+                    print('***PREREQUISITE VALIDATION FAILED***')
+        #  End prereq body
 
         for step in steps['body']:
             if step['type'] == 'heading':
@@ -25,7 +35,7 @@ class TutorialMode(ModeCommon):
             elif step['type'] == 'text':
                 self.process_text(step)
             elif step['type'] == 'commands':
-                self.process_commands(step)
+                self.process_commands(step['content'])
 
     @staticmethod
     def process_heading(step):
@@ -39,9 +49,9 @@ class TutorialMode(ModeCommon):
         print(step['content'])
         print()
 
-    def process_commands(self, step):
+    def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
-        for cmd in step['content']:
+        for cmd in cmds:
             print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ' + cmd)
             results = self.executor.run_cmd(cmd)
             print(results, end="", flush=True)
@@ -51,6 +61,7 @@ class TutorialMode(ModeCommon):
     @staticmethod
     def process_next_steps(steps):
         """ Is there a good way to test this that doesn't involve lots of test code + expect?
+            Not fully tested yet.  Low priority feature.
         """
         idx = 1
         if steps:

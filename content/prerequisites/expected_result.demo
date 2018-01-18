@@ -1,0 +1,18 @@
+$ echo prereq_validation_pass
+prereq_validation_pass
+
+***PREREQUISITE VALIDATION PASSED***
+$ echo prereq_validation_fail
+prereq_validation_fail
+
+***PREREQUISITE VALIDATION FAILED***
+$ echo YOU SHOULD SEE THIS
+YOU SHOULD SEE THIS
+
+$ prereq_processed=true
+
+$ echo prereq_ignored = $prereq_ignored
+prereq_ignored =
+$ echo prereq_processed = $prereq_processed
+prereq_processed = true
+

@@ -1,7 +1,0 @@
-$ prereq_run=true
-$ echo $prereq_run
-true
-
-$ echo $prereq_run
-true
-

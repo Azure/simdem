@@ -2,19 +2,15 @@
 
 One of the designs of SimDem is to allow multiple implementations of Markdown to support different use cases and documentation patterns.
 
-Currently, there are two implementation of Markdown syntax supported.
-
-* Context (default)
-* [Codeblock](syntax_codeblock.md)
-
+Currently, there is only one implementation of Markdown syntax supported.
 
 # Context Syntax Specification
 
 This is the syntax for the default codeblock format.  It's design is to allow more natural, expressive, and readable documentation.  It is based off of SimDem v1's syntax
 
-## Context Based (default)
+## SimDem V1 Based (default)
 
-[Example Context Based Document](../content/complete-features/context.md)
+[Example Context Based Document](../content/simdem1/README.md)
 
 Feature | Implementation 
 --- | --- 

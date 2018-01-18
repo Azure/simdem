@@ -22,7 +22,10 @@ class SimDem1Parser(object): # pylint: disable=R0903
 
 
 class SimDemMistletoeRenderer(BaseRenderer):
-    """ Based off of https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62 """
+    """ Based off of https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
+        Major Gotcha:  If this class calls a function that does not exist, it will NOT error
+        This is due to the way that the Mistletoe Renderer works.  Or at least how I think it works.
+    """
     section = None
     block = None
 
@@ -98,9 +101,9 @@ class SimDemMistletoeRenderer(BaseRenderer):
             # Validation blocks aren't run like normal blocks
             if self.block == 'results':
                 # Validation result blocks are expecially not checked like normal blocks
-                self.append_validation_result(content)
+                self.set_validation_result(content)
             else:
-                self.append_validation_command(content)
+                self.set_validation_command(content)
         else:
             if self.block == 'results':
                 # Assume that the last body item is the command we're expecting results for
@@ -141,15 +144,15 @@ class SimDemMistletoeRenderer(BaseRenderer):
         logging.debug('set_block(' + str(block) + ')')
         self.block = block
 
-    def append_validation_command(self, cmd):
+    def set_validation_command(self, cmds):
         """ Assuming validation commands should be a list """
-        logging.debug('append_validation(' + str(cmd) + ')')
-        self.output['validation_command'].append(cmd)
+        logging.debug('append_validation(' + str(cmds) + ')')
+        self.output['validation'] = {'commands': cmds.splitlines()}
 
-    def append_validation_result(self, result):
+    def set_validation_result(self, result):
         """ Assuming validation results should be a list """
         logging.debug('append_validation(' + str(result) + ')')
-        self.output['validation_expected_result'].append(result)
+        self.output['validation']['expected_result'] = result
 
     def append_body(self, body):
         """ Adding the meat of the work to the dict """

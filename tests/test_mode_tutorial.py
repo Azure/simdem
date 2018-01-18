@@ -34,7 +34,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
 
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
     @data('simple', 'simple-variable', 'results-block',
-          'results-block-fail', 'prerequisite-run')
+          'results-block-fail', 'prerequisites')
     def test_process(self, directory):
         """ Each content directory is expected to have a README.md and an expected_result.tutorial
             this allows us to test each of them easily
