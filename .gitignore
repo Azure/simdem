@@ -91,3 +91,5 @@ ENV/
 
 # Other
 .vscode
+simdem-env
+hello_world
