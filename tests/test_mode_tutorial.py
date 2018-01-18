@@ -39,6 +39,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
         """ Each content directory is expected to have a README.md and an expected_result.tutorial
             this allows us to test each of them easily
         """
+        self.maxDiff = None # pylint: disable=C0103
         self.simdem.process_file('./content/' + directory + '/README.md')
         # Unsure why Pylint complains that 'TextIOWrapper' has no 'getvalue' member.
         # I'm not Python smart enough yet to know why this works, but Pylint says it shouldn't.

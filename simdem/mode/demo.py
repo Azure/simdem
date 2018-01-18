@@ -10,25 +10,9 @@ class DemoMode(ModeCommon):
         It's designed for running files in a demo-able mode that looks like a human is typing it
     """
 
-    def process_file(self, file_path, is_prereq=False):
-        """ Parses the file and starts processing it """
-        logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
-        steps = self.parser.parse_file(file_path)
-
-        #  Begin prereq body
-        if 'prerequisites' in steps:
-            for prereq_file in steps['prerequisites']:
-                self.process_file(prereq_file, is_prereq=True)
-        if is_prereq and 'validation' in steps:
-            last_command_result = self.process_commands(steps['validation']['commands'])
-            if 'expected_result' in steps['validation']:
-                if self.is_result_valid(steps['validation']['expected_result'],
-                                        last_command_result):
-                    print('***PREREQUISITE VALIDATION PASSED***')
-                    return
-                else:
-                    print('***PREREQUISITE VALIDATION FAILED***')
-        #  End prereq body
+    def process(self, steps):
+        """ Processes the steps from a processed file """
+        logging.debug("process()")
 
         for step in steps['body']:
             if step['type'] == 'commands':

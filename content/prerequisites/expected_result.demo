@@ -1,7 +1,6 @@
 $ echo prereq_validation_pass
 prereq_validation_pass
 
-***PREREQUISITE VALIDATION PASSED***
 $ echo prereq_validation_fail
 prereq_validation_fail
 

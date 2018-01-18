@@ -15,6 +15,37 @@ class ModeCommon(object): # pylint: disable=R0903
         self.parser = parser
         self.executor = executor
 
+    def process_file(self, file_path, is_prereq=False):
+        """ Parses the file and starts processing it """
+        logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
+        steps = self.parser.parse_file(file_path)
+
+        #  Begin preqreq processing
+        if 'prerequisites' in steps:
+            for prereq_file in steps['prerequisites']:
+                self.process_file(prereq_file, is_prereq=True)
+        if is_prereq and 'validation' in steps:
+            last_command_result = self.process_commands(steps['validation']['commands']) # pylint: disable=no-member
+            if 'expected_result' in steps['validation']:
+                if self.is_result_valid(steps['validation']['expected_result'],
+                                        last_command_result):
+                    #print('***PREREQUISITE VALIDATION PASSED***')
+                    return
+                else:
+                    print('***PREREQUISITE VALIDATION FAILED***')
+        #  End prereq processing
+
+        self.process(steps) # pylint: disable=no-member
+
+    def process_commands(self, cmds):
+        """ Pretend to type the command, run it and then display the output """
+        for cmd in cmds:
+            print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ' + cmd)
+            results = self.executor.run_cmd(cmd)
+            print(results, end="", flush=True)
+        print()
+        return results
+
     @staticmethod
     def is_result_valid(expected_results, actual_results, expected_similarity=1.0):
         """Checks to see if a command execution passes.
