@@ -10,7 +10,7 @@ class ModeCommon(object): # pylint: disable=R0903
     config = None
     executor = None
     parser = None
-    cwd = './'
+    cwd = None
 
     def __init__(self, config, parser, executor):
         self.config = config
@@ -21,6 +21,9 @@ class ModeCommon(object): # pylint: disable=R0903
         """ Parses the file and starts processing it """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         steps = self.parser.parse_file(file_path)
+        # Change the working directory in case of any recursion
+        #print("changing path to:" + os.path.dirname(file_path))
+        #os.chdir(os.path.dirname(file_path))
 
         #  Begin preqreq processing
         if 'prerequisites' in steps:
