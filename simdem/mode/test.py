@@ -3,7 +3,7 @@
 import logging
 from simdem.mode.common import ModeCommon
 
-class AutomatedMode(ModeCommon):
+class TestMode(ModeCommon):
     """ This class is the automated SimDem mode
         Does not display the descriptive text, but pauses at each
         code block. When the user hits a key the command is "typed", a

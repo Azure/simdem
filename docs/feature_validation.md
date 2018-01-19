@@ -65,7 +65,6 @@ cleanup/README.md
 
 # Next Steps
 
-  1. [SimDem Index](../README.md)
-  2. [Build a Hello World script](../tutorial/README.md)
-  3. [Write SimDem documents](../syntax/README.md)
-  4. [Configure your scripts through variables](../variables/README.md)
+  1. [SimDem Index](README.md)
+  2. [Build a Hello World script](hello_world.md)
+  3. [Write SimDem documents](syntax.md)

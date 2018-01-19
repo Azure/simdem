@@ -7,7 +7,7 @@ import os
 
 from simdem.executor import bash
 from simdem.parser import ast, simdem1
-from simdem.mode import demo, dump, automated, tutorial
+from simdem.mode import demo, dump, test, tutorial
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     argp.add_argument('--config-file', '-c', default="content/config/demo.ini",
                       help="Config file to use")
     argp.add_argument('--mode', '-m', default="tutorial",
-                      help="Mode to use", choices=['demo', 'dump', 'automated', 'tutorial'])
+                      help="Mode to use", choices=['demo', 'dump', 'test', 'tutorial'])
     argp.add_argument('--parser', '-p', default="simdem1",
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
@@ -61,8 +61,8 @@ def get_mode(options, config):
     if options.mode == 'dump':
         return dump.DumpMode(config, parser, executor)
 
-    if options.mode == 'automated':
-        return automated.AutomatedMode(config, parser, executor)
+    if options.mode == 'test':
+        return test.TestMode(config, parser, executor)
 
     if options.mode == 'tutorial':
         return tutorial.TutorialMode(config, parser, executor)

@@ -15,7 +15,7 @@ We would love for you to contribute to SimDem.  If there is anything that would 
 Fetch the necessary packages
 
 ```
-make init
+pip3 install -r requirements.txt
 ```
 
 ## Validation
@@ -23,7 +23,7 @@ make init
 Verify the tests pass
 
 ```
-make test
+python3 setup.py nosetests
 ```
 
 # Code Structure
@@ -34,30 +34,24 @@ SimDem is broken into the following class types
 
 This class type parses the markdown document into a "SimDem Execution Object".  This object has everything SimDem needs to know on how to run the document (e.g. prerequisites, commands, validations, etc.)
 
-Implementations:
-* Context 
-* CodeBlock
-
-Example SimDem Execution Object:
-```
-{ 'prerequisites': ['prereq.md', 'prereq-2.md'],
-  'commands': [ { 'command': 'echo foo' },
-                { 'command': 'echo bar' },
-                { 'command': 'echo baz', 'expected_result': 'baz' } ]
-        }
-```
-
-## Render
-
-This class type formats the result of running the commands into the desired output
+Follow the links to see an [example document](../content/prerequisites/README.md) with its output [SimDem Execution Object](../content/prerequisites/expected_output.dump)
 
 Implementations:
-* Demonstration mode
-* Automated mode (coming soon)
+* [SimDem1](../simdem/parser/simdem1.py)
+
+## Mode
+
+This class contains the logic for how the markdown document is processed.
+
+Implementations:
+* [Demo mode](../simdem/mode/demo.py)
+* [Automated mode](../simdem/mode/automated.py)
+* [Dump](../simdem/mode/dump.py)
+* [Tutorial](../simdem/mode/tutorial.py)
 
 ## Execute
 
 This class type executes the desired commands into the shell
 
 Implementations:
-* Bash
+* [Bash](../simdem/executor/bash.py)
