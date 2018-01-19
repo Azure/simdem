@@ -1,10 +1,9 @@
 """ Tutorial mode for SimDem"""
 
-import sys
 import logging
-from simdem.mode.common import ModeCommon
+from simdem.mode.interactive import InteractiveMode
 
-class TutorialMode(ModeCommon):
+class TutorialMode(InteractiveMode):
     """ This class is the tutorial mode class for SimDem.
         It's designed for running files in a tutorial mode which Displays the descriptive text
         of the tutorial and pauses at code blocks to allow user interaction.

@@ -1,7 +1,6 @@
 """ Common mode for SimDem mode """
 
 import os
-import sys
 import logging
 import difflib
 
@@ -43,7 +42,7 @@ class ModeCommon(object): # pylint: disable=R0903
         self.process(steps) # pylint: disable=no-member
 
         if 'next_steps' in steps:
-            self.process_next_steps(steps['next_steps'], start_path)
+            self.process_next_steps(steps['next_steps'], start_path) # pylint: disable=no-member
 
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
@@ -91,26 +90,3 @@ class ModeCommon(object): # pylint: disable=R0903
             logging.error("expected_results = " + expected_results)
 
         return is_pass
-
-    def process_next_steps(self, steps, start_path):
-        """ Is there a good way to test this that doesn't involve lots of test code + expect?
-            Not fully tested yet.  Low priority feature.
-        """
-        idx = 1
-        if steps:
-            print("Next steps available:")
-            for step in steps:
-                print(str(idx) + ". " + step['title'] + " (" + step['target'] + ") ")
-                idx += 1
-            print()
-            # https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
-            if sys.stdout.isatty():
-                # You're running in a real terminal
-                step_request = input("Choose a step.  " +
-                                     "Type the # or 'q' to quit and then press Enter: ")
-                #print('You chose:' + str(steps[int(step_request) - 1]['title']))
-                self.process_file(start_path + '/' + steps[int(step_request) - 1]['target'])
-            else:
-                logging.info('Not connected to a TTY terminal  Not requesting input.')
-                # You're being piped or redirected
-        return

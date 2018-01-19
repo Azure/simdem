@@ -56,8 +56,8 @@ class SimDem1ParserTestSuite(unittest.TestCase):
            'type': 'text'}],
  'next_steps': [{'target': 'step-1.md', 'title': 'Step #1'},
                 {'target': 'step-2.md', 'title': 'Step #2'}],
- 'prerequisites': ['content/simdem1/prereq-ignored.md',
-                   'content/simdem1/prereq-processed.md']}
+ 'prerequisites': ['./prereq-ignored.md',
+                   './prereq-processed.md']}
         pprint.pprint(res)
         self.assertEqual(res, exp_resl)
 

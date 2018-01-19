@@ -3,9 +3,9 @@
 import random
 import time
 import logging
-from simdem.mode.common import ModeCommon
+from simdem.mode.interactive import InteractiveMode
 
-class DemoMode(ModeCommon):
+class DemoMode(InteractiveMode):
     """ This class is the default SimDem file processor.
         It's designed for running files in a demo-able mode that looks like a human is typing it
     """
@@ -22,7 +22,7 @@ class DemoMode(ModeCommon):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
             #  Request enter from user to know when to proceed
-            input()
+            self.get_single_key_input()
             self.type_command(cmd)
             results = self.executor.run_cmd(cmd)
             print(results, end="", flush=True)
