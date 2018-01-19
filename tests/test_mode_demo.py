@@ -20,7 +20,6 @@ class SimDemSystemTestSuite(unittest.TestCase):
     simdem = None
 
     def setUp(self):
-
         config = configparser.ConfigParser()
         config.read("content/config/unit_test.ini")
         self.demo = demo.DemoMode(config, simdem1.SimDem1Parser(), bash.BashExecutor())

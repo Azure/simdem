@@ -1,5 +1,6 @@
 """ Tutorial mode for SimDem"""
 
+import sys
 import logging
 from simdem.mode.common import ModeCommon
 
@@ -21,6 +22,9 @@ class TutorialMode(ModeCommon):
             elif step['type'] == 'commands':
                 self.process_commands(step['content'])
 
+        if 'next_steps' in steps:
+            self.process_next_steps(steps['next_steps'])
+
     @staticmethod
     def process_heading(step):
         """ Print out the heading exactly as we found it """
@@ -33,8 +37,7 @@ class TutorialMode(ModeCommon):
         print(step['content'])
         print()
 
-    @staticmethod
-    def process_next_steps(steps):
+    def process_next_steps(self, steps):
         """ Is there a good way to test this that doesn't involve lots of test code + expect?
             Not fully tested yet.  Low priority feature.
         """
@@ -42,9 +45,17 @@ class TutorialMode(ModeCommon):
         if steps:
             print("Next steps available:")
             for step in steps:
-                print(idx + ".) " + step['title'])
+                print(str(idx) + ".) " + step['title'])
                 idx += 1
-            step_request = input("Which step do you want to take next?")
-            if step_request:
-                return steps[step_request+1]['target']
+            print()
+            # https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
+            if sys.stdout.isatty():
+                # You're running in a real terminal
+                step_request = input("Choose a step.  " +
+                                     "Type the # or 'q' to quit and then press Enter: ")
+                #print('You chose:' + str(steps[int(step_request) - 1]['title']))
+                self.process_file(steps[int(step_request) - 1]['target'])
+            else:
+                logging.info('Not connected to a TTY terminal  Not requesting input.')
+                # You're being piped or redirected
         return

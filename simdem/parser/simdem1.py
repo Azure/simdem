@@ -59,12 +59,16 @@ class SimDemMistletoeRenderer(BaseRenderer):
 
     def render_list(self, token):
         """ Render a markdown list """
+        logging.debug('render_list()')
         inner = self.render_inner(token)
+        logging.debug('render_list()::inner=' + inner)
         return inner
 
     def render_list_item(self, token):
         """ Render a markdown list item """
+        logging.debug('render_list_item()')
         inner = self.render_inner(token)
+        logging.debug('render_list_item()::inner=' + inner)
         return inner
 
     def render_link(self, token):
@@ -72,9 +76,11 @@ class SimDemMistletoeRenderer(BaseRenderer):
             We need to find another way to store link targets.
             Unfortunately, I can only think of storing them in an array right now
         """
+        inner = self.render_inner(token)
+        if self.section and 'next_steps' in self.section:
+            self.append_next_step(inner, token.target)
         if self.section and 'prerequisites' in self.section:
             self.append_prereq(token.target)
-        inner = self.render_inner(token)
         return inner
 
     def render_raw_text(self, token):
@@ -163,3 +169,8 @@ class SimDemMistletoeRenderer(BaseRenderer):
         """ Set Prereqs """
         logging.debug('append_prereq(' + target + ')')
         self.output['prerequisites'].append(target)
+
+    def append_next_step(self, name, target):
+        """ Add steps to next step section """
+        logging.debug('append_next_step(' + name + ',' + target + ')')
+        self.output['next_steps'].append({'title': name, 'target': target})

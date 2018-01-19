@@ -54,6 +54,8 @@ class SimDem1ParserTestSuite(unittest.TestCase):
           {'content': 'The list inside this block are steps that could be '
                       'followed when performing an interactive tutorial',
            'type': 'text'}],
+ 'next_steps': [{'target': 'step-1.md', 'title': 'Step #1'},
+                {'target': 'step-2.md', 'title': 'Step #2'}],
  'prerequisites': ['content/simdem1/prereq-ignored.md',
                    'content/simdem1/prereq-processed.md']}
         pprint.pprint(res)

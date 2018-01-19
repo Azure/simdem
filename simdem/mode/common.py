@@ -1,5 +1,6 @@
 """ Common mode for SimDem mode """
 
+import os
 import logging
 import difflib
 
@@ -9,6 +10,7 @@ class ModeCommon(object): # pylint: disable=R0903
     config = None
     executor = None
     parser = None
+    cwd = './'
 
     def __init__(self, config, parser, executor):
         self.config = config
