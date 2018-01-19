@@ -22,3 +22,7 @@ class TestMode(ModeCommon):
                         print('***VALIDATION FAILED***')
                     else:
                         print('***VALIDATION PASSED***')
+
+    def process_next_steps(self, steps, start_path):
+        """ No need to display next steps if in test mode """
+        pass

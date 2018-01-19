@@ -59,16 +59,12 @@ class SimDemMistletoeRenderer(BaseRenderer):
 
     def render_list(self, token):
         """ Render a markdown list """
-        logging.debug('render_list()')
         inner = self.render_inner(token)
-        logging.debug('render_list()::inner=' + inner)
         return inner
 
     def render_list_item(self, token):
         """ Render a markdown list item """
-        logging.debug('render_list_item()')
         inner = self.render_inner(token)
-        logging.debug('render_list_item()::inner=' + inner)
         return inner
 
     def render_link(self, token):
