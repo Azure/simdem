@@ -21,6 +21,8 @@ class DemoMode(ModeCommon):
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
+            #  Request enter from user to know when to proceed
+            input()
             self.type_command(cmd)
             results = self.executor.run_cmd(cmd)
             print(results, end="", flush=True)
@@ -35,7 +37,7 @@ class DemoMode(ModeCommon):
         print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ', end="", flush=True)
         for _, char in enumerate(cmd):
             if char != "\n":
-                typing_delay = None #float(self.config.get('RENDER', 'TYPING_DELAY'))
+                typing_delay = float(self.config.get('RENDER', 'TYPING_DELAY'))
                 if typing_delay:
                     delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)

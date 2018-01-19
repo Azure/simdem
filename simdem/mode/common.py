@@ -21,8 +21,6 @@ class ModeCommon(object): # pylint: disable=R0903
         """ Parses the file and starts processing it """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         # Change the working directory in case of any recursion
-        #print("changing path to:" + os.path.dirname(file_path))
-        #os.chdir(os.path.dirname(file_path))
         start_path = os.path.dirname(file_path)
         steps = self.parser.parse_file(file_path)
 
