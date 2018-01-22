@@ -20,6 +20,7 @@ Currently, it's only available for installation in development mode:
 
 ```
 git clone git@github.com:Azure/simdem.git
+pip3 install -r requirements.txt
 pip3 install -v -e .
 ```
 
