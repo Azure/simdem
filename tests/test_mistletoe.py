@@ -23,7 +23,7 @@ class SimDemMistletoeTestSuite(unittest.TestCase):
                                 {'children': [{'content': 'echo foo\necho bar\n',
                                                'type': 'RawText'}],
                                  'language': 'shell',
-                                 'type': 'BlockCode'}],
+                                 'type': 'CodeFence'}],
                    'footnotes': {},
                    'type': 'Document'}
 

@@ -32,4 +32,3 @@ class TutorialMode(InteractiveMode):
     def process_text(step):
         """ Print out the text exactly as we found it """
         print(step['content'])
-        print()

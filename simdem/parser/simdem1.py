@@ -81,7 +81,7 @@ class SimDemMistletoeRenderer(BaseRenderer):
 
     def render_raw_text(self, token):
         """ Render raw text.  The only thing to look for is the result text indicator """
-        if token.content == 'Results:':
+        if token.content.rstrip() == 'Results:':
             self.set_block('results')
             return ''
         return token.content
