@@ -34,10 +34,10 @@ class DemoMode(InteractiveMode):
 
         # Must add ' ' when typing command because whitespaces are removed from configparser
         # https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
-        print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ', end="", flush=True)
+        print(self.config.get('render', 'console_prompt', raw=True) + ' ', end="", flush=True)
         for _, char in enumerate(cmd):
             if char != "\n":
-                typing_delay = float(self.config.get('RENDER', 'TYPING_DELAY'))
+                typing_delay = float(self.config.get('render', 'typing_delay'))
                 if typing_delay:
                     delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)

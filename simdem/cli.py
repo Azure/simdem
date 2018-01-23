@@ -25,6 +25,8 @@ def main():
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
                       help="Executor class to use", choices=['bash'])
+    argp.add_argument('--setting', '-s', metavar='setting',
+                      help="Setting to override in config file")
     options = argp.parse_args()
 
     file_path = options.file
@@ -35,11 +37,19 @@ def main():
 
     config = configparser.ConfigParser()
     config.read(options.config_file)
+    inject_arguments(options, config)
 
     setup_logging(config, options)
 
     mode = get_mode(options, config)
     mode.process_file(file_path)
+
+def inject_arguments(options, config):
+    """ Injects CLI arguments into config settings """
+    if options.setting:
+        [key, value] = options.setting.split('=')
+        [section, option] = key.split('.')
+        config.set(section, option, value)
 
 def validate(options, file_path):
     """ validate all passed in arguments """
@@ -81,11 +91,11 @@ def get_executor(options):
 
 def setup_logging(config, options):
     """ Establishes logging level and format """
-    log_formatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
+    log_formatter = logging.Formatter(config.get('log', 'format', raw=True))
     root_logger = logging.getLogger()
-    root_logger.setLevel(config.get('LOG', 'LEVEL'))
+    root_logger.setLevel(config.get('log', 'level'))
 
-    file_handler = logging.FileHandler(config.get('LOG', 'FILE'))
+    file_handler = logging.FileHandler(config.get('log', 'file'))
     file_handler.setFormatter(log_formatter)
     root_logger.addHandler(file_handler)
 

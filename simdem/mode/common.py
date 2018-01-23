@@ -47,7 +47,7 @@ class ModeCommon(object): # pylint: disable=R0903
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            print(self.config.get('RENDER', 'CONSOLE_PROMPT', raw=True) + ' ' + cmd)
+            print(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd)
             results = self.executor.run_cmd(cmd)
             print(results, end="", flush=True)
         print()

@@ -25,10 +25,10 @@ class SimDemSystemTestSuite(unittest.TestCase):
         config.read("content/config/unit_test.ini")
         self.simdem = tutorial.TutorialMode(config, simdem1.SimDem1Parser(), bash.BashExecutor())
 
-        log_formatter = logging.Formatter(config.get('LOG', 'FORMAT', raw=True))
+        log_formatter = logging.Formatter(config.get('log', 'format', raw=True))
         root_logger = logging.getLogger()
-        root_logger.setLevel(config.get('LOG', 'LEVEL'))
-        file_handler = logging.FileHandler(config.get('LOG', 'FILE'))
+        root_logger.setLevel(config.get('log', 'level'))
+        file_handler = logging.FileHandler(config.get('log', 'file'))
         file_handler.setFormatter(log_formatter)
         root_logger.addHandler(file_handler)
 
