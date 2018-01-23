@@ -12,6 +12,10 @@ class DumpMode(ModeCommon): # pylint: disable=R0903
         """ Parse the file and print it.  Not very exciting. """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         steps = self.parser.parse_file(file_path)
+        pprint.pprint(steps)
+
+    def print_config_data(self):
+        """ Dead code for now, but useful for debugging config """
         print("Config=")
         for section in self.config.sections():
             for option in self.config.options(section):
@@ -20,6 +24,3 @@ class DumpMode(ModeCommon): # pylint: disable=R0903
                 except configparser.InterpolationMissingOptionError:
                     pass
         print()
-        
-        print("Parsed file=")
-        pprint.pprint(steps)
