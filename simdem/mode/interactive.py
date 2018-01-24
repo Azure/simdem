@@ -13,7 +13,12 @@ class InteractiveMode(ModeCommon):
             https://stackoverflow.com/questions/983354/how-do-i-make-python-to-wait-for-a-pressed-key
             For SimDem2, I'm trying this alternative to allow for Windows compatibility
             https://stackoverflow.com/questions/510357/python-read-a-single-character-from-the-user/510404#510404
+
+            https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
+            Might need to allow config override of the conditional by allowing a config variable.
+            Experienced an issue where it hung running in a container and I didn't completely debug
         """
+
         if sys.stdout.isatty():
             getch = Getch()
             return getch.impl()

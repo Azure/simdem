@@ -1,0 +1,20 @@
+{
+    "body": [
+        {
+            "content": "this is text\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo foo",
+                "echo bar"
+            ],
+            "expected_result": "bar\n",
+            "type": "commands"
+        },
+        {
+            "content": "even more text\n",
+            "type": "text"
+        }
+    ]
+}

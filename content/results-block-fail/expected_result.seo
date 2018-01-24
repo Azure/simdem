@@ -1,0 +1,30 @@
+{
+    "body": [
+        {
+            "content": "this is text\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo foo",
+                "echo bar"
+            ],
+            "expected_result": "barr\n",
+            "type": "commands"
+        },
+        {
+            "content": "In demo mode, we will continue processing.\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo post_result_block_fail"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "even more text\n",
+            "type": "text"
+        }
+    ]
+}

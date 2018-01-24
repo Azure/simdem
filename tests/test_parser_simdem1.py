@@ -1,11 +1,15 @@
-# pylint: disable=C0330
-"""SimDem Test Case"""
+# -*- coding: utf-8 -*-
+""" system level test class """
 
 import configparser
 import unittest
-import pprint
+import json
+
+from ddt import data, ddt
+
 from simdem.parser import simdem1
 
+@ddt
 class SimDem1ParserTestSuite(unittest.TestCase):
     """Advanced test cases."""
 
@@ -17,49 +21,20 @@ class SimDem1ParserTestSuite(unittest.TestCase):
 
         self.parser = simdem1.SimDem1Parser()
 
-    def test_full(self):
-        """Test parsing a document with all features in it"""
-        self.maxDiff = None # pylint: disable=C0103
-        file_path = 'content/simdem1/README.md'
-        res = self.parser.parse_file(file_path)
 
-        # This is pretty brittle.  It might be valuable to have a test document with less content
-        exp_resl = {'body': [{'content': 'Prerequisites', 'level': 1, 'type': 'heading'},
-          {'content': 'This is the prerequisite section.  SimDem looks for a '
-                      'set of links to extract and run through first\n',
-           'type': 'text'},
-          {'content': "They don't even need to be in the same list\n",
-           'type': 'text'},
-          {'content': 'By this point, the prerequisites have either run or '
-                      'have passed their validation\n',
-           'type': 'text'},
-          {'content': 'Did our prerequisites run?',
-           'level': 1,
-           'type': 'heading'},
-          {'content': ['echo prereq_ignored = $prereq_ignored',
-                       'echo prereq_processed = $prereq_processed'],
-           'type': 'commands'},
-          {'content': 'Do stuff here', 'level': 1, 'type': 'heading'},
-          {'content': 'We want to execute this because the code type is shell\n',
-           'type': 'text'},
-          {'content': ['echo foo', 'var=bar'], 'type': 'commands'},
-          {'content': 'Do more stuff here', 'level': 1, 'type': 'heading'},
-          {'content': 'We assume the result is for the last command of the '
-                      'last code block\n',
-           'type': 'text'},
-          {'content': ['echo baz', 'echo $var'],
-           'expected_result': 'bar\n',
-           'type': 'commands'},
-          {'content': 'Next Steps', 'level': 1, 'type': 'heading'},
-          {'content': 'The list inside this block are steps that could be '
-                      'followed when performing an interactive tutorial\n',
-           'type': 'text'}],
- 'next_steps': [{'target': 'step-1.md', 'title': 'Step #1'},
-                {'target': 'step-2.md', 'title': 'Step #2'}],
- 'prerequisites': ['./prereq-ignored.md',
-                   './prereq-processed.md']}
-        pprint.pprint(res)
-        self.assertEqual(res, exp_resl)
+    # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
+    @data('simple', 'simple-variable', 'results-block',
+          'results-block-fail', 'prerequisites')
+    def test_process(self, directory):
+        """ Each content directory is expected to have a README.md and an expected_result.tutorial
+            this allows us to test each of them easily
+        """
+        self.maxDiff = None # pylint: disable=C0103
+        res = self.parser.parse_file('./content/' + directory + '/README.md')
+
+        # Research how to read dict from file
+        exp_res = json.load(open('./content/' + directory + '/expected_result.seo', 'r'))
+        self.assertEqual(exp_res, res)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 """ Debug renderer for SimDem"""
 
-import pprint
 import logging
+import json
 import configparser
 from simdem.mode.common import ModeCommon
 
@@ -12,7 +12,7 @@ class DumpMode(ModeCommon): # pylint: disable=R0903
         """ Parse the file and print it.  Not very exciting. """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         steps = self.parser.parse_file(file_path)
-        pprint.pprint(steps)
+        print(json.dumps(steps, indent=4, sort_keys=True))
 
     def print_config_data(self):
         """ Dead code for now, but useful for debugging config """

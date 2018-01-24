@@ -1,0 +1,33 @@
+{
+    "body": [
+        {
+            "content": "this is text\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo main"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "Next steps",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "The list inside this block are steps that could be followed when performing an interactive tutorial\n",
+            "type": "text"
+        }
+    ],
+    "next_steps": [
+        {
+            "target": "step-1.md",
+            "title": "Step #1"
+        },
+        {
+            "target": "step-2.md",
+            "title": "Step #2"
+        }
+    ]
+}
