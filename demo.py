@@ -365,6 +365,9 @@ logs throughout execution."""
                         self.ui.log("debug", "Added " + str(after - before) + " lines.")
                         
         if lines is None:
+            if (self.script_dir.endswith(".md")):
+                self.script_dir, self.filename = os.path.split(self.script_dir)
+                
             file = os.path.join(self.script_dir, self.filename)
             self.ui.log("info", "Reading lines from " + file)
     
