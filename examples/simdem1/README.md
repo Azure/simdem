@@ -1,10 +1,12 @@
 # Prerequisites
 
-This is the prerequisite section.  SimDem looks for a set of links to extract and run through first
+This is the prerequisite section.  SimDem extracts links to run through prior to executing the main steps.
+
+Here is an example of a prerequisite that will be ignored because it's conditions are already met.
 
 * [prereq-ignored](./prereq-ignored.md)
 
-They don't even need to be in the same list
+Here is an example of a prerequisites that will be run because it's conditions are not met.
 
 * [prereq-processed](./prereq-processed.md)
 
