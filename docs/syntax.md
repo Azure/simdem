@@ -10,7 +10,7 @@ This is the syntax for the default codeblock format.  It's design is to allow mo
 
 ## SimDem V1 Based (default)
 
-[Example Context Based Document](../content/simdem1/README.md)
+[Example Context Based Document](../examples/simdem1/README.md)
 
 Feature | Implementation 
 --- | --- 
