@@ -14,7 +14,7 @@ class SimDemMistletoeTestSuite(unittest.TestCase):
         """Verify we understand how the Mistletoe AST parsers work"""
         #self.maxDiff = None
 
-        file_path = 'content/simple/README.md'
+        file_path = 'examples/simple/README.md'
         with open(file_path, 'r') as fin:
             res = renderer.get_ast(token.Document(fin))
         exp_res = {'children': [{'children': [{'content': 'Simple', 'type': 'RawText'}],

@@ -22,7 +22,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
     def setUp(self):
 
         config = configparser.ConfigParser()
-        config.read("content/config/unit_test.ini")
+        config.read("examples/config/unit_test.ini")
         self.simdem = tutorial.TutorialMode(config, simdem1.SimDem1Parser(), bash.BashExecutor())
 
         log_formatter = logging.Formatter(config.get('log', 'format', raw=True))
@@ -36,15 +36,15 @@ class SimDemSystemTestSuite(unittest.TestCase):
     @data('simple', 'simple-variable', 'results-block',
           'results-block-fail', 'prerequisites')
     def test_process(self, directory):
-        """ Each content directory is expected to have a README.md and an expected_result.tutorial
+        """ Each examples directory is expected to have a README.md and an expected_result.tutorial
             this allows us to test each of them easily
         """
         self.maxDiff = None # pylint: disable=C0103
-        self.simdem.process_file('./content/' + directory + '/README.md')
+        self.simdem.process_file('./examples/' + directory + '/README.md')
         # Unsure why Pylint complains that 'TextIOWrapper' has no 'getvalue' member.
         # I'm not Python smart enough yet to know why this works, but Pylint says it shouldn't.
         res = sys.stdout.getvalue() # pylint: disable=E1101
-        exp_res = open('./content/' + directory + '/expected_result.tutorial', 'r').read()
+        exp_res = open('./examples/' + directory + '/expected_result.tutorial', 'r').read()
         self.assertEqual(exp_res, res)
 
 

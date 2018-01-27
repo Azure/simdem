@@ -17,7 +17,7 @@ class SimDem1ParserTestSuite(unittest.TestCase):
 
     def setUp(self):
         config = configparser.ConfigParser()
-        config.read("content/config/unit_test.ini")
+        config.read("examples/config/unit_test.ini")
 
         self.parser = simdem1.SimDem1Parser()
 
@@ -26,14 +26,14 @@ class SimDem1ParserTestSuite(unittest.TestCase):
     @data('simple', 'simple-variable', 'results-block',
           'results-block-fail', 'prerequisites')
     def test_process(self, directory):
-        """ Each content directory is expected to have a README.md and an expected_result.tutorial
+        """ Each examples directory is expected to have a README.md and an expected_result.tutorial
             this allows us to test each of them easily
         """
         self.maxDiff = None # pylint: disable=C0103
-        res = self.parser.parse_file('./content/' + directory + '/README.md')
+        res = self.parser.parse_file('./examples/' + directory + '/README.md')
 
         # Research how to read dict from file
-        exp_res = json.load(open('./content/' + directory + '/expected_result.seo', 'r'))
+        exp_res = json.load(open('./examples/' + directory + '/expected_result.seo', 'r'))
         self.assertEqual(exp_res, res)
 
 
