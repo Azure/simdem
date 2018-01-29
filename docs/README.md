@@ -2,12 +2,12 @@
 
 SimDem is:
 
-  * Documentation
-  * An interactive tutorial
-  * A live demo 
-  * An automated test script
-  * A Shell script
-  
+* Documentation
+* An interactive tutorial
+* A live demo
+* An automated test script
+* A Shell script
+
 ## SimDem overview
 
 Simdem allows you to wite a tutorial in markdown format and then run the commands as a simulated demo, interactive tutorial, a test script or generate executable shell scripts.

@@ -12,11 +12,6 @@ SimDem and can be run one of the following modes:
   markdown file) to be considered correct.
 * Dump:  Prints out the internal SimDem object
 
-
-
-
-
-
 # Next Steps
 
   1. [Beginning](README.md)
