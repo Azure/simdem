@@ -7,6 +7,21 @@ from simdem.misc.getch import Getch
 class InteractiveMode(ModeCommon):
     """ Interactive Mode subclass """
 
+    def process_commands(self, cmds):
+        """ Pretend to type the command, run it and then display the output """
+        for cmd in cmds:
+            #  Request enter from user to know when to proceed
+            self.get_single_key_input()
+            self.display_command(cmd)
+            results = self.executor.run_cmd(cmd)
+            print(results, end="", flush=True)
+        print()
+        return results
+
+    def display_command(self, cmd):
+        """ Default result for displaying a command """
+        print(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd, flush=True)
+
     @staticmethod
     def get_single_key_input():
         """ SimDem1 uses this method:

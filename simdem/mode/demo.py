@@ -18,18 +18,7 @@ class DemoMode(InteractiveMode):
             if step['type'] == 'commands':
                 self.process_commands(step['content'])
 
-    def process_commands(self, cmds):
-        """ Pretend to type the command, run it and then display the output """
-        for cmd in cmds:
-            #  Request enter from user to know when to proceed
-            self.get_single_key_input()
-            self.type_command(cmd)
-            results = self.executor.run_cmd(cmd)
-            print(results, end="", flush=True)
-        print()
-        return results
-
-    def type_command(self, cmd):
+    def display_command(self, cmd):
         """ Displays the command on the screen """
 
         # Must add ' ' when typing command because whitespaces are removed from configparser

@@ -26,6 +26,9 @@ class BashExecutor(object):
 
         command = command.strip()
         logging.debug("Execute command: '" + command + "'")
+        if not command:
+            logging.debug('Empty command.  Not executing')
+            return ''
         response = self.get_shell().run_command(command)
         # https://pexpect.readthedocs.io/en/stable/overview.html#find-the-end-of-line-cr-lf-conventions
         # Because pexpect respects TTY (which uses CRLF) instead of UNIX, we must swap out.

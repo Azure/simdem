@@ -39,6 +39,7 @@ class ModeCommon(object): # pylint: disable=R0903
                     print('***PREREQUISITE VALIDATION FAILED***')
         #  End prereq processing
 
+        self.executor.run_cmd('cd ' + start_path)
         self.process(steps) # pylint: disable=no-member
 
         if 'next_steps' in steps:
