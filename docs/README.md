@@ -21,10 +21,11 @@ It's easier to understand through example. If you are viewing this inside the in
 Tutorials can branch too, for example you can choose any of the following paths next:
 
 1. [Modes of operation](modes.md)
-1. [Build Hello World Demo](build_hello_world.md)
+1. [Build Hello World Demo](hello_world.md)
 1. [SimDem document syntax](syntax.md)
-1. [Use your documents as interactive tutorials or demos](demo_mode.md)
-1. [Use your documents as automated tests](test_mode.md)
+1. [Use your documents as an interactive tutorial](mode_tutorial.md)
+1. [Use your documents as an interactive demo](mode_demo.md)
+1. [Use your documents as an automated test](mode_test.md)
 
 
   

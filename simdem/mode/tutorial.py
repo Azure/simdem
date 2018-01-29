@@ -13,13 +13,21 @@ class TutorialMode(InteractiveMode):
         """ Processes the steps from a processed file """
         logging.debug("process()")
 
+        # https://www.quora.com/Is-there-a-Clear-screen-function-in-Python
+        print("\033[H\033[J")
         for step in steps['body']:
             if step['type'] == 'heading':
                 self.process_heading(step)
             elif step['type'] == 'text':
                 self.process_text(step)
             elif step['type'] == 'commands':
-                self.process_commands(step['content'])
+                last_command_result = self.process_commands(step['content'])
+                logging.debug(step)
+                if 'expected_result' in step:
+                    if self.is_result_valid(step['expected_result'], last_command_result):
+                        print('*** SIMDEM RESULT PASSED ***')
+                    else:
+                        print('*** SIMDEM RESULT FAILED ***')
 
 
     @staticmethod

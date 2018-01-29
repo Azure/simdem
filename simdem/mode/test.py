@@ -17,11 +17,11 @@ class TestMode(ModeCommon):
         for step in steps['body']:
             if step['type'] == 'commands':
                 last_command_result = self.process_commands(step['content'])
-                if 'expected_results' in step:
-                    if self.is_result_valid(step['content'], last_command_result):
-                        print('***VALIDATION FAILED***')
-                    else:
+                if 'expected_result' in step:
+                    if self.is_result_valid(step['expected_result'], last_command_result):
                         print('***VALIDATION PASSED***')
+                    else:
+                        print('***VALIDATION FAILED***')
 
     def process_next_steps(self, steps, start_path):
         """ No need to display next steps if in test mode """
