@@ -20,7 +20,8 @@ class ModeCommon(object): # pylint: disable=R0903
         """ Parses the file and starts processing it """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         # Change the working directory in case of any recursion
-        start_path = os.path.dirname(file_path)
+        start_path = os.path.dirname(os.path.abspath(file_path))
+        logging.debug('parse_file::start_path=' + start_path)
         steps = self.parser.parse_file(file_path)
 
         #  Begin preqreq processing
@@ -39,7 +40,8 @@ class ModeCommon(object): # pylint: disable=R0903
                     print('***PREREQUISITE VALIDATION FAILED***')
         #  End prereq processing
 
-        self.executor.run_cmd('cd ' + start_path)
+        if start_path:
+            self.executor.run_cmd('cd ' + start_path)
         self.process(steps) # pylint: disable=no-member
 
         if 'next_steps' in steps:

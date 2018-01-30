@@ -19,9 +19,10 @@ class TestMode(ModeCommon):
                 last_command_result = self.process_commands(step['content'])
                 if 'expected_result' in step:
                     if self.is_result_valid(step['expected_result'], last_command_result):
-                        print('***VALIDATION PASSED***')
+                        print('*** SIMDEM TEST RESULT PASSED ***')
                     else:
-                        print('***VALIDATION FAILED***')
+                        print('*** SIMDEM TEST RESULT FAILED ***')
+                        exit(1)
 
     def process_next_steps(self, steps, start_path):
         """ No need to display next steps if in test mode """
