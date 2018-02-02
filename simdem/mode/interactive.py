@@ -11,12 +11,18 @@ class InteractiveMode(ModeCommon):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
             #  Request enter from user to know when to proceed
-            self.get_single_key_input()
+            key = self.get_single_key_input()
+            self.process_command_input(key)
             self.display_command(cmd)
             results = self.executor.run_cmd(cmd)
             print(results, end="", flush=True)
         print()
         return results
+
+    def process_command_input(self, key):
+        """ Process the command input.  It's 4AM and I'm sleepy
+            For now, just return.  We'll implement that later """
+        return key
 
     def display_command(self, cmd):
         """ Default result for displaying a command """
@@ -39,24 +45,36 @@ class InteractiveMode(ModeCommon):
             return getch.impl()
         return
 
-    def process_next_steps(self, steps, start_path):
+    def process_next_steps(self, next_steps, start_path):
         """ Is there a good way to test this that doesn't involve lots of test code + expect?
             Not fully tested yet.  Low priority feature.
         """
         idx = 1
-        if steps:
+        if next_steps:
             print("Next steps available:")
-            for step in steps:
+            for step in next_steps:
                 print(str(idx) + ". " + step['title'] + " (" + step['target'] + ") ")
                 idx += 1
             print()
             # https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
             if sys.stdout.isatty():
                 # You're running in a real terminal
-                step_request = input("Choose a step.  " +
-                                     "Type the # or 'q' to quit and then press Enter: ")
+                in_string = ""
+                in_value = 0
+
+                while in_value < 1 or in_value > len(next_steps):
+                    in_string = input("Choose a step.  " +
+                                      "Enter a value between 1 and " +
+                                      str(len(next_steps)) + " or 'quit' ")
+                    if in_string.lower() == "quit" or in_string.lower() == "q":
+                        return
+                    try:
+                        in_value = int(in_string)
+                    except ValueError:
+                        pass
+
                 #print('You chose:' + str(steps[int(step_request) - 1]['title']))
-                self.process_file(start_path + '/' + steps[int(step_request) - 1]['target'])
+                self.process_file(start_path + '/' + next_steps[int(in_string) - 1]['target'])
             else:
                 logging.info('Not connected to a TTY terminal  Not requesting input.')
                 # You're being piped or redirected
