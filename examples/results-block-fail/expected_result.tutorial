@@ -4,11 +4,10 @@ $ echo foo
 foo
 $ echo bar
 bar
-
+*** SIMDEM RESULT FAILED ***
 In demo mode, we will continue processing.
 
 $ echo post_result_block_fail
 post_result_block_fail
-
 even more text
 

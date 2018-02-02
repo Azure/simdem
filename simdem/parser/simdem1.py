@@ -60,7 +60,8 @@ class SimDemMistletoeRenderer(BaseRenderer):
     def render_list(self, token):
         """ Render a markdown list """
         inner = self.render_inner(token)
-        self.output['body'].append({'type': 'text', 'content': ' '})
+        if self.section is None:
+            self.output['body'].append({'type': 'text', 'content': ' '})
         return inner
 
     def render_list_item(self, token):

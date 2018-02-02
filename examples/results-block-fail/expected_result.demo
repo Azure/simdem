@@ -2,7 +2,5 @@ $ echo foo
 foo
 $ echo bar
 bar
-
 $ echo post_result_block_fail
 post_result_block_fail
-

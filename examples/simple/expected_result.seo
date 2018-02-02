@@ -1,2 +1,16 @@
-{"body": [{"content": "Simple", "level": 1, "type": "heading"},
-          {"content": ["echo foo", "echo bar"], "type": "commands"}]}
+{
+    "body": [
+        {
+            "content": "Simple",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": [
+                "echo foo",
+                "echo bar"
+            ],
+            "type": "commands"
+        }
+    ]
+}

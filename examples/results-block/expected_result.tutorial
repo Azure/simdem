@@ -4,6 +4,6 @@ $ echo foo
 foo
 $ echo bar
 bar
-
+*** SIMDEM RESULT PASSED ***
 even more text
 

@@ -55,3 +55,15 @@ This class type executes the desired commands into the shell
 
 Implementations:
 * [Bash](../simdem/executor/bash.py)
+
+## Brittle testcases
+
+Because I'm a bad developer and the test cases for SimDem are brittle, here's how to regenerate all of the .demo/.tutorial files.
+
+This might happen because adding a newline to the logic breaks the testcases.  
+```
+for dir in simple simple-variable results-block results-block-fail prerequisites; do simdem -m tutorial examples/$dir/README.md > examples/$dir/expected_result.tutorial; done;
+for dir in simple simple-variable results-block results-block-fail prerequisites; do simdem -m dump examples/$dir/README.md > examples/$dir/expected_result.seo; done;
+for dir in simple simple-variable results-block results-block-fail prerequisites; do simdem -m demo examples/$dir/README.md > examples/$dir/expected_result.demo; done;
+
+```
