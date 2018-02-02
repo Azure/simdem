@@ -13,7 +13,7 @@ class InteractiveMode(ModeCommon):
         cmd = None
         from collections import deque
         cmd_deque = deque(cmds)
-        # https://twitter.com/sandwich_cool/status/956932558847176704 
+        # https://twitter.com/sandwich_cool/status/956932558847176704
         # The "I smell danger" picture is never truer than now
         # This while True statement is written in VSCode while I work for MSFT
         while True:
