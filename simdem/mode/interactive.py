@@ -8,25 +8,64 @@ class InteractiveMode(ModeCommon):
     """ Interactive Mode subclass """
 
     def process_commands(self, cmds):
-        """ Pretend to type the command, run it and then display the output """
-        for cmd in cmds:
-            #  Request enter from user to know when to proceed
+        """ Loop through the commands to run as well as expect interrupt logic from the user """
+        result = None
+        cmd = None
+        from collections import deque
+        cmd_deque = deque(cmds)
+        # https://twitter.com/sandwich_cool/status/956932558847176704 
+        # The "I smell danger" picture is never truer than now
+        # This while True statement is written in VSCode while I work for MSFT
+        while True:
+            self.display_prompt()
             key = self.get_single_key_input()
-            self.process_command_input(key)
-            self.display_command(cmd)
-            results = self.executor.run_cmd(cmd)
-            print(results, end="", flush=True)
-        print()
+            result = self.process_command_input(key, last_command=cmd)
+            logging.debug(cmd_deque)
+            if result:
+                continue
+            elif cmd_deque:
+                cmd = cmd_deque.popleft()
+                result = self.run_command(cmd)
+            if not cmd_deque:
+                break
+        return result
+
+    def run_command(self, cmd):
+        """ Pretend to type the command, run it and then display the output """
+        #  Request enter from user to know when to proceed
+        logging.debug('run_command(' + cmd + ')')
+        self.display_command(cmd)
+        results = self.executor.run_cmd(cmd)
+        print(results, end="", flush=True)
         return results
 
-    def process_command_input(self, key):
+    def process_command_input(self, key, last_command=None):
         """ Process the command input.  It's 4AM and I'm sleepy
             For now, just return.  We'll implement that later """
-        return key
+        result = None
+        if key == 'b':
+            logging.debug('Received Break request')
+            print("\nshell> ", end='')
+            command = input()
+            if command != "":
+                result = self.executor.run_cmd(command)
+                print(result, end="", flush=True)
+        elif key == 'r':
+            logging.debug('Received Run last command request')
+            if last_command:
+                result = self.run_command(last_command)
+        logging.debug('Output=' + str(result))
+        return result
+        # Otherwise, we will return and assume the user wants to continue
 
-    def display_command(self, cmd):
+    def display_prompt(self):
         """ Default result for displaying a command """
-        print(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd, flush=True)
+        print(self.config.get('render', 'console_prompt', raw=True) + ' ', end="", flush=True)
+
+    @staticmethod
+    def display_command(cmd):
+        """ Default result for displaying a command """
+        print(cmd, flush=True)
 
     @staticmethod
     def get_single_key_input():
@@ -65,7 +104,7 @@ class InteractiveMode(ModeCommon):
                 while in_value < 1 or in_value > len(next_steps):
                     in_string = input("Choose a step.  " +
                                       "Enter a value between 1 and " +
-                                      str(len(next_steps)) + " or 'quit' ")
+                                      str(len(next_steps)) + " or 'q' to quit: ")
                     if in_string.lower() == "quit" or in_string.lower() == "q":
                         return
                     try:
