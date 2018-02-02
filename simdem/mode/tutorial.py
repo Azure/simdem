@@ -1,5 +1,7 @@
 """ Tutorial mode for SimDem"""
 
+import os
+import sys
 import logging
 from simdem.mode.interactive import InteractiveMode
 
@@ -13,10 +15,10 @@ class TutorialMode(InteractiveMode):
         """ Processes the steps from a processed file """
         logging.debug("process()")
 
-        # This breaks testcases right now.  Blarg
         # https://www.quora.com/Is-there-a-Clear-screen-function-in-Python
         #print("\033[H\033[J")
-        #os.system('clear')
+        if sys.stdout.isatty():
+            os.system('clear')
         for step in steps['body']:
             if step['type'] == 'heading':
                 self.process_heading(step)
