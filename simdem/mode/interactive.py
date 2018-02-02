@@ -1,6 +1,7 @@
 """ Interactive Mode Class """
 import sys
 import logging
+from collections import deque
 from simdem.mode.common import ModeCommon
 from simdem.misc.getch import Getch
 
@@ -11,11 +12,10 @@ class InteractiveMode(ModeCommon):
         """ Loop through the commands to run as well as expect interrupt logic from the user """
         result = None
         cmd = None
-        from collections import deque
         cmd_deque = deque(cmds)
         # https://twitter.com/sandwich_cool/status/956932558847176704
         # The "I smell danger" picture is never truer than now
-        # This while True statement is written in VSCode while I work for MSFT
+        # This statement is written in VSCode while I work for MSFT
         while True:
             self.display_prompt()
             key = self.get_single_key_input()
