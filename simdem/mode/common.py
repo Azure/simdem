@@ -10,11 +10,13 @@ class ModeCommon(object): # pylint: disable=R0903
     config = None
     executor = None
     parser = None
+    render = None
 
-    def __init__(self, config, parser, executor):
+    def __init__(self, config, parser, executor, ui):
         self.config = config
         self.parser = parser
         self.executor = executor
+        self.ui = ui 
 
     def process_file(self, file_path, is_prereq=False):
         """ Parses the file and starts processing it """
@@ -34,10 +36,9 @@ class ModeCommon(object): # pylint: disable=R0903
             if 'expected_result' in steps['validation']:
                 if self.is_result_valid(steps['validation']['expected_result'],
                                         last_command_result):
-                    #print('***PREREQUISITE VALIDATION PASSED***')
                     return
                 else:
-                    print('***PREREQUISITE VALIDATION FAILED***')
+                    self.ui.print_validation_failed()
         #  End prereq processing
 
         if start_path:
@@ -50,10 +51,10 @@ class ModeCommon(object): # pylint: disable=R0903
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            print(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd)
+            self.ui.println(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd)
             results = self.executor.run_cmd(cmd)
-            print(results, end="", flush=True)
-        print()
+            self.ui.print_flush(results)
+        self.ui.print()
         return results
 
     @staticmethod

@@ -29,5 +29,5 @@ class DemoMode(InteractiveMode):
                 if typing_delay:
                     delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)
-                print(char, end="", flush=True)
-        print("", flush=True)
+                self.ui.print(char)
+        self.ui.println('')

@@ -19,9 +19,9 @@ class TestMode(ModeCommon):
                 last_command_result = self.process_commands(step['content'])
                 if 'expected_result' in step:
                     if self.is_result_valid(step['expected_result'], last_command_result):
-                        print('*** SIMDEM TEST RESULT PASSED ***')
+                        self.ui.print_test_passed()
                     else:
-                        print('*** SIMDEM TEST RESULT FAILED ***')
+                        self.ui.print_test_failed()
                         exit(1)
 
     def process_next_steps(self, steps, start_path):

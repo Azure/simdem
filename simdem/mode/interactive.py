@@ -3,7 +3,6 @@ import sys
 import logging
 from collections import deque
 from simdem.mode.common import ModeCommon
-from simdem.misc.getch import Getch
 
 class InteractiveMode(ModeCommon):
     """ Interactive Mode subclass """
@@ -18,7 +17,7 @@ class InteractiveMode(ModeCommon):
         # This statement is written in VSCode while I work for MSFT
         while True:
             self.display_prompt()
-            key = self.get_single_key_input()
+            key = self.ui.get_single_key_input()
             result = self.process_command_input(key, last_command=cmd)
             logging.debug(cmd_deque)
             if result:
@@ -36,7 +35,7 @@ class InteractiveMode(ModeCommon):
         logging.debug('run_command(' + cmd + ')')
         self.display_command(cmd)
         results = self.executor.run_cmd(cmd)
-        print(results, end="", flush=True)
+        self.ui.print(results)
         return results
 
     def process_command_input(self, key, last_command=None):
@@ -45,11 +44,11 @@ class InteractiveMode(ModeCommon):
         result = None
         if key == 'b':
             logging.debug('Received Break request')
-            print("\nshell> ", end='')
-            command = input()
+            self.ui.print("\nshell> ")
+            command = self.ui.get_line_input()
             if command != "":
                 result = self.executor.run_cmd(command)
-                print(result, end="", flush=True)
+                self.ui.print(result)
         elif key == 'r':
             logging.debug('Received Run last command request')
             if last_command:
@@ -60,29 +59,11 @@ class InteractiveMode(ModeCommon):
 
     def display_prompt(self):
         """ Default result for displaying a command """
-        print(self.config.get('render', 'console_prompt', raw=True) + ' ', end="", flush=True)
+        self.ui.print(self.config.get('render', 'console_prompt', raw=True) + ' ')
 
-    @staticmethod
-    def display_command(cmd):
+    def display_command(self, cmd):
         """ Default result for displaying a command """
-        print(cmd, flush=True)
-
-    @staticmethod
-    def get_single_key_input():
-        """ SimDem1 uses this method:
-            https://stackoverflow.com/questions/983354/how-do-i-make-python-to-wait-for-a-pressed-key
-            For SimDem2, I'm trying this alternative to allow for Windows compatibility
-            https://stackoverflow.com/questions/510357/python-read-a-single-character-from-the-user/510404#510404
-
-            https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
-            Might need to allow config override of the conditional by allowing a config variable.
-            Experienced an issue where it hung running in a container and I didn't completely debug
-        """
-
-        if sys.stdout.isatty():
-            getch = Getch()
-            return getch.impl()
-        return
+        self.ui.println(cmd)
 
     def process_next_steps(self, next_steps, start_path):
         """ Is there a good way to test this that doesn't involve lots of test code + expect?
@@ -90,11 +71,11 @@ class InteractiveMode(ModeCommon):
         """
         idx = 1
         if next_steps:
-            print("Next steps available:")
+            self.ui.println("Next steps available:")
             for step in next_steps:
-                print(str(idx) + ". " + step['title'] + " (" + step['target'] + ") ")
+                self.ui.println(str(idx) + ". " + step['title'] + " (" + step['target'] + ") ")
                 idx += 1
-            print()
+            self.ui.println()
             # https://stackoverflow.com/questions/1077113/how-do-i-detect-whether-sys-stdout-is-attached-to-terminal-or-not
             if sys.stdout.isatty():
                 # You're running in a real terminal
@@ -102,9 +83,9 @@ class InteractiveMode(ModeCommon):
                 in_value = 0
 
                 while in_value < 1 or in_value > len(next_steps):
-                    in_string = input("Choose a step.  " +
-                                      "Enter a value between 1 and " +
-                                      str(len(next_steps)) + " or 'q' to quit: ")
+                    prompt = "Choose a step.  Enter a value between 1 and " + \
+                             str(len(next_steps)) + " or 'q' to quit: "
+                    in_string = self.ui.get_line_input(prompt)
                     if in_string.lower() == "quit" or in_string.lower() == "q":
                         return
                     try:
@@ -112,7 +93,6 @@ class InteractiveMode(ModeCommon):
                     except ValueError:
                         pass
 
-                #print('You chose:' + str(steps[int(step_request) - 1]['title']))
                 self.process_file(start_path + '/' + next_steps[int(in_string) - 1]['target'])
             else:
                 logging.info('Not connected to a TTY terminal  Not requesting input.')

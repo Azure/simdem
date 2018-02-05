@@ -9,7 +9,7 @@ import pkg_resources
 from simdem.executor import bash
 from simdem.parser import ast, simdem1
 from simdem.mode import demo, dump, test, tutorial
-
+from simdem.ui import basic
 
 def main():
     """ Main execution function """
@@ -26,6 +26,8 @@ def main():
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
                       help="Executor class to use", choices=['bash'])
+    argp.add_argument('--render', '-r', default="basic",
+                      help="Render class to use", choices=['basic'])
     argp.add_argument('--setting', '-s', metavar='setting',
                       help="Setting to override in config file")
     options = argp.parse_args()
@@ -71,18 +73,24 @@ def get_mode(options, config):
 
     parser = get_parser(options)
     executor = get_executor(options)
+    ui = get_ui(options)
 
     if options.mode == 'demo':
-        return demo.DemoMode(config, parser, executor)
+        return demo.DemoMode(config, parser, executor, ui)
 
     if options.mode == 'dump':
-        return dump.DumpMode(config, parser, executor)
+        return dump.DumpMode(config, parser, executor, ui)
 
     if options.mode == 'test':
-        return test.TestMode(config, parser, executor)
+        return test.TestMode(config, parser, executor, ui)
 
     if options.mode == 'tutorial':
-        return tutorial.TutorialMode(config, parser, executor)
+        return tutorial.TutorialMode(config, parser, executor, ui)
+
+def get_ui(options):
+    """ return UI object """
+    if options.ui == 'basic':
+        return basic.BasicUI()
 
 def get_parser(options):
     """ Returns correct parser object """
