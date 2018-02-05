@@ -26,8 +26,8 @@ def main():
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
                       help="Executor class to use", choices=['bash'])
-    argp.add_argument('--render', '-r', default="basic",
-                      help="Render class to use", choices=['basic'])
+    argp.add_argument('--ui', '-u', default="basic",
+                      help="UI class to use", choices=['basic'])
     argp.add_argument('--setting', '-s', metavar='setting',
                       help="Setting to override in config file")
     options = argp.parse_args()
