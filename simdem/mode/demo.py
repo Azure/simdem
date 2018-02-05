@@ -30,4 +30,4 @@ class DemoMode(InteractiveMode):
                     delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)
                 self.ui.print(char)
-        self.ui.println('')
+        self.ui.print_break()

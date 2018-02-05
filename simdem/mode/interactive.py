@@ -16,7 +16,7 @@ class InteractiveMode(ModeCommon):
         # The "I smell danger" picture is never truer than now
         # This statement is written in VSCode while I work for MSFT
         while True:
-            self.display_prompt()
+            self.ui.print_prompt()
             key = self.ui.get_single_key_input()
             result = self.process_command_input(key, last_command=cmd)
             logging.debug(cmd_deque)
@@ -33,10 +33,11 @@ class InteractiveMode(ModeCommon):
         """ Pretend to type the command, run it and then display the output """
         #  Request enter from user to know when to proceed
         logging.debug('run_command(' + cmd + ')')
-        self.display_command(cmd)
-        results = self.executor.run_cmd(cmd)
-        self.ui.print(results)
-        return results
+        self.ui.print_cmd(cmd)
+        self.ui.print_break()
+        result = self.executor.run_cmd(cmd)
+        self.ui.print_result(result)
+        return result
 
     def process_command_input(self, key, last_command=None):
         """ Process the command input.  It's 4AM and I'm sleepy
@@ -45,10 +46,10 @@ class InteractiveMode(ModeCommon):
         if key == 'b':
             logging.debug('Received Break request')
             self.ui.print("\nshell> ")
-            command = self.ui.get_line_input()
+            command = self.ui.get_line_input('')
             if command != "":
                 result = self.executor.run_cmd(command)
-                self.ui.print(result)
+                self.ui.print_result(result)
         elif key == 'r':
             logging.debug('Received Run last command request')
             if last_command:
@@ -56,14 +57,6 @@ class InteractiveMode(ModeCommon):
         logging.debug('Output=' + str(result))
         return result
         # Otherwise, we will return and assume the user wants to continue
-
-    def display_prompt(self):
-        """ Default result for displaying a command """
-        self.ui.print(self.config.get('render', 'console_prompt', raw=True) + ' ')
-
-    def display_command(self, cmd):
-        """ Default result for displaying a command """
-        self.ui.println(cmd)
 
     def process_next_steps(self, next_steps, start_path):
         """ Is there a good way to test this that doesn't involve lots of test code + expect?

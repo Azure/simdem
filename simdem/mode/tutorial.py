@@ -18,9 +18,9 @@ class TutorialMode(InteractiveMode):
         self.ui.clear()
         for step in steps['body']:
             if step['type'] == 'heading':
-                self.process_heading(step)
+                self.ui.print_heading(step['content'], step['level'])
             elif step['type'] == 'text':
-                self.process_text(step)
+                self.ui.println(step['content'])
             elif step['type'] == 'commands':
                 last_command_result = self.process_commands(step['content'])
                 logging.debug(step)
@@ -29,13 +29,3 @@ class TutorialMode(InteractiveMode):
                         self.ui.print_test_passed()
                     else:
                         self.ui.print_test_failed()
-
-
-    def process_heading(self, step):
-        """ Print out the heading exactly as we found it """
-        self.ui.println(step['level'] * '#' + ' ' + step['content'])
-        self.ui.println()
-
-    def process_text(self, step):
-        """ Print out the text exactly as we found it """
-        self.ui.println(step['content'])

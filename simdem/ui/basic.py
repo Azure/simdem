@@ -7,6 +7,9 @@ from simdem.misc.getch import Getch
 class BasicUI(object):
     """ No frills, no thrills render object """
 
+    def __init__(self, config):
+        self.config = config
+
     @staticmethod
     def get_single_key_input():
         """ SimDem1 uses this method:
@@ -37,9 +40,8 @@ class BasicUI(object):
     def print(output=''):
         print(output, end="", flush=True)
 
-    @staticmethod
-    def print_validation_failed():
-        print('***PREREQUISITE VALIDATION FAILED***')
+    def print_validation_failed(self):
+        self.println('***PREREQUISITE VALIDATION FAILED***')
 
     @staticmethod
     def clear():
@@ -48,10 +50,25 @@ class BasicUI(object):
         if sys.stdout.isatty():
             os.system('clear')
 
-    @staticmethod
-    def print_test_passed():
-        print('*** SIMDEM TEST RESULT PASSED ***')
+    def print_test_passed(self):
+        self.println('*** SIMDEM TEST RESULT PASSED ***')
     
-    @staticmethod
-    def print_test_failed():
-        print('*** SIMDEM TEST RESULT FAILED ***')
+    def print_test_failed(self):
+        self.println('*** SIMDEM TEST RESULT FAILED ***')
+
+    def print_heading(self, content, level):
+        """ Print out the heading exactly as we found it """
+        self.println(level * '#' + ' ' + content)
+        self.print_break()
+
+    def print_prompt(self):
+        self.print(self.config.get('render', 'console_prompt', raw=True) + ' ')
+    
+    def print_cmd(self, cmd):
+        self.print(cmd)
+    
+    def print_result(self, result):
+        self.print(result)
+    
+    def print_break(self):
+        self.println()

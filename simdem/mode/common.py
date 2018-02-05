@@ -51,11 +51,12 @@ class ModeCommon(object): # pylint: disable=R0903
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            self.ui.println(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd)
-            results = self.executor.run_cmd(cmd)
-            self.ui.println(results)
-        self.ui.println()
-        return results
+            self.ui.print_prompt()
+            self.ui.print_cmd(cmd)
+            result = self.executor.run_cmd(cmd)
+            self.ui.print_result(result)
+        self.ui.print_break()
+        return result
 
     @staticmethod
     def is_result_valid(expected_results, actual_results, expected_similarity=1.0):

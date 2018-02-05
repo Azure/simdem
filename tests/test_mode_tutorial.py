@@ -24,7 +24,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read("examples/config/unit_test.ini")
         self.simdem = tutorial.TutorialMode(config, simdem1.SimDem1Parser(), bash.BashExecutor(),
-                                            basic.BasicUI())
+                                            basic.BasicUI(config))
 
         log_formatter = logging.Formatter(config.get('log', 'format', raw=True))
         root_logger = logging.getLogger()

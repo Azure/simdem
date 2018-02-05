@@ -73,7 +73,7 @@ def get_mode(options, config):
 
     parser = get_parser(options)
     executor = get_executor(options)
-    ui = get_ui(options)
+    ui = get_ui(options, config)
 
     if options.mode == 'demo':
         return demo.DemoMode(config, parser, executor, ui)
@@ -87,10 +87,10 @@ def get_mode(options, config):
     if options.mode == 'tutorial':
         return tutorial.TutorialMode(config, parser, executor, ui)
 
-def get_ui(options):
+def get_ui(options, config):
     """ return UI object """
     if options.ui == 'basic':
-        return basic.BasicUI()
+        return basic.BasicUI(config)
 
 def get_parser(options):
     """ Returns correct parser object """
