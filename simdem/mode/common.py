@@ -53,8 +53,8 @@ class ModeCommon(object): # pylint: disable=R0903
         for cmd in cmds:
             self.ui.println(self.config.get('render', 'console_prompt', raw=True) + ' ' + cmd)
             results = self.executor.run_cmd(cmd)
-            self.ui.print_flush(results)
-        self.ui.print()
+            self.ui.println(results)
+        self.ui.println()
         return results
 
     @staticmethod
