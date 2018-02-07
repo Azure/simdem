@@ -90,6 +90,18 @@ class SimDemMistletoeRenderer(BaseRenderer):
             return ''
         return token.content
 
+    def render_emphasis(self, token):
+        """ Render for inline code """
+        inner = self.render_inner(token)
+        if inner:
+            body = {'type': 'text', 'content': '*' + str(inner) + '*'}
+            self.append_body(body)
+        return ''
+
+    def render_inline_code(self, token):
+        """ Render for inline code """
+        return '`' +  self.render_inner(token) + '`'
+
     def render_paragraph(self, token):
         """ Render for Paragraph """
         inner = self.render_inner(token)

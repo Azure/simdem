@@ -34,6 +34,7 @@ class InteractiveMode(ModeCommon):
         #  Request enter from user to know when to proceed
         logging.debug('run_command(' + cmd + ')')
         self.ui.print_cmd(cmd)
+        # For some reason this requires a print_break() while common does not.  Too late to debug
         self.ui.print_break()
         result = self.executor.run_cmd(cmd)
         self.ui.print_result(result)

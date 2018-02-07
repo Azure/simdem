@@ -53,6 +53,7 @@ class ModeCommon(object): # pylint: disable=R0903
         for cmd in cmds:
             self.ui.print_prompt()
             self.ui.print_cmd(cmd)
+            self.ui.print_break()
             result = self.executor.run_cmd(cmd)
             self.ui.print_result(result)
         self.ui.print_break()
