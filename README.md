@@ -33,6 +33,16 @@ A great place to start working on SimDem is to run SimDem on its own documentati
 simdem docs/README.md
 ```
 
+## Documentation
+
+It's more fun to run SimDem on it's own documentation; however, you can learn how how SimDem works by [reading the docs](https://github.com/Azure/simdem/tree/simdem2/docs).
+
+We provide a [simple hello-world example](https://github.com/Azure/simdem/blob/simdem2/docs/hello_world.md).
+
+### Examples
+
+If you want to see existing examples, with expected output, check out the [examples](https://github.com/Azure/simdem/tree/simdem2/examples)
+
 # Syntax
 
 Currently, SimDem supports Markdown as the source document.  Details on how to compose Markdown documents can be found in the [syntax documentation](docs/syntax.md).
