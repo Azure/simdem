@@ -60,7 +60,7 @@ class ModeCommon(object): # pylint: disable=R0903
         return result
 
     @staticmethod
-    def is_result_valid(expected_results, actual_results, expected_similarity=1.0):
+    def is_result_valid(expected_results, actual_results, expected_similarity=0.8):
         """Checks to see if a command execution passes.
         If actual results compared to expected results is within
         the expected similarity level then it's considered a pass.
