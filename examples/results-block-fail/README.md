@@ -8,7 +8,7 @@ echo bar
 Results:
 
 ```result
-barr
+barrrrr
 ```
 
 In demo mode, we will continue processing.

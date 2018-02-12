@@ -9,7 +9,7 @@
                 "echo foo",
                 "echo bar"
             ],
-            "expected_result": "barr\n",
+            "expected_result": "barrrrr\n",
             "type": "commands"
         },
         {
