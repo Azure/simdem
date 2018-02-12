@@ -24,7 +24,7 @@ class SimDem1ParserTestSuite(unittest.TestCase):
 
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
     #@data('markdown-syntax')
-    @data('simple', 'simple-variable', 'results-block',
+    @data('simple', 'simple-variable', 'results-block', 'toc',
           'results-block-fail', 'prerequisites')
     def test_process(self, directory):
         """ Each examples directory is expected to have a README.md and an expected_result.tutorial

@@ -65,6 +65,7 @@ class InteractiveMode(ModeCommon):
         """
         idx = 1
         if next_steps:
+            self.ui.println()
             self.ui.println("Next steps available:")
             for step in next_steps:
                 self.ui.println(str(idx) + ". " + step['title'] + " (" + step['target'] + ") ")
@@ -87,7 +88,7 @@ class InteractiveMode(ModeCommon):
                     except ValueError:
                         pass
 
-                self.process_file(start_path + '/' + next_steps[int(in_string) - 1]['target'])
+                self.process_file(start_path + '/' + next_steps[int(in_string) - 1]['target'], toc=next_steps)
             else:
                 logging.info('Not connected to a TTY terminal  Not requesting input.')
                 # You're being piped or redirected

@@ -37,16 +37,15 @@ class SimDemMistletoeRenderer(BaseRenderer):
     def render_heading(self, token):
         """ Render for Heading: # """
         inner = self.render_inner(token)
-        content = {'type': 'heading', 'level': token.level, 'content': inner}
-        self.append_body(content)
 
         # Prerequisite Heading
         if inner.lower() == 'prerequisites':
             self.set_section('prerequisites')
 
-        # Next Steps Heading
-        elif inner.lower() == 'next steps':
-            self.set_section('next_steps')
+        # ToC (legacy: Next Steps) Heading
+        elif inner.lower() == 'next steps' or inner.lower() == 'toc':
+            self.set_section('toc')
+            return inner
 
         # Validation Heading
         elif inner.lower() == 'validation':
@@ -55,6 +54,9 @@ class SimDemMistletoeRenderer(BaseRenderer):
         else:
             logging.debug("parse_file():unable to determing header type.")
             self.reset_section()
+        
+        content = {'type': 'heading', 'level': token.level, 'content': inner}
+        self.append_body(content)
         return inner
 
     def render_list(self, token):
@@ -77,10 +79,10 @@ class SimDemMistletoeRenderer(BaseRenderer):
             Unfortunately, I can only think of storing them in an array right now
         """
         inner = self.render_inner(token)
-        if self.section and 'next_steps' in self.section:
-            self.append_next_step(inner, token.target)
         if self.section and 'prerequisites' in self.section:
             self.append_prereq(token.target)
+        if self.section and 'toc' in self.section:
+            self.append_toc(inner, token.target)
         return inner
 
     def render_raw_text(self, token):
@@ -182,7 +184,7 @@ class SimDemMistletoeRenderer(BaseRenderer):
         logging.debug('append_prereq(' + target + ')')
         self.output['prerequisites'].append(target)
 
-    def append_next_step(self, name, target):
-        """ Add steps to next step section """
-        logging.debug('append_next_step(' + name + ',' + target + ')')
-        self.output['next_steps'].append({'title': name, 'target': target})
+    def append_toc(self, name, target):
+        """ Add steps to table of contents section """
+        logging.debug('append_toc(' + name + ',' + target + ')')
+        self.output['toc'].append({'title': name, 'target': target})

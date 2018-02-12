@@ -18,13 +18,19 @@ class ModeCommon(object): # pylint: disable=R0903
         self.executor = executor
         self.ui = ui 
 
-    def process_file(self, file_path, is_prereq=False):
+    def process_file(self, file_path, is_prereq=False, toc={}):
         """ Parses the file and starts processing it """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         # Change the working directory in case of any recursion
         start_path = os.path.dirname(os.path.abspath(file_path))
         logging.debug('parse_file::start_path=' + start_path)
         steps = self.parser.parse_file(file_path)
+
+        # We want to inherit the parent's TOC to reduce the # of copies needed 
+        if toc:
+            logging.debug('Adding parent POC')
+            steps['toc'] = toc
+            logging.debug(steps)
 
         #  Begin preqreq processing
         if 'prerequisites' in steps:
@@ -45,8 +51,8 @@ class ModeCommon(object): # pylint: disable=R0903
             self.executor.run_cmd('cd ' + start_path)
         self.process(steps) # pylint: disable=no-member
 
-        if 'next_steps' in steps:
-            self.process_next_steps(steps['next_steps'], start_path) # pylint: disable=no-member
+        if 'toc' in steps:
+            self.process_next_steps(steps['toc'], start_path) # pylint: disable=no-member
 
     def process_commands(self, cmds):
         """ Pretend to type the command, run it and then display the output """
