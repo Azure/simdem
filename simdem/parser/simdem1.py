@@ -51,6 +51,11 @@ class SimDemMistletoeRenderer(BaseRenderer):
         elif inner.lower() == 'validation':
             self.set_section('validation')
 
+        # Cleanup
+        elif inner.lower() == 'cleanup':
+            self.set_section('cleanup')
+            return inner
+
         else:
             logging.debug("parse_file():unable to determing header type.")
             self.reset_section()
@@ -124,6 +129,8 @@ class SimDemMistletoeRenderer(BaseRenderer):
                 self.set_validation_result(content)
             else:
                 self.set_validation_command(content)
+        elif self.section == 'cleanup':
+            self.set_cleanup(content)
         else:
             if self.block == 'results':
                 # Assume that the last body item is the command we're expecting results for
@@ -188,3 +195,8 @@ class SimDemMistletoeRenderer(BaseRenderer):
         """ Add steps to table of contents section """
         logging.debug('append_toc(' + name + ',' + target + ')')
         self.output['toc'].append({'title': name, 'target': target})
+
+    def set_cleanup(self, cmds):
+        """ Assuming cleanup commands are a list """
+        logging.debug('set_cleanup_command(' + str(cmds) + ')')
+        self.output['cleanup'] = {'commands': cmds.splitlines()}
