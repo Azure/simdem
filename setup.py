@@ -20,7 +20,7 @@ setup(
     author='Tommy Falgout/Ross Gardler',
     author_email='thfalgou@microsoft.com',
     url='https://github.com/Azure/simdem',
-    license=LICENSE,
+    license='MIT',
     packages=find_packages(exclude=('tests', 'docs')),
     entry_points={
         'console_scripts': [
