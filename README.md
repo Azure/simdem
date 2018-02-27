@@ -1,3 +1,8 @@
+NOTICE: SimDem is undergoing a complete rewrite. What started out as a hack to solve a problem has taken on a life of its own.
+Consequently the code in SimDem is, well awful! So Tommy Falgout is rewriting it. The goal is for it to be backward compatible
+with the current version, but it will be much more maintainable and thus more conducive to improvement. At the time of writing 
+(end of Feb 2018) it's getting close to being ready to replace the current code. We [encourage you to take a look](https://github.com/Azure/simdem/tree/simdem2) - patches welcome.
+
 [![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
 
 This project provides ways to write tutorials in markdown that then
