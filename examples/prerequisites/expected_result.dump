@@ -7,7 +7,7 @@
           {'content': 'By this point, the prerequisites have either run or '
                       'have passed their validation',
            'type': 'text'},
-          {'content': 'Did our prerequisites run?',
+          {'content': 'Validation',
            'level': 1,
            'type': 'heading'},
           {'content': ['echo prereq_ignored = $prereq_ignored',

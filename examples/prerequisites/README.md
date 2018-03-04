@@ -10,7 +10,7 @@ They don't even need to be in the same list
 
 By this point, the prerequisites have either run or have passed their validation
 
-# Did our prerequisites run?
+# Validation
 
 ```shell
 echo prereq_ignored = $prereq_ignored

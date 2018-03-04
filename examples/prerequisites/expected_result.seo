@@ -18,7 +18,7 @@
             "type": "text"
         },
         {
-            "content": "Did our prerequisites run?",
+            "content": "Validation",
             "level": 1,
             "type": "heading"
         },

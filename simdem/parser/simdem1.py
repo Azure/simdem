@@ -11,10 +11,10 @@ class SimDem1Parser(object): # pylint: disable=R0903
     """ Parses markdown based off of Mistletoe renderer """
 
     @staticmethod
-    def parse_file(file_path):
+    def parse_file(file_path, is_prerequisite=False):
         """ The main meat for parsing the file. """
         with open(file_path, 'r') as fin:
-            with SimDemMistletoeRenderer() as renderer:
+            with SimDemMistletoeRenderer(is_prerequisite) as renderer:
                 rendered = renderer.render(Document(fin))
 
         # Do stuff here
@@ -28,11 +28,13 @@ class SimDemMistletoeRenderer(BaseRenderer):
     """
     section = None
     block = None
+    _is_prerequisite = False
 
-    def __init__(self):
+    def __init__(self, is_prerequisite):
         super().__init__()
         self.output = defaultdict(list)
         self.reset_section()
+        self._is_prerequisite = is_prerequisite
 
     def render_heading(self, token):
         """ Render for Heading: # """
@@ -48,7 +50,7 @@ class SimDemMistletoeRenderer(BaseRenderer):
             return inner
 
         # Validation Heading
-        elif inner.lower() == 'validation':
+        elif self._is_prerequisite and inner.lower() == 'validation':
             self.set_section('validation')
 
         # Cleanup

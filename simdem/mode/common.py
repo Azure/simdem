@@ -24,7 +24,7 @@ class ModeCommon(object): # pylint: disable=R0903
         # Change the working directory in case of any recursion
         start_path = os.path.dirname(os.path.abspath(file_path))
         logging.debug('parse_file::start_path=' + start_path)
-        steps = self.parser.parse_file(file_path)
+        steps = self.parser.parse_file(file_path, is_prereq)
 
         # We want to inherit the parent's TOC to reduce the # of copies needed 
         if toc:
