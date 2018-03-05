@@ -21,7 +21,14 @@ class ModeCommon(object): # pylint: disable=R0903
     def run_setup_script(self, file_path):
         """ Runs setup script """
         logging.debug("run_setup_script(" + file_path + ")")
-        self.executor.run_cmd('. ' + file_path)
+
+        cmd = '. ' + file_path
+        self.ui.print_prompt()
+        self.ui.print_cmd(cmd)
+        self.ui.print_break()
+        result = self.executor.run_cmd(cmd)
+        self.ui.print_result(result)
+        self.ui.print_break()
 
 
     def process_file(self, file_path, is_prereq=False, toc={}):

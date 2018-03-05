@@ -61,8 +61,8 @@ def get_config_file_path(options):
 
 def inject_config_options(options, config):
     """ Injects CLI arguments into config settings """
-    if options.override:
-        [key, value] = options.override.split('=')
+    if options.override_config:
+        [key, value] = options.override_config.split('=')
         [section, option] = key.split('.')
         config.set(section, option, value)
 

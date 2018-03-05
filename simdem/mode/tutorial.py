@@ -15,7 +15,7 @@ class TutorialMode(InteractiveMode):
         """ Processes the steps from a processed file """
         logging.debug("process()")
 
-        self.ui.clear()
+#        self.ui.clear()
         for step in steps['body']:
             if step['type'] == 'heading':
                 self.ui.print_heading(step['content'], step['level'])
