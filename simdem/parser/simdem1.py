@@ -23,8 +23,6 @@ class SimDem1Parser(object): # pylint: disable=R0903
 
 class SimDemMistletoeRenderer(BaseRenderer):
     """ Based off of https://gist.github.com/miyuchina/a06bd90d91b70be0906266760547da62
-        Major Gotcha:  If this class calls a function that does not exist, it will NOT error
-        This is due to the way that the Mistletoe Renderer works.  Or at least how I think it works.
     """
     section = None
     block = None
@@ -154,7 +152,13 @@ class SimDemMistletoeRenderer(BaseRenderer):
         return dict(self.output)
 
     def __getattr__(self, name):
-        return lambda token: ''
+        """ Kudos to @miyuchina for this suggestion
+            https://github.com/Azure/simdem/pull/89#issuecomment-370445949
+        """
+        if name.startswith('render'):
+            return lambda token: ''
+        raise AttributeError('{} has no attribute {}'.format(repr(type(self).__name__), repr(name)))
+
 
     # Everything below here is boring setters
 
