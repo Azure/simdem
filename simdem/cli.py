@@ -26,10 +26,12 @@ def main():
                       help="Parser class to use", choices=['simdem1', 'ast'])
     argp.add_argument('--executor', '-e', default="bash",
                       help="Executor class to use", choices=['bash'])
+    argp.add_argument('--setup-script', '-s', default=None,
+                      help="Setup script to execute")
     argp.add_argument('--ui', '-u', default="basic",
                       help="UI class to use", choices=['basic'])
-    argp.add_argument('--setting', '-s', metavar='setting',
-                      help="Setting to override in config file")
+    argp.add_argument('--override-config', '-o', metavar='override',
+                      help="Override setting in config file")
     options = argp.parse_args()
 
     file_path = options.file
@@ -38,11 +40,15 @@ def main():
 
     config = configparser.ConfigParser()
     config.read(config_file_path)
-    inject_arguments(options, config)
+    inject_config_options(options, config)
 
     setup_logging(config, options)
 
     mode = get_mode(options, config)
+
+    if options.setup_script:
+        mode.run_setup_script(options.setup_script)
+
     mode.process_file(file_path)
 
 def get_config_file_path(options):
@@ -53,10 +59,10 @@ def get_config_file_path(options):
     file_path = pkg_resources.resource_filename(__name__, 'simdem.ini')
     return file_path
 
-def inject_arguments(options, config):
+def inject_config_options(options, config):
     """ Injects CLI arguments into config settings """
-    if options.setting:
-        [key, value] = options.setting.split('=')
+    if options.override:
+        [key, value] = options.override.split('=')
         [section, option] = key.split('.')
         config.set(section, option, value)
 

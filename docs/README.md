@@ -26,6 +26,8 @@ Tutorials can branch too, for example you can choose any of the following paths 
 1. [Use your documents as an interactive tutorial](mode_tutorial.md)
 1. [Use your documents as an interactive demo](mode_demo.md)
 1. [Use your documents as an automated test](mode_test.md)
+1. [Features](features.md)
+1. [Advanced Features](feature_advanced.md)
 
 
   
