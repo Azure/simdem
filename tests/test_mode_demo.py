@@ -36,7 +36,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
     @data('simple', 'simple-variable', 'results-block', 'toc',
           'results-block-fail', 'prerequisites')
     def test_process(self, directory):
-        """ Each examples directory is expected to have a README.md and an expected_result.out
+        """ Each examples directory is expected to have a README.md and an expected_result.demo
             this allows us to test each of them easily
         """
         self.demo.process_file('./examples/' + directory + '/README.md')

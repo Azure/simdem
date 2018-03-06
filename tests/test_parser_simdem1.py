@@ -27,7 +27,7 @@ class SimDem1ParserTestSuite(unittest.TestCase):
     @data('simple', 'simple-variable', 'results-block', 'toc',
           'results-block-fail', 'prerequisites')
     def test_process(self, directory):
-        """ Each examples directory is expected to have a README.md and an expected_result.tutorial
+        """ Each examples directory is expected to have a README.md and an expected_result.seo
             this allows us to test each of them easily
         """
         self.maxDiff = None # pylint: disable=C0103
