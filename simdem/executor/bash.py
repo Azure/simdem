@@ -14,7 +14,7 @@ class BashExecutor(object):
     """
 
     _shell = None
-    _env = None
+    _env = {'PS1': '"$ "'}
 
     def __init__(self):
         pass

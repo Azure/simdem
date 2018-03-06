@@ -6,6 +6,7 @@ import logging
 import sys
 import unittest
 
+from io import StringIO
 from ddt import data, ddt
 
 from simdem.parser import simdem1
@@ -32,6 +33,7 @@ class SimDemSystemTestSuite(unittest.TestCase):
         file_handler = logging.FileHandler(config.get('log', 'file'))
         file_handler.setFormatter(log_formatter)
         root_logger.addHandler(file_handler)
+        sys.stdout = StringIO()
 
     # https://docs.python.org/3/library/unittest.html#unittest.TestResult.buffer
     @data('simple', 'simple-variable', 'results-block', 'toc',
@@ -41,11 +43,14 @@ class SimDemSystemTestSuite(unittest.TestCase):
             this allows us to test each of them easily
         """
         self.maxDiff = None # pylint: disable=C0103
+
         self.simdem.process_file('./examples/' + directory + '/README.md')
         # Unsure why Pylint complains that 'TextIOWrapper' has no 'getvalue' member.
         # I'm not Python smart enough yet to know why this works, but Pylint says it shouldn't.
-        res = sys.stdout.getvalue() # pylint: disable=E1101
-        exp_res = open('./examples/' + directory + '/expected_result.tutorial', 'r').read()
+        res = sys.stdout.getvalue()
+        exp_file = open('./examples/' + directory + '/expected_result.tutorial', 'r')
+        exp_res = exp_file.read()
+        exp_file.close()
         self.assertEqual(exp_res, res)
 
 
