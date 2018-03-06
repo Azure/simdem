@@ -14,10 +14,10 @@ with open('LICENSE') as f:
 
 setup(
     name='simdem',
-    version='0.1.0',
+    version='0.9.0',
     description='SimDem',
     long_description=README,
-    author='Tommy Falgout/Ross Gardler',
+    author='Tommy Falgout, Ross Gardler',
     author_email='thfalgou@microsoft.com',
     url='https://github.com/Azure/simdem',
     license='MIT',
