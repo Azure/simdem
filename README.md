@@ -25,6 +25,10 @@ pip3 install -r requirements.txt
 pip3 install -v -e .
 ```
 
+Note: in rare machine configuations you may get a "simdem: command not
+found" error after installing. If you see this error take a look at
+the workaround in [issue #99](https://github.com/Azure/simdem/issues/99).
+
 ## Running
 
 A great place to start working on SimDem is to run SimDem on its own documentation
