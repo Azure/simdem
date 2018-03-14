@@ -24,13 +24,15 @@ def main():
                       help="Mode to use", choices=['demo', 'dump', 'test', 'tutorial', 'cleanup'])
     argp.add_argument('--parser', '-p', default="simdem1",
                       help="Parser class to use", choices=['simdem1', 'ast'])
-    argp.add_argument('--executor', '-e', default="bash",
-                      help="Executor class to use", choices=['bash'])
-    argp.add_argument('--setup-script', '-s', default=None,
-                      help="Setup script to execute")
+    argp.add_argument('--shell', '-s', default="bash",
+                      help="Shell class to use", choices=['bash'])
+    argp.add_argument('--environment', '-e', default='',
+                      help="Environment variables to inject (Example: -e FOO=foo1,BAR=bar1)")
+    argp.add_argument('--boot-strap', '-b', default=None,
+                      help="Boot strap script to execute")
     argp.add_argument('--ui', '-u', default="basic",
                       help="UI class to use", choices=['basic'])
-    argp.add_argument('--override-config', '-o', metavar='override',
+    argp.add_argument('--override-config', metavar='override',
                       help="Override setting in config file")
     options = argp.parse_args()
 
@@ -46,7 +48,11 @@ def main():
 
     mode = get_mode(options, config)
 
-    if options.setup_script:
+    if options.environment:
+        commands = options.environment.split(',')
+        mode.process_commands(commands)
+
+    if options.boot_strap:
         mode.run_setup_script(options.setup_script)
 
     mode.process_file(file_path)
@@ -78,23 +84,23 @@ def get_mode(options, config):
     """ Returns correct renderer object """
 
     parser = get_parser(options)
-    executor = get_executor(options)
+    shell = get_shell(options)
     ui = get_ui(options, config)
 
     if options.mode == 'demo':
-        return demo.DemoMode(config, parser, executor, ui)
+        return demo.DemoMode(config, parser, shell, ui)
 
     if options.mode == 'dump':
-        return dump.DumpMode(config, parser, executor, ui)
+        return dump.DumpMode(config, parser, shell, ui)
 
     if options.mode == 'cleanup':
-        return cleanup.CleanupMode(config, parser, executor, ui)
+        return cleanup.CleanupMode(config, parser, shell, ui)
 
     if options.mode == 'test':
-        return test.TestMode(config, parser, executor, ui)
+        return test.TestMode(config, parser, shell, ui)
 
     if options.mode == 'tutorial':
-        return tutorial.TutorialMode(config, parser, executor, ui)
+        return tutorial.TutorialMode(config, parser, shell, ui)
 
 def get_ui(options, config):
     """ return UI object """
@@ -108,9 +114,9 @@ def get_parser(options):
     elif options.parser == 'simdem1':
         return simdem1.SimDem1Parser()
 
-def get_executor(options):
-    """ Returns correct executor object """
-    if options.executor == 'bash':
+def get_shell(options):
+    """ Returns correct shell object """
+    if options.shell == 'bash':
         return bash.BashExecutor()
 
 def setup_logging(config, options):
