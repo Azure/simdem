@@ -20,10 +20,14 @@ Currently, it's only available for installation in development mode:
 
 ```
 git clone git@github.com:Azure/simdem.git
-git checkout -b simdem2
+git checkout -b simdem2 remotes/origin/simdem2
 pip3 install -r requirements.txt
 pip3 install -v -e .
 ```
+
+Note: in rare machine configuations you may get a "simdem: command not
+found" error after installing. If you see this error take a look at
+the workaround in [issue #99](https://github.com/Azure/simdem/issues/99).
 
 ## Running
 
