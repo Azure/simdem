@@ -24,7 +24,7 @@ class ModeCommon(object): # pylint: disable=R0903
 
         cmd = '. ' + file_path
         self.ui.print_prompt()
-        self.ui.print_cmd(cmd)
+        self.print_command(cmd)
         self.ui.print_break()
         result = self.executor.run_cmd(cmd)
         self.ui.print_result(result)
@@ -71,12 +71,15 @@ class ModeCommon(object): # pylint: disable=R0903
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
             self.ui.print_prompt()
-            self.ui.print_cmd(cmd)
+            self.print_command(cmd)
             self.ui.print_break()
             result = self.executor.run_cmd(cmd)
             self.ui.print_result(result)
         self.ui.print_break()
         return result
+
+    def print_command(self, cmd):
+        self.ui.print_cmd(cmd)
 
     @staticmethod
     def is_result_valid(expected_results, actual_results, expected_similarity=0.8):

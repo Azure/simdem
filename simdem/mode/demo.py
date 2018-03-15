@@ -18,7 +18,7 @@ class DemoMode(InteractiveMode):
             if step['type'] == 'commands':
                 self.process_commands(step['content'])
 
-    def display_command(self, cmd):
+    def print_command(self, cmd):
         """ Displays the command on the screen """
 
         # Must add ' ' when typing command because whitespaces are removed from configparser
@@ -30,4 +30,3 @@ class DemoMode(InteractiveMode):
                     delay = random.uniform(0.02, typing_delay)
                     time.sleep(delay)
                 self.ui.print(char)
-        self.ui.print_break()
