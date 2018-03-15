@@ -13,7 +13,7 @@ from simdem.ui import basic
 
 def main():
     """ Main execution function """
-    argp = argparse.ArgumentParser()
+    argp = argparse.ArgumentParser(prog='simdem')
     argp.add_argument('file', metavar='file',
                       help='file to process')
     argp.add_argument('--debug', '-d', action="store_true",
@@ -34,6 +34,9 @@ def main():
                       help="UI class to use", choices=['basic'])
     argp.add_argument('--override-config', metavar='override',
                       help="Override setting in config file")
+    version = pkg_resources.require("simdem")[0].version
+    argp.add_argument('--version', action='version', version='%(prog)s ' + version,
+                      help="Display SimDem's version number")
     options = argp.parse_args()
 
     file_path = options.file
