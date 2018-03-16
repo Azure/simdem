@@ -130,7 +130,7 @@ class ModeCommon(object): # pylint: disable=R0903
         return is_pass
 
     def setup_temp_dir(self):
-        logging.info("temp_dir=" + self.config.get('main', 'temp_dir', raw=True))
-        directory = os.path.abspath(self.config.get('main', 'temp_dir', raw=True))
+        directory = str(pathlib.Path.home()) + '/' + self.config.get('main', 'temp_dir', raw=True)
+        logging.info("temp_dir=" + directory)
         self.process_command("mkdir -p " + directory, display=False)
         self.process_command("export SIMDEM_TEMP_DIR=" + directory, display=False)
