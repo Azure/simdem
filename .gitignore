@@ -93,3 +93,4 @@ ENV/
 .vscode
 simdem-env
 hello_world
+.simdem

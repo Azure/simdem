@@ -3,6 +3,7 @@
 import os
 import logging
 import difflib
+import pathlib
 
 class ModeCommon(object): # pylint: disable=R0903
     """ This class is designed to hold any shared code across modes
@@ -30,12 +31,13 @@ class ModeCommon(object): # pylint: disable=R0903
         self.ui.print_result(result)
         self.ui.print_break()
 
-
     def process_file(self, file_path, is_prereq=False, toc={}):
         """ Parses the file and starts processing it """
         logging.debug("parse_file(file_path=" + file_path + ", is_prereq=" + str(is_prereq))
         # Change the working directory in case of any recursion
         start_path = os.path.dirname(os.path.abspath(file_path))
+
+        self.setup_temp_dir()
         logging.debug('parse_file::start_path=' + start_path)
         steps = self.parser.parse_file(file_path, is_prereq)
 
@@ -70,15 +72,20 @@ class ModeCommon(object): # pylint: disable=R0903
     def process_commands(self, cmds, display=True):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            if display:
-                self.ui.print_prompt()
-                self.print_command(cmd)
-                self.ui.print_break()
-            result = self.executor.run_cmd(cmd)
-            if display:
-                self.ui.print_result(result)
+            result = self.process_command(cmd, display)
         if display:
             self.ui.print_break()
+        return result
+
+    def process_command(self, cmd, display=True):
+        """ Process single command """
+        if display:
+            self.ui.print_prompt()
+            self.print_command(cmd)
+            self.ui.print_break()
+        result = self.executor.run_cmd(cmd)
+        if display:
+            self.ui.print_result(result)
         return result
 
     def print_command(self, cmd):
@@ -121,3 +128,9 @@ class ModeCommon(object): # pylint: disable=R0903
             logging.error("expected_results = " + expected_results)
 
         return is_pass
+
+    def setup_temp_dir(self):
+        logging.info("temp_dir=" + self.config.get('main', 'temp_dir', raw=True))
+        directory = os.path.abspath(self.config.get('main', 'temp_dir', raw=True))
+        self.process_command("mkdir -p " + directory, display=False)
+        self.process_command("export SIMDEM_TEMP_DIR=" + directory, display=False)
