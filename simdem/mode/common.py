@@ -67,15 +67,18 @@ class ModeCommon(object): # pylint: disable=R0903
         if 'toc' in steps:
             self.process_next_steps(steps['toc'], start_path) # pylint: disable=no-member
 
-    def process_commands(self, cmds):
+    def process_commands(self, cmds, display=True):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            self.ui.print_prompt()
-            self.print_command(cmd)
-            self.ui.print_break()
+            if display:
+                self.ui.print_prompt()
+                self.print_command(cmd)
+                self.ui.print_break()
             result = self.executor.run_cmd(cmd)
-            self.ui.print_result(result)
-        self.ui.print_break()
+            if display:
+                self.ui.print_result(result)
+        if display:
+            self.ui.print_break()
         return result
 
     def print_command(self, cmd):
