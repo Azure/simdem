@@ -89,6 +89,7 @@ class ModeCommon(object): # pylint: disable=R0903
         return result
 
     def print_command(self, cmd):
+        """ Default action to print the command is to just call the UI. """
         self.ui.print_cmd(cmd)
 
     @staticmethod
@@ -130,6 +131,7 @@ class ModeCommon(object): # pylint: disable=R0903
         return is_pass
 
     def setup_temp_dir(self):
+        """ https://github.com/Azure/simdem/issues/104 """
         directory = str(pathlib.Path.home()) + '/' + self.config.get('main', 'temp_dir', raw=True)
         logging.info("temp_dir=" + directory)
         self.process_command("mkdir -p " + directory, display=False)
