@@ -15,14 +15,16 @@ class TutorialMode(InteractiveMode):
         """ Processes the steps from a processed file """
         logging.debug("process()")
 
+        last_text = None
 #        self.ui.clear()
         for step in steps['body']:
             if step['type'] == 'heading':
                 self.ui.print_heading(step['content'], step['level'])
             elif step['type'] == 'text':
                 self.ui.println(step['content'])
+                last_text = step['content']
             elif step['type'] == 'commands':
-                last_command_result = self.process_commands(step['content'])
+                last_command_result = self.process_commands(step['content'], last_text=last_text)
                 logging.debug(step)
                 if 'expected_result' in step:
                     if self.is_result_valid(step['expected_result'], last_command_result):

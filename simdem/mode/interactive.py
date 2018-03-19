@@ -7,7 +7,7 @@ from simdem.mode.common import ModeCommon
 class InteractiveMode(ModeCommon):
     """ Interactive Mode subclass """
 
-    def process_commands(self, cmds):
+    def process_commands(self, cmds, last_text=None):
         """ Loop through the commands to run as well as expect interrupt logic from the user """
         result = None
         cmd = None
@@ -18,14 +18,18 @@ class InteractiveMode(ModeCommon):
         while True:
             self.ui.print_prompt()
             key = self.ui.get_single_key_input()
-            result = self.process_command_input(key, last_command=cmd)
+            result = self.process_command_input(key, last_command=cmd, last_text=last_text)
             logging.debug(cmd_deque)
+
             if result:
+                # We received a special key.  Loop through again
                 continue
             elif cmd_deque:
+                # Are there still commands left to be run?
                 cmd = cmd_deque.popleft()
                 result = self.run_command(cmd)
             if not cmd_deque:
+                # We've completed all commands
                 break
         return result
 
@@ -40,7 +44,7 @@ class InteractiveMode(ModeCommon):
         self.ui.print_result(result)
         return result
 
-    def process_command_input(self, key, last_command=None):
+    def process_command_input(self, key, last_command=None, last_text=None):
         """ Process the command input.  It's 4AM and I'm sleepy
             For now, just return.  We'll implement that later """
         result = None
@@ -55,6 +59,11 @@ class InteractiveMode(ModeCommon):
             logging.debug('Received Run last command request')
             if last_command:
                 result = self.run_command(last_command)
+        elif key == 'd':
+            logging.debug('Received Show last description request')
+            if last_text:
+                self.ui.println(last_text)
+                result = last_text
         logging.debug('Output=' + str(result))
         return result
         # Otherwise, we will return and assume the user wants to continue
