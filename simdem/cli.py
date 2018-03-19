@@ -9,7 +9,7 @@ import pkg_resources
 from simdem.executor import bash
 from simdem.parser import ast, simdem1
 from simdem.mode import demo, dump, test, tutorial, cleanup
-from simdem.ui import basic
+from simdem.ui import basic, color
 
 def main():
     """ Main execution function """
@@ -30,8 +30,8 @@ def main():
                       help="Environment variables to inject (Example: -e FOO=foo1,BAR=bar1)")
     argp.add_argument('--boot-strap', '-b', default=None,
                       help="Boot strap script to execute")
-    argp.add_argument('--ui', '-u', default="basic",
-                      help="UI class to use", choices=['basic'])
+    argp.add_argument('--ui', '-u', default='color',
+                      help="UI class to use", choices=['basic', 'color'])
     argp.add_argument('--override-config', metavar='override',
                       help="Override setting in config file")
     version = pkg_resources.require("simdem")[0].version
@@ -109,6 +109,8 @@ def get_ui(options, config):
     """ return UI object """
     if options.ui == 'basic':
         return basic.BasicUI(config)
+    elif options.ui == 'color':
+        return color.ColorUI(config)
 
 def get_parser(options):
     """ Returns correct parser object """
