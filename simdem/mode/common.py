@@ -41,6 +41,11 @@ class ModeCommon(object): # pylint: disable=R0903
         logging.debug('parse_file::start_path=' + start_path)
         steps = self.parser.parse_file(file_path, is_prereq)
 
+        # https://github.com/Azure/simdem/issues/92
+        env_file = start_path + '/./env.sh'
+        if os.path.isfile(env_file):
+            self.process_env_file(env_file)
+
         # We want to inherit the parent's TOC to reduce the # of copies needed 
         if toc:
             logging.debug('Adding parent POC')
@@ -69,10 +74,18 @@ class ModeCommon(object): # pylint: disable=R0903
         if 'toc' in steps:
             self.process_next_steps(steps['toc'], start_path) # pylint: disable=no-member
 
+    def process_env_file(self, env_file):
+        """ Run the env file.  Assumes it exists """
+        logging.debug('process_env_file(' + env_file + ')')
+        env_fh = open(env_file)
+        env_contents = env_fh.readlines()
+        env_fh.close()
+        self.process_commands(env_contents)
+
     def process_commands(self, cmds, display=True):
         """ Pretend to type the command, run it and then display the output """
         for cmd in cmds:
-            result = self.process_command(cmd, display)
+            result = self.process_command(cmd, display=display)
         if display:
             self.ui.print_break()
         return result

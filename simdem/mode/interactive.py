@@ -7,7 +7,7 @@ from simdem.mode.common import ModeCommon
 class InteractiveMode(ModeCommon):
     """ Interactive Mode subclass """
 
-    def process_commands(self, cmds, last_text=None):
+    def process_commands(self, cmds, last_text=None, display=True):
         """ Loop through the commands to run as well as expect interrupt logic from the user """
         result = None
         cmd = None
@@ -27,21 +27,24 @@ class InteractiveMode(ModeCommon):
             elif cmd_deque:
                 # Are there still commands left to be run?
                 cmd = cmd_deque.popleft()
-                result = self.run_command(cmd)
+                result = self.run_command(cmd, display=display)
             if not cmd_deque:
                 # We've completed all commands
                 break
         return result
 
-    def run_command(self, cmd):
+    def run_command(self, cmd, display=True):
         """ Pretend to type the command, run it and then display the output """
         #  Request enter from user to know when to proceed
         logging.debug('run_command(' + cmd + ')')
-        self.print_command(cmd)
-        # For some reason this requires a print_break() while common does not.  Too late to debug
-        self.ui.print_break()
+
+        if display:
+            self.print_command(cmd)
+            # For some reason this requires a print_break() while common does not.  Too late to debug
+            self.ui.print_break()
         result = self.executor.run_cmd(cmd)
-        self.ui.print_result(result)
+        if display:
+            self.ui.print_result(result)
         return result
 
     def process_command_input(self, key, last_command=None, last_text=None):
