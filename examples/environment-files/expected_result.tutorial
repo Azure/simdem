@@ -1,0 +1,11 @@
+$ FOO=foo
+
+$ BAR=bar
+# testing importing env.sh file
+
+text1
+
+$ echo $FOO
+foo
+text2
+

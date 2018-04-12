@@ -1,0 +1,23 @@
+{
+    "body": [
+        {
+            "content": "testing importing env.sh file",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "text1\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo $FOO"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "text2\n",
+            "type": "text"
+        }
+    ]
+}
