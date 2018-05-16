@@ -51,6 +51,9 @@ def main():
 
     mode = get_mode(options, config)
 
+    # Add user's home directory to path
+    mode.process_command("export HOME=" + os.path.expanduser("~"))
+
     if options.environment:
         commands = options.environment.split(',')
         mode.process_commands(commands)
