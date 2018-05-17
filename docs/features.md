@@ -1,6 +1,6 @@
 # Features
 
-This document is intended to be a list of all features supported in SimDem.  To see examples on how to write documents that use these features, please see the [syntax documentation](syntad.md).
+This document is intended to be a list of all features supported in SimDem.  To see examples on how to write documents that use these features, please see the [syntax documentation](syntax.md).
 
 
 ## Commands
