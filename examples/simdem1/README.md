@@ -10,7 +10,7 @@ Here is an example of a prerequisites that will be run because its conditions ar
 
 * [prereq-processed](./prereq-processed.md)
 
-By this point, the prerequisites have either run or have passed their validation
+By this point, the prerequisites have either run or have passed their validation.
 
 # Did our prerequisites run?
 
