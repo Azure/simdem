@@ -21,7 +21,7 @@ echo prereq_processed = $prereq_processed
 
 # Do stuff here
 
-We want to execute this because the code type is shell
+We want to execute this because the code type is shell.
 
 ```shell
 echo foo
@@ -31,7 +31,7 @@ var=bar
 
 # Do more stuff here
 
-We assume the result is for the last command of the last code block
+We assume the result is for the last command of the last code block.
 
 ```shell
 echo baz
