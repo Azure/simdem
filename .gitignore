@@ -94,3 +94,19 @@ ENV/
 simdem-env
 hello_world
 .simdem
+||||||| merged common ancestors
+*~
+\#*
+.#*
+env.local.json
+!demo_scripts/simdem/variables/env.local.json
+!demo_scripts/test/env.local.json
+!/env.local.json
+
+# Python
+simdem-env/
+env.local.json
+!demo_scripts/simdem/variables/env.local.json
+!demo_scripts/test/env.local.json
+!/env.local.json
+*.log

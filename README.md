@@ -1,4 +1,5 @@
 # SimDem
+[![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
 
 SimDem provides an easy way to convert tutorials written in markdown into interactive demos and automated tests. 
 
