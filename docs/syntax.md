@@ -6,7 +6,7 @@ Currently, there is only one implementation of Markdown syntax supported.
 
 # Context Syntax Specification
 
-This is the syntax for the default codeblock format.  It's design is to allow more natural, expressive, and readable documentation.  It is based off of SimDem v1's syntax
+This is the syntax for the default codeblock format.  It's design is to allow more natural, expressive, and readable documentation.  It is based off of SimDem v1's syntax.
 
 ## SimDem V1 Based (default)
 
