@@ -26,7 +26,9 @@ pip3 install -r requirements.txt
 pip3 install -v -e .
 ```
 
-Note: in rare machine configuations you may get a "simdem: command not found" error after installing. If so, see [this workaround (issue #99)](https://github.com/Azure/simdem/issues/99).
+If you are experiencing issues with installation, please see these issues:
+* ["simdem: command not found" error](https://github.com/Azure/simdem/issues/99)
+* [cannot import name 'main'](https://github.com/Azure/simdem/issues/111)
 
 ### Running
 
