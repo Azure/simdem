@@ -1,0 +1,25 @@
+{
+    "body": [
+        {
+            "content": "this is text",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": [
+                "FOO=bar"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": [
+                "echo $FOO"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "more text\n",
+            "type": "text"
+        }
+    ]
+}

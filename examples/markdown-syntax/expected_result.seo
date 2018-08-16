@@ -1,0 +1,47 @@
+{
+    "body": [
+        {
+            "content": "Heading 1",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "Code Block",
+            "level": 2,
+            "type": "heading"
+        },
+        {
+            "content": "This is a code block:\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo foo",
+                "echo bar"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "Emphasis",
+            "level": 2,
+            "type": "heading"
+        },
+        {
+            "content": "*This is emphasis*",
+            "type": "text"
+        },
+        {
+            "content": "\n",
+            "type": "text"
+        },
+        {
+            "content": "Inline code",
+            "level": 2,
+            "type": "heading"
+        },
+        {
+            "content": "Precode `this is inline code` Postcode",
+            "type": "text"
+        }
+    ]
+}

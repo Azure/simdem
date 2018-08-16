@@ -1,0 +1,4 @@
+$ FOO=foo
+$ BAR=bar
+$ echo $FOO
+foo

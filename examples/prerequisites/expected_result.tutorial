@@ -1,0 +1,36 @@
+$ echo prereq_validation_pass
+prereq_validation_pass
+$ echo prereq_validation_fail
+prereq_validation_fail
+***PREREQUISITE VALIDATION FAILED***
+# WE ARE IN prereq-processed.md
+
+This file is designed to have the validation fail.  This means that we should completely execute this file
+
+# Validation
+
+This is a validation section.  If this validation section passes, we stop processing this file
+
+# Main area
+
+This should be run since the validation for the prereq has failed
+
+$ echo YOU SHOULD SEE THIS
+YOU SHOULD SEE THIS
+# Set a variable that passes through
+
+$ prereq_processed=true
+# Prerequisites
+
+This is the prerequisite section.  SimDem looks for a set of links to extract and run through first
+
+They don't even need to be in the same list
+
+By this point, the prerequisites have either run or have passed their validation
+
+# Validation
+
+$ echo prereq_ignored = $prereq_ignored
+prereq_ignored =
+$ echo prereq_processed = $prereq_processed
+prereq_processed = true

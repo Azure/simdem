@@ -1,0 +1,9 @@
+this is text
+
+$ echo foo
+foo
+$ echo bar
+bar
+*** SIMDEM TEST RESULT PASSED ***
+even more text
+

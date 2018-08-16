@@ -1,0 +1,32 @@
+{
+    "body": [
+        {
+            "content": "This the table of contents test",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "Main content",
+            "level": 2,
+            "type": "heading"
+        },
+        {
+            "content": "Foo",
+            "type": "text"
+        }
+    ],
+    "toc": [
+        {
+            "target": "README.md",
+            "title": "Main"
+        },
+        {
+            "target": "one.md",
+            "title": "One"
+        },
+        {
+            "target": "two.md",
+            "title": "Two"
+        }
+    ]
+}

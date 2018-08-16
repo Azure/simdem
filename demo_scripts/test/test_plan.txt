@@ -1,4 +1,0 @@
-# SimDem Test Plan
-README.md
-directory/README.md
-environment_test.md

@@ -1,0 +1,89 @@
+{
+    "body": [
+        {
+            "content": "Prerequisites",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "This is the prerequisite section.  SimDem looks for a set of links to extract and run through first\n",
+            "type": "text"
+        },
+        {
+            "content": "They don't even need to be in the same list\n",
+            "type": "text"
+        },
+        {
+            "content": "By this point, the prerequisites have either run or have passed their validation\n",
+            "type": "text"
+        },
+        {
+            "content": "Did our prerequisites run?",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": [
+                "echo prereq_ignored = $prereq_ignored",
+                "echo prereq_processed = $prereq_processed"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "Do stuff here",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "We want to execute this because the code type is shell\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo foo",
+                "var=bar"
+            ],
+            "type": "commands"
+        },
+        {
+            "content": "Do more stuff here",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "We assume the result is for the last command of the last code block\n",
+            "type": "text"
+        },
+        {
+            "content": [
+                "echo baz",
+                "echo $var"
+            ],
+            "expected_result": "bar\n",
+            "type": "commands"
+        },
+        {
+            "content": "Next Steps",
+            "level": 1,
+            "type": "heading"
+        },
+        {
+            "content": "The list inside this block are steps that could be followed when performing an interactive tutorial\n",
+            "type": "text"
+        }
+    ],
+    "next_steps": [
+        {
+            "target": "step-1.md",
+            "title": "Step #1"
+        },
+        {
+            "target": "step-2.md",
+            "title": "Step #2"
+        }
+    ],
+    "prerequisites": [
+        "./prereq-ignored.md",
+        "./prereq-processed.md"
+    ]
+}
