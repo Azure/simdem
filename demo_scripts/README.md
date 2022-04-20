@@ -16,4 +16,5 @@ It's all of them!
 
   1. [Hello World Demo](simdem/demo/README.md)
   2. [SimDem Documentation](simdem/README.md)
+  3. [Create an Azure VM](azure/CreateVM.md)
 
