@@ -6,9 +6,10 @@ You can't do anything until you ahve an AKS cluster to work with, so lets do tha
 
 First we need to check you are logged in to the Azure in the CLI. The following command will check to see if you are logged in. If not it will open a browser and take you through the login steps.
 
-```
+`
 az login
-```
+`
+
 ## Create a resource group
 
 A resource group is a container for related resources. All resources must be placed in a resource group. We will create one for this tutorial. 
@@ -51,9 +52,9 @@ Results:
 
 To manage a Kubernetes cluster you need Kubectl installed. The following command will install it for you if necessary.
 
-```
+`
 sudo az aks install-cli
-```
+`
 
 Results:
 
@@ -67,7 +68,7 @@ Please ensure that /usr/local/bin is in your search PATH, so the `kubelogin` com
 Setup the credentials for accessing the cluster via Kubectl:
 
 ```
-az aks get-credentials --resource-group $MY_RESOURCE_GROUP_NAME --name $MY_AKS_CLUSTER_NAME
+az aks get-credentials --resource-group $MY_RESOURCE_GROUP_NAME --name $MY_AKS_CLUSTER_NAME --overwrite-existing
 ```
 Results:
 

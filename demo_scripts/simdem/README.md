@@ -7,6 +7,7 @@ Is it:
   * A live demo 
   * An automated test script
   * A Shell script
+To progress in tutorial mode press a key when prompted. Most keys will work, but some are special keys. So, for now, press space when prompted.
   
 ## Simdem is Documentation, Tutorials, Demo's and Tests
 

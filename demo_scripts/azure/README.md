@@ -5,10 +5,6 @@ At the end of this tutorial you will have the option to download a script that w
 
 Here are the defaults that will be used. Don't worry about what they are used for, they will be explained as they become important.
 
-```
-echo $MY_VM_IMAGE
-```
-
 The environment now is:
 
 ```
@@ -81,5 +77,5 @@ That's it! You now have a VM running in Azure. The output above provides details
 
   1. [Install a web server and connect via a browser](WebSever.md)
   2. [Install a Go development environment and SSH in](GoDevelopment.md)
-  3. [Delete all resources](Cleanup.md)
+  3. [Delete all resources](Cleanup/README.md)
 
