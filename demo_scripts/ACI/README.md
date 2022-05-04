@@ -31,7 +31,7 @@ az container create --resource-group $MY_RESOURCE_GROUP_NAME --name $MY_CONTAINE
 It can take a short while for the deployment to complete you can get the status of the deployment with:
 
 ```
-MY_STATUS=$(az container show --resource-group $MY_RESOURCE_GROUP_NAME --name $MY_CONTAINER_NAME --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --output table)
+MY_STATUS=$(az container show --resource-group $MY_RESOURCE_GROUP_NAME --name $MY_CONTAINER_NAME --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --output tsv)
 ```
 
 Which is currently giving a status of:
