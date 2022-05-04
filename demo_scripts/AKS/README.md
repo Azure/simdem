@@ -10,29 +10,7 @@ First we need to check you are logged in to the Azure in the CLI. The following 
 az login
 `
 
-## Create a resource group
-
-A resource group is a container for related resources. All resources must be placed in a resource group. We will create one for this tutorial. 
-
-This command used two environment variables, `MY_RESOURCE_GROUP_NAME` is the name of the resource group and will be commonly using in other commands. `MY_LOCATION` is the data center that the resource group will be created in. When this command has completed it will return a JSON file. You can see what the values are set at for this tutorial in that output.
-
-```
-az group create --name $MY_RESOURCE_GROUP_NAME --location $MY_LOCATION
-```
-
-Results:
-
-```expected_similarity=0.3
-  "id": "/subscriptions/325e7c34-99fb-4190-aa87-1df746c67705/resourceGroups/myResourceGroup",
-  "location": "eastus",
-  "managedBy": null,
-  "name": "myResourceGroup",
-  "properties": {
-    "provisioningState": "Succeeded"
-  },
-  "tags": null,
-  "type": "Microsoft.Resources/resourceGroups"
-```
+As is nearly always the case when working with resources on Azure, you need to [create a resource group](../azure/ResourceGroup/README.md) to deploy your resources to.
 
 ## Create an AKS Cluster
 
