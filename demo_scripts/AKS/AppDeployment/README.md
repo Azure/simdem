@@ -120,7 +120,7 @@ When the application runs, a Kubernetes service exposes the application front en
 However, when running in automated scripts it is helpful to capture the IP and store it in an environment varable. So lets do that:
 
 ```
-export MY_APP_IP=$(kubectl get service azure-vote-front -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+MY_APP_IP=$(kubectl get service azure-vote-front -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
 However, usually it takes a little while for the IP to be available, so lets repeat that command until the value is set.
