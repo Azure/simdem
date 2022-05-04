@@ -10,7 +10,7 @@ This script uses the following environment variables:
 env | grep MY_
 ```
 
-As is nearly always the case when working with resources on Azure, you need to [create a resource group](../azure/ResourceGroup/README.md) to deploy your resources to.
+As is nearly always the case when working with resources on Azure, you need to [create a resource group](../Azure/ResourceGroup/README.md) to deploy your resources to.
 
 # Deploy the Container
 
