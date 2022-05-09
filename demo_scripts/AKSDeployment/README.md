@@ -99,15 +99,16 @@ kubectl apply -f azure-vote-start.yml
 
 
 Store the public IP Address as an environment variable with the following command:
-'export IP_ADDRESS=$(kubectl get service azure-vote-front --output jsonpath='{.status.loadBalancer.ingress[0].ip}')'
+'for run in {1..3}; do export IP_ADDRESS=$(kubectl get service azure-vote-front --output jsonpath='{.status.loadBalancer.ingress[0].ip}'); sleep 5; done'
 
 ```
-export IP_ADDRESS=$(kubectl get service azure-vote-front --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+for run in {1..3}; do export IP_ADDRESS=$(kubectl get service azure-vote-front --output jsonpath='{.status.loadBalancer.ingress[0].ip}'); sleep 5; done
 ```
 
 Validate IP Address by running:
 'echo $IP_ADDRESS'
-After running this command you should be able to see your application running! 
+After running this command you should be able to see your application running!
+If the variable is empty then the command ran before the IP Address became available. Press b and run the above command manually. 
 ```
 echo $IP_ADDRESS
 ```
