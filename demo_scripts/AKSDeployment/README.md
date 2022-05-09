@@ -108,7 +108,6 @@ for run in {1..3}; do export IP_ADDRESS=$(kubectl get service azure-vote-front -
 Validate IP Address by running:
 'echo $IP_ADDRESS'
 After running this command you should be able to see your application running!
-If the variable is empty then the command ran before the IP Address became available. Press b and run the above command manually. 
 ```
 echo $IP_ADDRESS
 ```
@@ -176,7 +175,7 @@ Grab the Vnet ID by running the following:
 AKS_VNET_ID=$(az network vnet show -n $AKS_VNET_NAME -g $NODE_RESOURCE_GROUP -o tsv --query "id")
 ```
 Create the peering from Application Gateway to AKS by runnig the following:
-'az network vnet peering create --name AppGWtoAKSVnetPeering -g $RESOURCE_GROUP_NAME --vnet-name'
+'az network vnet peering create --name AppGWtoAKSVnetPeering -g $RESOURCE_GROUP_NAME --vnet-name $VNET_NAME --remote-vnet $AKS_VNET_ID --allow-vnet-access'
 ```
 az network vnet peering create --name AppGWtoAKSVnetPeering -g $RESOURCE_GROUP_NAME --vnet-name $VNET_NAME --remote-vnet $AKS_VNET_ID --allow-vnet-access 
 ```
