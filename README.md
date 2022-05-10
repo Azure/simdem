@@ -198,7 +198,7 @@ You can run the Python source without a Docker container. To learn
 more install Python 3 and pip, then type the following commands:
 
 ```
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 python3 main.py --help
 ```
 

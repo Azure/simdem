@@ -777,7 +777,11 @@ found in the validation section.
         executable bash script from the commands contained within.
 
         """
+        if not self.script_dir.endswith('/'):
+            self.script_dir = self.script_dir + "/"
+        
         script = ""
+        env = Environment(self.script_dir, False).get()
         for key, value in env.items():
             script += key + "='" + value + "'\n"
 
