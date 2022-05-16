@@ -510,7 +510,8 @@ logs throughout execution."""
         executed_code_in_this_section = False
         next_steps = []
 
-        self.ui.clear()
+        if not self.is_testing:
+            self.ui.clear()
         for line, next_line in get_next(lines):
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
@@ -568,7 +569,7 @@ logs throughout execution."""
             elif line["type"] == "heading":
                 if not is_first_line and not self.is_simulation:
                     self.ui.check_for_interactive_command()
-                if not self.is_simulation:
+                if not self.is_simulation and not self.is_testing:
                     self.ui.clear()
                     self.ui.heading(line["text"])
             else:
@@ -666,7 +667,8 @@ logs throughout execution."""
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)
-            self.ui.clear()
+            if not self.is_testing:
+                self.ui.clear()
             
     def validate(self, lines):
         """Run through the supplied lines, executing and testing any that are
