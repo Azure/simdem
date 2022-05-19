@@ -39,8 +39,7 @@ jobs:
           destination: test-reports
 
   verify-install-az-cli:
-    docker:
-      - image: circleci/python:3.6.1
+    executor: azure-cli/default
     steps:
       - checkout
       - azure-cli/install
