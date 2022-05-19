@@ -7,9 +7,13 @@ jobs:
     executor: azure-cli/default
     steps:
       - azure-cli/install
+      - azure-cli/login-with-service-principal
       - run:
           command: az -v
           name: Verify Azure CLI is installed 
+      - run: 
+          name: List SP Resoures
+          command: az resource list
 
   build:
     docker:
