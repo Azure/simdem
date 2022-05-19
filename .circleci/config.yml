@@ -37,6 +37,15 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+  test:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+      - azure-cli/install
+      - run:
+          command: az -v
+          name: Verify Azure CLI is installed 
 workflows:
   version: 2
   test:
