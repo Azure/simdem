@@ -37,7 +37,8 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-  test:
+
+  verify-install-az-cli:
     docker:
       - image: circleci/python:3.6.1
     steps:
@@ -51,4 +52,5 @@ workflows:
   test:
     jobs:
       - build
+      - verify-install-az-cli
           
