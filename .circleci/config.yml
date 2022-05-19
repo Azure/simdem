@@ -38,10 +38,9 @@ jobs:
           path: test-reports
           destination: test-reports
 
-  verify-install-az-cli:
+  verify-install:
     executor: azure-cli/default
     steps:
-      - checkout
       - azure-cli/install
       - run:
           command: az -v
@@ -51,5 +50,5 @@ workflows:
   test:
     jobs:
       - build
-      - verify-install-az-cli
+      - verify-install
           
