@@ -1,8 +1,9 @@
 version: 2.1
 orbs: 
   azure-cli: circleci/azure-cli@1.2.2
+  
 jobs:
-verify-install:
+  verify-install:
     executor: azure-cli/default
     steps:
       - azure-cli/install
@@ -13,7 +14,6 @@ workflows:
   example-workflow:
     jobs:
       - verify-install
-      
   build:
     docker:
       - image: circleci/python:3.6.1
