@@ -1,54 +1,15 @@
-version: 2.1
+version: '2.1'
 orbs:
-  azure-cli: circleci/azure-cli@1.2.2
+  azure-cli: circleci/azure-cli@1.0.0
 jobs:
-  build:
-    docker:
-      - image: circleci/python:3.6.1
-
-    working_directory: ~/simdem
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-        
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            python main.py test test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
-
   verify-install:
     executor: azure-cli/default
     steps:
       - azure-cli/install
       - run:
           command: az -v
-          name: Verify Azure CLI is installed 
+          name: Verify Azure CLI is installed
 workflows:
-  version: 2
-  test:
+  example-workflow:
     jobs:
-      - build
       - verify-install
-          
