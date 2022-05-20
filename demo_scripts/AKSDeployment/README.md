@@ -30,7 +30,7 @@ For example mycooldomain - this domain is already taken btw :)
 
 Note - Do not add any capitalization or .com
 ```
-echo $CUSTOM_DOMAIN_NAME
+if [[ ! $CUSTOM_DOMAIN_NAME =~ ^[a-z][a-z0-9-]{1,61}[a-z0-9] ]]; then echo "Invalid Domain, re enter your domain by pressing b and running 'export CUSTOM_DOMAIN_NAME="customdomainname"' then press r to re-run the previous command and validate the custom domain"; else echo "Custom Domain Set!"; fi; 
 ```
 
 For the email address any enter a valid email. I.e sarajane@gmail.com
@@ -255,7 +255,7 @@ kubectl get ingress
 Check SSL Certificate - The following command will query the status of the SSL certificate for 3 minutes. 
 In rare occasions it may take up to 15 minutes for Lets Encrypt to issue a successful challenge and the ready state to be 'True'
 ```
-runtime="3 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do STATUS=$(kubectl get certificate --output jsonpath={..status.conditions[0].status}); echo $STATUS; if [ "$STATUS" = 'True' ]; then break; else sleep 10; fi; done
+runtime="10 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do STATUS=$(kubectl get certificate --output jsonpath={..status.conditions[0].status}); echo $STATUS; if [ "$STATUS" = 'True' ]; then break; else sleep 10; fi; done
 ```
 
 Validate certificate status is true - Sometimes there may be a slight delay
@@ -267,6 +267,6 @@ kubectl get certificate
 Paste the following link into your browser with https:// as the prefix
 
 ```
-echo $FQDN
+echo https://$FQDN
 ```
 
