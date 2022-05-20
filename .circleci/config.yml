@@ -17,6 +17,9 @@ jobs:
           name: List SP Resoures
           command: az resource list
       - run:
+          name: Install requirements 
+          command: pip install -r requirements.txt
+      - run:
           name: Azure Tests
           command: python3 main.py test azureTests
 
@@ -51,12 +54,6 @@ jobs:
           command: |
             . venv/bin/activate
             python main.py test test
-
-      - run:
-          name: Run Azure Tests
-          command: |
-            . venv/bin/activate
-            python3 main.py test azureTests
 
       - store_artifacts:
           path: test-reports
