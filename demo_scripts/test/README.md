@@ -37,6 +37,11 @@ test files. The [prerequisite test script](./prerequisites/README.md)
 validates whether the file exists and, if it doesn't it will execute
 and create it.
 
+This will run our Azure test scripts. 
+The [Azure scripts](./azureTests/README.md) 
+creates azure resources and validates that our
+current documentation is up to date
+
 Each [prerequisite](./prerequisites/README.md) will only be run once,
 so even though this partucular prereq appears twice it will only
 execute once. This is important when building multi-part tutorials/
@@ -107,7 +112,7 @@ date
 
 Results: 
 
-```expected_Similarity=0.2
+```expected_Similarity=0.1
 Tue Jun  6 15:23:53 UTC 2017
 ```
 
@@ -153,5 +158,6 @@ Results:
 ```expected_similarity=0.9
 Normal Underlined Normal
 ```
+
 
 
