@@ -1,19 +1,16 @@
 version: 2.1
-orbs: 
-  azure-cli: circleci/azure-cli@1.2.2
+orbs:
+  azure-cli: circleci/azure-cli@1.0.0
 jobs:
-verify-install:
+
+  verify-install:
     executor: azure-cli/default
     steps:
       - azure-cli/install
       - run:
           command: az -v
-          name: Verify Azure CLI is installed
-workflows:
-  example-workflow:
-    jobs:
-      - verify-install
-      
+          name: Verify Azure CLI is installed 
+
   build:
     docker:
       - image: circleci/python:3.6.1
@@ -49,4 +46,11 @@ workflows:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+workflows:
+  version: 2
+  example-workflow:
+    jobs:
+      - build
+      - verify-install
           
