@@ -1,11 +1,3 @@
-create random custom domain - 
-```
-export RAND_DOMAIN=$(tr -dc a-z </dev/urandom | head -c 4 ; echo '')
-```
-
-```
-export CUSTOM_DOMAIN_NAME="$CUSTOM_DOMAIN_NAME$RAND_DOMAIN"
-```
 
 # AKS Script Test
 
