@@ -34,16 +34,10 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
         
       - run:
-          name: run tests
+          name: run SimDem tests
           command: |
             . venv/bin/activate
             python main.py test test
-
-      - run:
-          name: Run Azure Tests
-          command: |
-            . venv/bin/activate
-            python main.py test azureTests
 
       - store_artifacts:
           path: test-reports
