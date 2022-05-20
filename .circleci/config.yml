@@ -18,7 +18,7 @@ jobs:
           name: Run Azure Tests
           command: |
             . venv/bin/activate
-            python main.py test azureTests
+            python3 main.py test azureTests
 
 
   build:
