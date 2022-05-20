@@ -3,7 +3,7 @@ orbs:
   azure-cli: circleci/azure-cli@1.0.0
 jobs:
 
-  verify-install:
+  azure-test:
     executor: azure-cli/default
     steps:
       - azure-cli/install
@@ -53,8 +53,8 @@ jobs:
 
 workflows:
   version: 2
-  example-workflow:
+  workflow:
     jobs:
       - build
-      - verify-install
+      - azure-test
           
