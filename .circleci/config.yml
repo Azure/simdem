@@ -40,7 +40,7 @@ jobs:
             python main.py test test
 
       - run:
-          name: run tests
+          name: Run Azure Tests
           command: |
             . venv/bin/activate
             python main.py test azureTests
