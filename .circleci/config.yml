@@ -18,7 +18,7 @@ jobs:
           command: az resource list
       - run:
           name: upgrade pip
-          command: python3 -m pip install --upgrade pip
+          command: python -m ensurepip --upgrade
       - run:
           name: Install requirements 
           command: pip install -r requirements.txt
