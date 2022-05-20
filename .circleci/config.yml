@@ -13,7 +13,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "46:8c:ff:45:d9:ef:24:7a:a6:7a:7f:d7:77:59:cf:c0"
+            - "	cf:f3:0f:79:ee:f8:e1:f0:f0:bb:26:03:6b:b9:04:30"
       - kubernetes/install-kubectl
       - azure-cli/install
       - azure-cli/login-with-service-principal
