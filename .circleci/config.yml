@@ -16,16 +16,6 @@ jobs:
       - run: 
           name: List SP Resoures
           command: az resource list
-      - run:
-          name: upgrade pip
-          command: python -m ensurepip --upgrade
-      - run:
-          name: Install requirements 
-          command: pip install -r requirements.txt
-          
-      - run:
-          name: Azure Tests
-          command: python3 main.py test azureTests
 
   build:
     docker:
