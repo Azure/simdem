@@ -5,7 +5,9 @@ jobs:
 
   azure-test:
     executor: azure-cli/default
+    working_directory: ~/simdem
     steps:
+      - checkout
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - run:
@@ -14,7 +16,9 @@ jobs:
       - run: 
           name: List SP Resoures
           command: az resource list
-
+      - run:
+          name: Azure Tests
+          command: python3 main.py test azureTests
 
   build:
     docker:
