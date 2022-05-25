@@ -75,7 +75,7 @@ The next step is to create an AKS Cluster. This can be done with the following c
 
 This will take a few minutes
 ```
-az aks create --resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME --node-count 1 --enable-addons monitoring --generate-ssh-keys
+az aks create -resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME --node-count 1 --enable-addons monitoring --generate-ssh-keys
 ```
 
 ## Install az aks CLI locally using the az aks install-cli command
