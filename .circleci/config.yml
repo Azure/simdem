@@ -46,7 +46,11 @@ jobs:
           name: generate new RSA keys
           command: ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa 
           
-      
+      - run:
+          name: run SimDem tests
+          command: |
+            . venv/bin/activate
+            python main.py test test
 
       - store_artifacts:
           path: test-reports
