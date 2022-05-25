@@ -54,6 +54,21 @@ Create Resource Group
 ```
 az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
+Results:
+
+```expected_similarity=0.5
+{
+  "id": "/subscriptions/bb318642-28fd-482d-8d07-79182df07999/resourceGroups/testResourceGroup24763",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "testResourceGroup",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+```
 
 ## Create an AKS Cluster 
 The next step is to create an AKS Cluster. This can be done with the following command - 

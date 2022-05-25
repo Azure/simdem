@@ -12,7 +12,6 @@ jobs:
 
     steps:
       - checkout
-      - add_ssh_keys 
       - kubernetes/install-kubectl
       - helm/install-helm-client
       - azure-cli/install
