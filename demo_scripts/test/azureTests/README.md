@@ -52,7 +52,7 @@ if [ "$(az group exists --name $RESOURCE_GROUP_NAME)" = 'true' ]; then export RA
 
 Create Resource Group
 ```
-az group create -name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
+az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
 Results:
 
