@@ -166,7 +166,7 @@ az network vnet create --name $VNET_NAME --resource-group $RESOURCE_GROUP_NAME -
 > [!NOTE] 
 > This will take around 5 minutes 
 ```
-az network application-gateway create --name $APPLICATION_GATEWAY_NAME --location $RESOURCE_LOCATION --resource-group $RESOURCE_GROUP_NAME --sku Standard_v2 --public-ip-address $PUBLIC_IP_NAME --vnet-name $VNET_NAME --subnet $SUBNET_NAME --priority 100
+az network application-gateway create --name $APPLICATION_GATEWAY_NAME --location $RESOURCE_LOCATION --resource-group $RESOURCE_GROUP_NAME --sku Standard_v2 --public-ip-address $PUBLIC_IP_NAME --vnet-name $VNET_NAME --subnet $SUBNET_NAME
 ```
 
 ## Enable the AGIC add-on in existing AKS cluster 
