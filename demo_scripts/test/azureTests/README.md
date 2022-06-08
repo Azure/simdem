@@ -41,7 +41,7 @@ For the email address any enter a valid email. I.e sarajane@gmail.com
 echo $SSL_EMAIL_ADDRESS
 ```
 
-## Create A Resource Group
+## Create a Resource Group
 An Azure resource group is a logical group in which Azure resources are deployed and managed. When you create a resource group, you are prompted to specify a location. This location is:
   - The storage location of your resource group metadata.
   - Where your resources will run in Azure if you don't specify another region during resource creation.
@@ -54,7 +54,7 @@ if [ "$(az group exists --name $RESOURCE_GROUP_NAME)" = 'true' ]; then export RA
 
 Create a resource group using the az group create command.
 ```
-az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
+az group create -name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
 Results:
 
