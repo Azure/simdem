@@ -1,6 +1,4 @@
-
-# AKS Script Test
-
+# Quickstart: Deploy a Scalable & Secure Azure Kubernetes Service cluster using the Azure CLI
 Welcome to this tutorial where we will take you step by step in creating an Azure Kubernetes Web Application with a custom domain that is secured via https. This tutorial assumes you are logged into Azure CLI already and have selected a subscription to use with the CLI. It also assumes that you have Helm installed (Instructions can be found here https://helm.sh/docs/intro/install/). If you have not done this already. Press b and hit ctl c to exit the program.
 
 To Login to Az CLI and select a subscription 
@@ -46,13 +44,13 @@ An Azure resource group is a logical group in which Azure resources are deployed
   - The storage location of your resource group metadata.
   - Where your resources will run in Azure if you don't specify another region during resource creation.
 
-Validate Resource Group does not already exist. If it does, select a new resource group name
+Validate Resource Group does not already exist. If it does, select a new resource group name by running the following:
 
 ```
 if [ "$(az group exists --name $RESOURCE_GROUP_NAME)" = 'true' ]; then export RAND=$RANDOM; export RESOURCE_GROUP_NAME="$RESOURCE_GROUP_NAME$RAND"; echo "Your new Resource Group Name is $RESOURCE_GROUP_NAME"; fi
 ```
 
-Create a resource group using the az group create command.
+Create a resource group using the az group create command:
 ```
 az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
@@ -166,7 +164,7 @@ az network vnet create --name $VNET_NAME --resource-group $RESOURCE_GROUP_NAME -
 > [!NOTE] 
 > This will take around 5 minutes 
 ```
-az network application-gateway create --name $APPLICATION_GATEWAY_NAME --location $RESOURCE_LOCATION --resource-group $RESOURCE_GROUP_NAME --sku Standard_v2 --public-ip-address $PUBLIC_IP_NAME --vnet-name $VNET_NAME --subnet $SUBNET_NAME --priority 100
+az network application-gateway create --name $APPLICATION_GATEWAY_NAME --location $RESOURCE_LOCATION --resource-group $RESOURCE_GROUP_NAME --sku Standard_v2 --public-ip-address $PUBLIC_IP_NAME --vnet-name $VNET_NAME --subnet $SUBNET_NAME
 ```
 
 ## Enable the AGIC add-on in existing AKS cluster 
@@ -213,9 +211,15 @@ APPLICATION_GATEWAY_VNET_ID=$(az network vnet show --name $VNET_NAME --resource-
 ```
 az network vnet peering create --name $AKS_TO_APPGW_PEERING_NAME --resource-group $NODE_RESOURCE_GROUP --vnet-name $AKS_VNET_NAME --remote-vnet $APPLICATION_GATEWAY_VNET_ID --allow-vnet-access
 ```
+4. Store New IP address as environment variable by running the following command:
+```
+runtime="2 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do export IP_ADDRESS=$(az network public-ip show --resource-group $RESOURCE_GROUP_NAME --name $PUBLIC_IP_NAME --query ipAddress --output tsv); if ! [ -z $IP_ADDRESS ]; then break; else sleep 10; fi; done
+```
 
 ## Apply updated application YAML complete with AGIC
-An addition to the Voting App quickstart complete with Application Gateway Ingress has been prepared. Use the following command to update the application.
+In order to use the Application Gateway Ingress Controller we deployed we need to re-deploy an update Voting App YML file. The following command will update the application:
+
+The full updated YML file can be viewed at `azure-vote-agic-yml`
 ```
 kubectl apply -f azure-vote-agic.yml
 ```
@@ -227,12 +231,6 @@ Check that the sample application you created is up and running by either visiti
 ```
 kubectl get ingress
 ```
-
-Store New IP address as environment variable by running the following command:
-```
-runtime="2 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do export IP_ADDRESS=$(az network public-ip show --resource-group $RESOURCE_GROUP_NAME --name $PUBLIC_IP_NAME --query ipAddress --output tsv); if ! [ -z $IP_ADDRESS ]; then break; else sleep 10; fi; done
-```
-
 
 ## Add custom subdomain to AGIC
 Now Application Gateway Ingress has been added to the application gateway the next step is to add a custom domain. This will allow the endpoint to be reached by a human readable URL as well as allow for SSL Termination at the endpoint.
@@ -300,45 +298,46 @@ helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.7.0
 ```
 
-4. Apply CertIssuer YAML File 
+4. Apply Certificate Issuer YAML File
+
+    ClusterIssuers are Kubernetes resources that represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request.
+
+    The issuer we are using can be found in the `cluster-issuer-prod.yaml file`
 ```
 envsubst < cluster-issuer-prod.yaml | kubectl apply -f -
 ```
 
-Apply Updated AKS Application via YAML file with SSL
+5. Upate Voting App Application to use Cert-Manager to obtain an SSL Certificate. 
+
+    The full YAML file can be found in `azure-vote-agic-ssl-yml`
 ```
 envsubst < azure-vote-agic-ssl.yml | kubectl apply -f -
 ```
+## Validate application is working
 
-Check to make sure Ingress is working
-```
-kubectl get ingress
-```
-
-Check SSL Certificate - The following command will query the status of the SSL certificate for 3 minutes. 
-In rare occasions it may take up to 15 minutes for Lets Encrypt to issue a successful challenge and the ready state to be 'True'
+Wait for SSL certificate to issue. The following command will query the status of the SSL certificate for 3 minutes.
+ In rare occasions it may take up to 15 minutes for Lets Encrypt to issue a successful challenge and the ready state to be 'True'
 ```
 runtime="10 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do STATUS=$(kubectl get certificate --output jsonpath={..status.conditions[0].status}); echo $STATUS; if [ "$STATUS" = 'True' ]; then break; else sleep 10; fi; done
 ```
 
-for testing purposes - If the SSL Certificate 
+Validate SSL certificate is True by running the follow command:
 ```
 kubectl get certificate --output jsonpath={..status.conditions[0].status}
 ```
+
 Results:
 
 ```expected_similarity=0.8
 True
 ```
 
-Validate certificate status is true - Sometimes there may be a slight delay
-```
-kubectl get certificate
-```
+## Browse your AKS Deployment Secured via HTTPS!
+Run the following command to get the HTTPS endpoint for your application:
 
-## Browse your secured AKS Deployment!
-Paste the following link into your browser with https:// as the prefix
-
+>[!Note]
+> It often takes 2-3 minutes for the SSL certificate to propogate and the site to be reachable via https 
 ```
 echo https://$FQDN
 ```
+Paste this into the browser to validate your deployment.
