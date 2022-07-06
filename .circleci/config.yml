@@ -35,15 +35,15 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
-          name: remove ed formated private key
+          name: remove auto generated ed_25519 formated private key
           command: rm ~/.ssh/id_rsa
 
       - run:
-          name: remove ed formated public key 
+          name: remove auto generated ed_25519 formated public key 
           command: rm ~/.ssh/id_rsa.pub
 
       - run:
-          name: generate new RSA keys
+          name: generate new SSH-2 RSA keys
           command: ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa 
           
       - run:
