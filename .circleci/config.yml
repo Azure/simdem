@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+orbs:
+  azure-cli: circleci/azure-cli@1.0.0
+  kubernetes: circleci/kubernetes@1.3.0
+  helm: circleci/helm@2.0.0
 jobs:
   build:
     docker:
@@ -8,6 +12,10 @@ jobs:
 
     steps:
       - checkout
+      - kubernetes/install-kubectl
+      - helm/install-helm-client
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "requirements.txt" }}
@@ -25,9 +33,17 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-        
+
       - run:
-          name: run tests
+          name: removing keys that are invalid for az aks create
+          command: rm ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
+
+      - run:
+          name: generate new SSH-2 RSA keys
+          command: ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa 
+          
+      - run:
+          name: run SimDem tests
           command: |
             . venv/bin/activate
             python main.py test test
@@ -35,4 +51,9 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-          
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build

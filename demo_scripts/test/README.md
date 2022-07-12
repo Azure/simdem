@@ -7,6 +7,12 @@ succession. This script also lists commands known not to work.
 
 Ensure the test environment is correctly setup.
 
+Create a resource group to deploy Azure Resources to
+
+```
+az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
+```
+
 ## SimDem version check
 
 ```
@@ -36,6 +42,13 @@ Test to see if our prerequesites work. In the setup we cleaned out our
 test files. The [prerequisite test script](./prerequisites/README.md)
 validates whether the file exists and, if it doesn't it will execute
 and create it.
+
+Run Azure Tests
+
+This will run our Azure test scripts. 
+The [Azure scripts](./azureTests/README.md) 
+creates azure resources and validates that our
+current documentation is up to date
 
 Each [prerequisite](./prerequisites/README.md) will only be run once,
 so even though this partucular prereq appears twice it will only
@@ -107,7 +120,7 @@ date
 
 Results: 
 
-```expected_Similarity=0.2
+```expected_Similarity=0.1
 Tue Jun  6 15:23:53 UTC 2017
 ```
 
@@ -154,4 +167,9 @@ Results:
 Normal Underlined Normal
 ```
 
+Delete Azure resource group 
+
+```
+az group delete --name $RESOURCE_GROUP_NAME --no-wait --yes
+```
 
