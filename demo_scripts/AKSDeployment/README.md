@@ -1,40 +1,52 @@
-# Quickstart: Deploy a Scalable & Secure Azure Kubernetes Service cluster using the Azure CLI
-Welcome to this tutorial where we will take you step by step in creating an Azure Kubernetes Web Application with a custom domain that is secured via https. This tutorial assumes you are logged into Azure CLI already and have selected a subscription to use with the CLI. It also assumes that you have Helm installed (Instructions can be found here https://helm.sh/docs/intro/install/). If you have not done this already. Press b and hit ctl c to exit the program.
+# Tutorial: Deploy a Scalable & Secure Azure Kubernetes Service cluster using the Azure CLI
+Azure Kubernetes Service provides a powerful way to manage Kubernetes applications which are Portable, extensibile, and when combined with Azure infrastructure highly scalable. This tutorial covers the steps you in creating an Azure Kubernetes Web Application with a custom domain that is secured via https.
 
-To Login to Az CLI and select a subscription 
-'az login' followed by 'az account list --output table' and 'az account set --subscription "name of subscription to use"'
+## Prerequisites
+ - Access to Azure CLI with an active subscription. To install Azure CLI see https://docs.microsoft.com/en-us/cli/azure/install-azure-cli.
+ - If you have multiple Azure subscriptions, select the appropriate subscription ID in which the resources should be billed using the az account command.
+ - This tutorial requires version 2.0.64 or later of the Azure CLI. If using Azure Cloud Shell, the latest version is already installed.
 
-To Install Az CLI
-If you need to install Azure CLI run the following command - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+ - If you're using a local installation, sign in to the Azure CLI by using the az login command. To finish the authentication process, follow the steps displayed in your terminal. For other sign-in options, see Sign in with the Azure CLI..
+ - Helm installed and configured. To install Helm see  https://helm.sh/docs/intro/install/.
+- Consider using the Bash enviornment in Azure Cloud Shell
+- Envsubst installed. This can be installed in Cloud Shell by running pip install envsubst
 
+## Setup
 
-Assuming the pre requisites are met press enter to proceed
-
-## Define Command Line Variables 
-Most of these variables should be set to a smart default. However, if you want to change them
-press b and run the command export VARIABLE_NAME="new variable value"
+### Define Default Command Line Variables 
+This tutorial will use command line variables. Copy and run the following  the following to set default command line variables 
 
 ```
-echo $RESOURCE_GROUP_NAME
-echo $RESOURCE_LOCATION
-echo $AKS_CLUSTER_NAME
-echo $PUBLIC_IP_NAME
-echo $VNET_NAME
-echo $SUBNET_NAME
-echo $APPLICATION_GATEWAY_NAME
+export RESOURCE_GROUP_NAME="myResourceGroup"
+export RESOURCE_LOCATION="eastus"
+export AKS_CLUSTER_NAME "myAKSCluster"
+export PUBLIC_IP_NAME="myPublicIp"
+export VNET_NAME="myVnet"
+export SUBNET_NAME="mySubnet"
+export APPLICATION_GATEWAY_NAME="myApplicationGateway"
+export APPGW_TO_AKS_PEERING_NAME="AppGWtoAKSVnetPeering"
+export AKS_TO_APPGW_PEERING_NAME="AKStoAppGWVnetPeering"
 ```
 
-For the following variables, unless you manually added them in the env.json, you will be asked to provide an input
+### Define Custom Command Line Variables 
+Custom values are required for the following inputs.
 
-The custom domain must be unique and fit the pattern: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$
-For example mycooldomain - this domain is already taken btw :) 
+We will now choose and define the custom domain which your application will use. The application will be reachable at {mycustomdomain}.eastus.cloudapp.azure.com
+ 
+ Run the following command with a unique custom domain:
+>[!Note] Do not add any capitalization or .com. The custom domain must be unique and fit the pattern: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$
 
-Note - Do not add any capitalization or .com
+
 ```
-if [[ ! $CUSTOM_DOMAIN_NAME =~ ^[a-z][a-z0-9-]{1,61}[a-z0-9] ]]; then echo "Invalid Domain, re enter your domain by pressing b and running 'export CUSTOM_DOMAIN_NAME="customdomainname"' then press r to re-run the previous command and validate the custom domain"; else echo "Custom Domain Set!"; fi; 
+echo $CUSTOM_DOMAIN_NAME
 ```
 
-For the email address any enter a valid email. I.e sarajane@gmail.com
+You can validate the custom domain works by running the following 
+```
+if [[ ! $CUSTOM_DOMAIN_NAME =~ ^[a-z][a-z0-9-]{1,61}[a-z0-9] ]]; then echo "Invalid Domain, run'export CUSTOM_DOMAIN_NAME="customdomainname"' again and choose a new domain"; else echo "Custom Domain Set!"; fi; 
+```
+
+Set a valid email address for SSL validation by running the following:
 ```
 echo $SSL_EMAIL_ADDRESS
 ```
@@ -54,6 +66,8 @@ Create a resource group using the az group create command:
 ```
 az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
+The following is output for successful resource group creation
+
 Results:
 
 ```expected_similarity=0.5
@@ -73,7 +87,6 @@ Results:
 ## Create AKS Cluster 
 Create an AKS cluster using the az aks create command with the --enable-addons monitoring parameter to enable Container insights. The following example creates a cluster named myAKSCluster with one node:
 
-This will take a few minutes
 ```
 az aks create --resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME --node-count 1 --enable-addons monitoring --generate-ssh-keys
 ```
@@ -105,24 +118,31 @@ kubectl get nodes
 ```
 
 ## Deploy the Application 
-A Kubernetes manifest file defines a cluster's desired state, such as which container images to run.
 
-In this quickstart, you will use a manifest to create all objects needed to run the Azure Vote application. This manifest includes two Kubernetes deployments:
+A [Kubernetes manifest file](https://docs.microsoft.com/en-us/azure/aks/concepts-clusters-workloads#deployments-and-yaml-manifests) defines a cluster's desired state, such as which container images to run.
+
+In this quickstart, you will use a manifest to create all objects needed to run the [Azure Vote application](https://github.com/Azure-Samples/azure-voting-app-redis). This manifest includes two Kubernetes deployments:
 
 - The sample Azure Vote Python applications.
 - A Redis instance.
 
-Two Kubernetes Services are also created:
+Two [Kubernetes Services](https://docs.microsoft.com/en-us/azure/aks/concepts-network#services) are also created:
 
 - An internal service for the Redis instance.
 - An external service to access the Azure Vote application from the internet.
 
-A test voting app YML file is already prepared. To deploy this app run the following command 
+1. Create a file named azure-vote.yaml and copy in the following manifest - 
+https://github.com/Azure/simdem/blob/jamesserDev/demo_scripts/AKSDeployment/azure-vote-start.yml
+
+    - If you use the Azure Cloud Shell, this file can be created using code, vi, or nano as if working on a virtual or physical system.
+
+
+2. Deploy the application using the [kubectl apply](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply) command and specify the name of your YAML manifest:
 ```
 kubectl apply -f azure-vote-start.yml
 ```
 
-## Test The Application
+## Test the Application
 When the application runs, a Kubernetes service exposes the application front end to the internet. This process can take a few minutes to complete.
 
 Check progress using the kubectl get service command.
@@ -138,12 +158,16 @@ Store the public IP Address as an environment variable for later use.
 runtime="2 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) -le $endtime ]]; do export IP_ADDRESS=$(kubectl get service azure-vote-front --output jsonpath='{.status.loadBalancer.ingress[0].ip}'); if ! [ -z $IP_ADDRESS ]; then break; else sleep 10; fi; done
 ```
 
-Validate IP Address by running the following:
+Run the following command to obtain the IP Address
 ```
 echo $IP_ADDRESS
 ```
 
-# Add Application Gateway Ingress Controller
+To see the Azure Vote app in action, open a web browser to the external IP address of the application.
+
+# Part 2: Scale your Application
+
+## Add Application Gateway Ingress Controller
 The Application Gateway Ingress Controller (AGIC) is a Kubernetes application, which makes it possible for Azure Kubernetes Service (AKS) customers to leverage Azure's native Application Gateway L7 load-balancer to expose cloud software to the Internet. AGIC monitors the Kubernetes cluster it is hosted on and continuously updates an Application Gateway, so that selected services are exposed to the Internet
 
 AGIC helps eliminate the need to have another load balancer/public IP in front of the AKS cluster and avoids multiple hops in your datapath before requests reach the AKS cluster. Application Gateway talks to pods using their private IP directly and does not require NodePort or KubeProxy services. This also brings better performance to your deployments.
@@ -217,9 +241,14 @@ runtime="2 minute"; endtime=$(date -ud "$runtime" +%s); while [[ $(date -u +%s) 
 ```
 
 ## Apply updated application YAML complete with AGIC
-In order to use the Application Gateway Ingress Controller we deployed we need to re-deploy an update Voting App YML file. The following command will update the application:
 
-The full updated YML file can be viewed at `azure-vote-agic-yml`
+1. Create a file named azure-vote-agic-yaml and copy in the following manifest - https://github.com/Azure/simdem/blob/jamesserDev/demo_scripts/AKSDeployment/azure-vote-agic.yml
+
+    - If you use the Azure Cloud Shell, this file can be created using code, vi, or nano as if working on a virtual or physical system.
+
+
+2. Deploy the updated Voting App AGIC YAML file with Application Gateway Ingress added by running the following command:
+
 ```
 kubectl apply -f azure-vote-agic.yml
 ```
@@ -232,8 +261,17 @@ Check that the sample application you created is up and running by either visiti
 kubectl get ingress
 ```
 
-## Add custom subdomain to AGIC
-Now Application Gateway Ingress has been added to the application gateway the next step is to add a custom domain. This will allow the endpoint to be reached by a human readable URL as well as allow for SSL Termination at the endpoint.
+Run the following command to obtain the IP Address of Application Gateway
+```
+echo $IP_ADDRESS
+```
+
+To see the Azure Vote app in action, open a web browser to the external IP address of the application.
+
+
+# Part 3: Custom Domain and HTTPS
+## Add custom domain to AGIC
+Now that Application Gateway Ingress has been added, the next step is to add a custom domain. This will allow the endpoint to be reached by a human readable URL as well as allow for SSL Termination at the endpoint.
 
 1. Store Unique ID of the Public IP Address as an environment variable by running the following:
 ```
@@ -245,20 +283,21 @@ export PUBLIC_IP_ID=$(az network public-ip list --query "[?ipAddress!=null]|[?co
 az network public-ip update --ids $PUBLIC_IP_ID --dns-name $CUSTOM_DOMAIN_NAME
 ```
 
-3. Validate the resource is reachable via the custom domain.
+3. Run the following command to see the fully qualified domain name (FQDN) of your application. 
 ```
 az network public-ip show --ids $PUBLIC_IP_ID --query "[dnsSettings.fqdn]" --output tsv
 ```
+     Validate the domain works by opening a web browser to the FQDN of the application.
 
 4. Store the custom domain as en enviornment variable. This will be used later when setting up https termination.
 ```
 export FQDN=$(az network public-ip show --ids $PUBLIC_IP_ID --query "[dnsSettings.fqdn]" --output tsv)
 ```
 
-# Add HTTPS termination to custom domain 
+## Add HTTPS termination to custom domain 
 At this point in the tutorial you have an AKS web app with Application Gateway as the Ingress controller and a custom domain you can use to access your application. The next step is to add an SSL certificate to the domain so that users can reach your application securely via https.  
 
-## Set Up Cert Manager
+### Set Up Cert Manager
 In order to add HTTPS we are going to use Cert Manager. Cert Manager is an open source tool used to obtain and manage SSL certificate for Kubernetes deployments. Cert Manager will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.
 
 1. In order to install cert-manager, we must first create a namespace to run it in. This tutorial will install cert-manager into the cert-manager namespace. It is possible to run cert-manager in a different namespace, although you will need to make modifications to the deployment manifests.
@@ -277,7 +316,7 @@ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.7
 kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
 ```
 
-## Obtain certificate via Helm Charts
+### Obtain certificate via Helm Charts
 Helm is a Kubernetes deployment tool for automating creation, packaging, configuration, and deployment of applications and services to Kubernetes clusters.
 
 Cert-manager provides Helm charts as a first-class method of installation on Kubernetes.
@@ -298,18 +337,27 @@ helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.7.0
 ```
 
-4. Apply Certificate Issuer YAML File
+4. Deploy Cluster Issuer 
 
     ClusterIssuers are Kubernetes resources that represent certificate authorities (CAs) that are able to generate signed certificates by honoring certificate signing requests. All cert-manager certificates require a referenced issuer that is in a ready condition to attempt to honor the request.
 
-    The issuer we are using can be found in the `cluster-issuer-prod.yaml file`
+    - Create a file named cluster-issuer-prod.yaml and copy in the following manifest - https://github.com/Azure/simdem/blob/jamesserDev/demo_scripts/AKSDeployment/cluster-issuer-prod.yaml
+
+    - If you use the Azure Cloud Shell, this file can be created using code, vi, or nano as if working on a virtual or physical system.
+
+- Deploy the Cluster Issuer YAML file by running the following command:
+  >[!NOTE] envsubst will replace variables in the YAML file with command line variables previosuly defined
 ```
 envsubst < cluster-issuer-prod.yaml | kubectl apply -f -
 ```
 
-5. Upate Voting App Application to use Cert-Manager to obtain an SSL Certificate. 
+5. Create and deploy Updated YAML manifest which includes ssl termination
+ - Create a file named azure-vote-agic-ssl.yml and copy in the following manifest -https://github.com/Azure/simdem/blob/jamesserDev/demo_scripts/AKSDeployment/azure-vote-agic-ssl.yml
 
-    The full YAML file can be found in `azure-vote-agic-ssl-yml`
+
+- Deploy the YAML file complete with SSL termination by running the following command: 
+    >[!NOTE] envsubst will replace variables in the YAML file with command line variables previosuly defined
+
 ```
 envsubst < azure-vote-agic-ssl.yml | kubectl apply -f -
 ```
@@ -326,8 +374,9 @@ Validate SSL certificate is True by running the follow command:
 kubectl get certificate --output jsonpath={..status.conditions[0].status}
 ```
 
-Results:
+The following is a successful output
 
+Results:
 ```expected_similarity=0.8
 True
 ```
@@ -340,4 +389,4 @@ Run the following command to get the HTTPS endpoint for your application:
 ```
 echo https://$FQDN
 ```
-Paste this into the browser to validate your deployment.
+To see the Azure Vote app in action, open a web browser to the HTTPS Endpoint of the Application.
