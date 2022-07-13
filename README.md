@@ -28,6 +28,9 @@ can have a full desktop experience.
 
 # Try it Out
 
+Note that the Docker container still works but it is no longer maintained and
+does not have the latest fixes and features.
+
 The easiest way to try SimDem out is with a Docker container and work
 through the embedded tutorial. The following command will run the
 latest developer version of the code (i.e. there may be errors).
