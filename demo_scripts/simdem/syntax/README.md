@@ -39,6 +39,18 @@ For example:
 echo "This command will be 'typed' and executed."
 ```
 
+Code blocks can optionally be indented to make the markdown more 
+readable. For example:
+
+    ```
+    echo "Hello world indent"
+    ```
+
+Results:
+```expected_similarity=0.6
+Hello world indent
+```
+
 ### Command Limitations
 
 At the time of writing it is not possible to have interactive

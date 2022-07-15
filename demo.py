@@ -413,7 +413,7 @@ logs throughout execution."""
             elif line.lower().startswith("results:"):
                 # Entering results section
                 in_results_section = True
-            elif line.startswith("```") and not in_code_block:
+            elif line.strip().startswith("```") and not in_code_block:
                 # Entering a code block,
                 in_code_block = True
                 pos = line.lower().find("expected_similarity=")
@@ -423,7 +423,7 @@ logs throughout execution."""
                     expected_similarity = float(similarity)
                 else:
                     expected_similarity = 0.66
-            elif line.startswith("```") and in_code_block:
+            elif line.strip().startswith("```") and in_code_block:
                 # Finishing code block
                 in_code_block = False
                 in_results_section = False
@@ -440,7 +440,7 @@ logs throughout execution."""
                 else:
                     classified_lines.append({"type": "executable",
                                              "text": line})
-            elif line.startswith("#") and not in_code_block and not in_results_section:
+            elif line.strip().startswith("#") and not in_code_block and not in_results_section:
                 # Heading in descriptive text, indicating a new section
                 if line.lower().strip().endswith("# next steps"):
                     in_next_steps = True

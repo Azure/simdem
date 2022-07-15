@@ -21,7 +21,7 @@ echo $SIMDEM_VERSION
 
 Results:
 
-```expected_similarity=0.8
+```expected_similarity=0.4
 0.8.2-dev
 ```
 
