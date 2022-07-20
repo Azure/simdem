@@ -3,6 +3,36 @@
 This is a simple test script. It runs a number of commands in
 succession. This script also lists commands known not to work.
 
+## Basic Code block and results section
+
+Ensure things work with a bash code block in various formats.
+
+```bash
+# This is a code block, this comment will be ignored by SimDem
+echo "This command will be 'typed' and executed."
+```
+
+Code blocks can optionally be indented to make the markdown more 
+readable. For example:
+
+    ```
+    echo "Hello world indent"
+    ```
+
+Results:
+```expected_similarity=0.6
+Hello world indent
+```
+
+If a code block exists with a different language hint, it will not be
+execute, but instead will be output as formatted code, for example:
+
+```json
+{
+  Foo: "bar"
+}
+```
+
 # Setup
 
 Ensure the test environment is correctly setup.

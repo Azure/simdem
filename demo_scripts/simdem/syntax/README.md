@@ -9,7 +9,7 @@ use cases (documentation, tutorial, demo, test and script).
 
 For example, lets take a look at the start of this file this file:
 
-```
+```bash
 head -n 25 README.md 
 ```
 
@@ -28,13 +28,16 @@ aware of. They are detailed in the next few sections.
 ## Code Blocks
 
 In SimDem a code block is marked in exactly the same way it is in
-Markdown, that is with three backticks (``````). Unless a Code Block
+Markdown, that is with three backticks (``````), followed by a language hint. 
+For the code block to be considered executable it is good practice to use
+the `bash` hint. However, the absence of a `bash` hint will result in the
+assumption that it is `bash` code. Unless a Code Block
 is marked as a Results block (see next section) it is assumed that
 this is executable code. SimDem will execute each line individually.
 
 For example:
 
-```
+```bash
 # This is a code block, this comment will be ignored by SimDem
 echo "This command will be 'typed' and executed."
 ```
@@ -42,13 +45,22 @@ echo "This command will be 'typed' and executed."
 Code blocks can optionally be indented to make the markdown more 
 readable. For example:
 
-    ```
+    ```bash
     echo "Hello world indent"
     ```
 
 Results:
 ```expected_similarity=0.6
 Hello world indent
+```
+
+If a code block exists with a different language hint, it will not be
+execute, but instead will be output as formatted code, for example:
+
+```json
+{
+  Foo: "bar"
+}
 ```
 
 ### Command Limitations
