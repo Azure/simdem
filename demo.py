@@ -179,7 +179,7 @@ class Demo(object):
         self.ui.log("debug", "Running script in " + self.mode + " mode")
 
         if mode == "script":
-            # print(self.get_bash_script())
+            print(self.get_bash_script())
             return
         elif mode == "demo":
             # we automate the prereq steps so start in auto mode without simulation
@@ -261,6 +261,7 @@ class Demo(object):
                 self.set_script_dir(match.groups()[0], self.script_dir)
                 self.filename = match.groups()[1]
                 self.run(self.mode)
+
         self.output_results()
 
     def output_results(self):
@@ -320,7 +321,7 @@ logs throughout execution."""
                 passed = False
 
         if len(output) == 0:
-            output = "Completed run succesfully"
+            output = "Completed run."
                 
         if passed:
             if self.parent_script_dir:
@@ -399,8 +400,9 @@ logs throughout execution."""
 
         classified_lines = []
 
+        # TODO: this for loop is awful. We need to make this a state machine. It has grown out of control.
         for line in lines:
-            # print("Line: " + line)
+            # print("Classifying line: " + line)
             if line.startswith("START TEST FILE: "):
                 test_file_path = line[17:]
                 self.ui.log("debug", "Entering test file: " + test_file_path)
@@ -414,26 +416,29 @@ logs throughout execution."""
                 test_file_path = None
             elif line.lower().startswith("results:"):
                 # Entering results section
-                # print("Entering results section")
+                # print("Entering results section " + line)
                 in_results_section = True
-            elif not in_code_block and (line.strip().lower() == "```bash" or line.strip().lower() == "```"):
+            elif not in_code_block and line.strip().lower() == "```bash":
                 # Entering a code block,
-                # print("Entering executable code block")
+                # print("Entering executable code block " + line);
                 in_code_block = True 
+            elif not in_code_block and not in_non_executable_code_block and line.startswith("```"):
+                if (not in_results_section and line.strip() == "```"):
+                        self.ui.warning("Found a backtick line with no language hint near line " + str(len(classified_lines) + 1) + " of '" + file + "'\n. Treating as a non-executable code block, this can result in failed tests if this is intended to be executable. Add a 'bash' language hint to mark it as executable.")
+                # Entering a non executable code block - one we don't know how to execute
+                #print("Entering a non-executable block " + line)
+                in_non_executable_code_block = True
                 pos = line.lower().find("expected_similarity=")
                 if pos >= 0:
                     pos = pos + len("expected_similarity=")
                     similarity = line[pos:]
                     expected_similarity = float(similarity)
                 else:
-                    expected_similarity = 0.66
-            elif not in_code_block and not in_non_executable_code_block and not in_results_section and line.startswith("```"):
-                # Entering a non executable code block - one we don't know how to execute
-                # print("In a non-executable block " + line)
-                in_non_executable_code_block = True
+                    expected_similarity = 0.5
+                # print("Expected similarity set to " + str(expected_similarity))
             elif (in_code_block or in_non_executable_code_block or in_results_section) and line.strip().startswith("```"):
                 # Finishing code block
-                # print("Exiting code block")
+                # print("Exiting code block " + line)
                 in_code_block = False
                 in_non_executable_code_block = False
                 in_results_section = False
@@ -445,7 +450,8 @@ logs throughout execution."""
                                          "text": line})
             elif in_code_block and not in_results_section:
                 # Executable line
-                if line.startswith("#"):
+                # print("Add executable line " + line)
+                if line.strip().startswith("#"):
                     # comment
                     pass
                 else:
@@ -517,13 +523,12 @@ logs throughout execution."""
         failed_tests = 0
         passed_tests = 0
         done_prerequisites = False
-        in_validation = False
-        executed_code_in_this_section = False
-        next_steps = []
 
         if not self.is_testing:
             self.ui.clear()
         for line, next_line in get_next(lines):
+            # print("Executing line of Type: " + line["type"])
+
             if line["type"] == "start_test_file":
                 source_file_directory = os.path.dirname(line["file"])
                 self.ui.get_shell().run_command("pushd " + source_file_directory)
@@ -540,13 +545,14 @@ logs throughout execution."""
             elif line["type"] != "result" and in_results:
                 # Finishing results section
                 if self.is_testing:
-                    ansi_escape = re.compile(r'\x1b[^m]*m')
                     results = self.is_pass(expected_results, self.strip_ansi(actual_results), expected_similarity)
                     self.ui.test_results(results)
                     self.all_results.append(results)
                     if results["passed"]:
                         passed_tests += 1
                     else:
+                        # print("Failed test")
+                        # print(line)
                         failed_tests += 1
                         if self.is_fast_fail:
                             break
@@ -566,6 +572,8 @@ logs throughout execution."""
                         self.is_simulation = True
                         self.is_automated = False
             elif line["type"] == "executable":
+                # print("Execting:")
+                # print(line["text"])
                 if line["text"].strip() == "":
                     break
                 if not self.is_learning:
@@ -585,6 +593,8 @@ logs throughout execution."""
                     self.ui.heading(line["text"])
             else:
                 if not self.is_simulation and (line["type"] == "description" or line["type"] == "validation"):
+                    # print("Description:")
+                    # print(line)
                     # Descriptive text
                     if not self.is_testing:
                         self.ui.description(line["text"])
@@ -674,7 +684,7 @@ logs throughout execution."""
         if self.validate(lines):
             self.ui.information("Validation passed.", True)
         else:
-            self.ui.information("Validation failed. Running prerequisite steps in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'", True)
+            self.ui.information("Validation failed of pre-requisite execution did not pass. Running prerequisite steps in '" + os.path.abspath(os.path.join(self.script_dir, self.filename)) + "'", True)
             self.ui.new_para()
             self.ui.check_for_interactive_command()
             self.run(mode)

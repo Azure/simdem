@@ -11,7 +11,7 @@ We should be able to run [nested prerequisites](./nested_prereq.md).
 
 # Create the test file
 
-```
+```bash
 touch $SIMDEM_TEMP_DIR/test/prereq_ran
 ```
 
@@ -21,7 +21,8 @@ If the `prereq_ran` file exists then we don't need to run this
 script. In our tests the setup phase removes this file so the
 validation test should always fail.
 
-```
+```bash
+echo temp is $SIMDEM_TEMP_DIR
 ls $SIMDEM_TEMP_DIR/test
 ```
 

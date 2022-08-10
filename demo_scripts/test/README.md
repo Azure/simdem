@@ -15,12 +15,13 @@ echo "This command will be 'typed' and executed."
 Code blocks can optionally be indented to make the markdown more 
 readable. For example:
 
-    ```
+    ```bash
     echo "Hello world indent"
     ```
 
 Results:
-```expected_similarity=0.6
+
+```expected_similarity=0.5
 Hello world indent
 ```
 
@@ -39,13 +40,13 @@ Ensure the test environment is correctly setup.
 
 Create a resource group to deploy Azure Resources to
 
-```
+```bash
 az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
 
 ## SimDem version check
 
-```
+```bash
 echo $SIMDEM_VERSION
 ```
 
@@ -60,7 +61,7 @@ Results:
 Ensure that our working files folder exists and that there are no
 residual files from previus test runs.
 
-```
+```bash
 echo $SIMDEM_TEMP_DIR
 mkdir -p $SIMDEM_TEMP_DIR/test
 rm -Rf $SIMDEM_TEMP_DIR/test/*
@@ -90,32 +91,32 @@ demos where a prereq may be included in more than one part.
 The prerequisite script should have run and created a `prereq_ran`
 file.
 
-```
+```bash
 ls $SIMDEM_TEMP_DIR/test
 ```
 
 Results:
 
 ```
-prereq_ran
+nested_prereq_ran  prereq_ran
 ```
 
 
 # Directory Check
 
-```
+```bash
 head -n 1 README.md
 ```
 
 Results: 
 
-``` Expected_Similarity=0.8
+```
 # SimDem Test Script
 ```
 
 # Simple Echo
 
-``` 
+```bash
 echo "Hello world" 
 ```
 
@@ -127,7 +128,7 @@ Hello world
 
 # Code comments
 
-```
+```bash
 # This is a comment and should be ignored
 echo "This output should be displayed, the comment before this line should be ignored"
 ```
@@ -144,14 +145,14 @@ When we know the results will be different and we want to use them in
 tests we need to override the similarity expected by adding
 `expected_similarity=x.y` in the start line of the results block:
 
-```
+```bash
 date
 ```
 
 Results: 
 
 ```expected_Similarity=0.1
-Tue Jun  6 15:23:53 UTC 2017
+Tue Jun  6 15:23:53 UTC 2022
 ```
 
 # For Loop
@@ -160,7 +161,7 @@ Because SimDem will interactively ask for values for undefined
 variables it is sometimes necessary to first declare a variable to
 prevent this action. For example:
 
-```
+```bash
 i=0
 for i in {0..10}; do echo "Welcome $i times"; done
 ```
@@ -187,19 +188,28 @@ To make it easier to write scripts we don't want to include ANSI
 escape sequences (such as colors and text deocration) in the results
 section. SimDem automatically strips these when capturing the results.
 
-```
+```bash
 printf "Normal \e[4mUnderlined\e[24m Normal"
 ```
 
 Results:
 
-```expected_similarity=0.9
+```
 Normal Underlined Normal
 ```
 
 Delete Azure resource group 
 
-```
-az group delete --name $RESOURCE_GROUP_NAME --no-wait --yes
+```bash
+az group delete --name $RESOURCE_GROUP_NAME --no-wait --yes --verbose
 ```
 
+Results:
+
+```expected_similarity=0.5
+Command ran in 2.344 seconds (init: 0.067, invoke: 2.277)
+```
+
+# Tests Complete
+
+Well that's all folks...

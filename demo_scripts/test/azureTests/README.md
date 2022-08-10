@@ -9,12 +9,13 @@ You need to use the environment variable $RESOURCE_GROUP_NAME for any resource g
 
 Create Azure resources
 
-```
+```bash
 echo $RESOURCE_GROUP_NAME
 ```
 
 Check resource group exists
-```
+
+```bash
 az group exists --name $RESOURCE_GROUP_NAME
 ```
 
