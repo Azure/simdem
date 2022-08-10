@@ -1,13 +1,9 @@
-NOTICE: SimDem is undergoing a complete rewrite. What started out as a hack to solve a problem has taken on a life of its own.
-Consequently the code in SimDem is, well awful! So Tommy Falgout is rewriting it. The goal is for it to be backward compatible
-with the current version, but it will be much more maintainable and thus more conducive to improvement. At the time of writing 
-(end of Feb 2018) it's getting close to being ready to replace the current code. We [encourage you to take a look](https://github.com/Azure/simdem/tree/simdem2) - patches welcome.
+## Overview
 
 [![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
 
-This project provides ways to write tutorials in markdown that then
-become interactive demo's and automated tests. You can run in a number
-of different modes:
+SimDem is an open source projcet that will provide tooling that empowers all people to write tutorials in markdown that then
+become interactive demo's and automated tests. You can run Simdem in four different modes:
 
   * Tutorial: Displays the descriptive text of the tutorial and pauses
     at code blocks to allow user interaction.
@@ -19,12 +15,17 @@ of different modes:
     markdown file) to be considered correct.
   * Script: Creates an executable bash script from the document
   * Auto: allows any of the above modes to be run but without user
-    interaction
 
 The application can be run in either a CLI mode, which is ideal for
 console based demo's and tutorials, or it can be run using NoVNC for a
 browser based desktop experience - that is, using only a browser you
 can have a full desktop experience.
+
+**NOTICE**: **SimDem is a proof of concept with lots of bugs. SimDem is undergoing a complete rewrite. As such, it may break unexpectedly.**
+If you are able to contribute, we want your help!
+Currently, Tommy Falgout is rewriting a lot of SimDem to improve it with the goal for it to be backward compatible
+with the current version. The outcome of this reqrite will allow SimDem to be much more maintainable and more conducive to future improvement. At the time of writing 
+(end of Feb 2018) it's getting close to being ready to replace the current code. We [encourage you to take a look](https://github.com/Azure/simdem/tree/simdem2) - patches welcome.
 
 # Try it Out
 
@@ -78,7 +79,7 @@ you are writing markdown with code blocks. For more information see
 
 There are two containers available, the 'cli' version and the 'novnc'
 version. The first is command line only, the latter provides a browser
-based Linux desktop envirnment in which the CLI is availale. The NoVNC
+based Linux desktop envirnment in which the CLI is available. The NoVNC
 version makes it easy to do demo's with browser based steps without
 having to install any software (other than Docker) on your client.
 
@@ -87,12 +88,13 @@ custom scripts into it.
 
 ### CLI Container
 
-The CLI container can be run in four modes:
+The CLI container can be run in five modes:
 
-Tutorial : in which full textual descriptions are provided
-Learn    : similar to Tutorial mode, but users are expected to type the commands
-Demo     : in which no textual descriptions are shown and commands are "typed"
-Test     : run the tests
+* Tutorial   : Full textual descriptions are provided
+* Learn      : Similar to Tutorial mode, but users are expected to type the commands
+* Demo       : No textual descriptions are shown and commands are "typed"
+* Preparation: Only the prerequisite steps are executed. This is useful for setting up the environment for a demo
+* Test       : Run the tests to validate script
 
 #### Tutorial Mode
 
@@ -208,43 +210,16 @@ python3 main.py --help
 ## Azure Cloud Shell
 
 The CLI version of SimDem works fine in Azure Cloud Shell, but you
-need to install it manually at this time. Here's how.
-
-
-NOTE: in the current code (at the time of writing) the HEAD version
-does not work because of the need to install some dependencies that
-CloudShell does not like. We are therefore going to use an earlier
-version of SimDem, this means some of the more recent features will
-not be available. See issues https://github.com/Azure/simdem/issues/19
-and https://github.com/Azure/simdem/issues/22.
-
+need to install it manually at this time. The general format is: `python3 main.py <FLAVOR> <SCRIPT_DIR>` 
+The following code snippet allows you to clone the simdem repo and allow you to run the simdem script in tutorial mode.
 
 ```
 git clone https://github.com/Azure/simdem.git
 cd simdem
-git checkout tags/CloudShell
 
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
-mkdir -p ~/bin/simdem-dev
-cp -r * ~/bin/simdem-dev
-chmod +x ~/bin/simdem-dev/main.py
-
-echo 'export PATH=$PATH:~/bin/simdem-dev' >> ~/.bashrc
-ln -s ~/bin/simdem-dev/main.py ~/bin/simdem
-```
-
-Now that you have the code and enviornment setup you will first need
-to acivite the Python Virtual Environment.
-
-```
-source simdem-env/bin/activate
-```
-
-Now you can run the Simdem CLI:
-
-```
-simdem --version
+python3 main.py tutorial simdem
 ```
 
 # Hacking Guide
