@@ -1,5 +1,8 @@
 ## Overview
 
+**NOTICE**: **SimDem is a proof of concept with lots of bugs. SimDem is undergoing a complete rewrite. As such, it is still in development and features may be removed or iterated on as we refine executable docs.**
+**If you are able to contribute, we want your help!**
+
 [![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
 
 SimDem is an open source projcet that will provide tooling that empowers all people to write tutorials in markdown that then
@@ -21,11 +24,12 @@ console based demo's and tutorials, or it can be run using NoVNC for a
 browser based desktop experience - that is, using only a browser you
 can have a full desktop experience.
 
-**NOTICE**: **SimDem is a proof of concept with lots of bugs. SimDem is undergoing a complete rewrite. As such, it may break unexpectedly.**
-If you are able to contribute, we want your help!
-Currently, Tommy Falgout is rewriting a lot of SimDem to improve it with the goal for it to be backward compatible
-with the current version. The outcome of this reqrite will allow SimDem to be much more maintainable and more conducive to future improvement. At the time of writing 
-(end of Feb 2018) it's getting close to being ready to replace the current code. We [encourage you to take a look](https://github.com/Azure/simdem/tree/simdem2) - patches welcome.
+Currently, Tommy Falgout is rewriting a lot of SimDem to improve it, while concurrently 
+aiming for it backward compatible with the current version. 
+The outcome of this reqrite will allow SimDem to be much more maintainable 
+and more conducive to future improvement. At the time of writing (end of Feb 2018) 
+it's getting close to being ready to replace the current code. 
+We [encourage you to take a look](https://github.com/Azure/simdem/tree/simdem2) - patches welcome.
 
 # Try it Out
 
