@@ -20,7 +20,7 @@ port = 8080
 
 # Set is_debug to True if you want to run in debug mode. This setting
 # can be overriden in the command like with the `--debug true` option.
-is_debug = False
+is_debug = True
 
 # Available modes of execution
 modes = [ "tutorial", "demo", "learn", "test", "script", "prep" ]

@@ -98,7 +98,7 @@ cat ../env.json
 Results:
 
 <!-- expected_similarity = 0.3 -->
-```json
+```expected_similarity = 0.3
 {
   "PARENT_TEST": "Hello from the parent"
 }
@@ -194,7 +194,7 @@ echo $CAPTURED_OUTPUT
 
 Results:
 
-```
+```expected_similarity = 0.2
 bar
 ```
 

@@ -428,14 +428,14 @@ logs throughout execution."""
                 # Entering a non executable code block - one we don't know how to execute
                 #print("Entering a non-executable block " + line)
                 in_non_executable_code_block = True
-                pos = line.lower().find("expected_similarity=")
+                pos = line.lower().find("expected_similarity")
                 if pos >= 0:
-                    pos = pos + len("expected_similarity=")
-                    similarity = line[pos:]
+                    pos = line.find("=", pos) + 1
+                    similarity = line[pos:].strip()
                     expected_similarity = float(similarity)
                 else:
                     expected_similarity = 0.5
-                # print("Expected similarity set to " + str(expected_similarity))
+                self.ui.log("debug", "Expected similarity set to " + str(expected_similarity) + " because of line '" + line + "'")
             elif (in_code_block or in_non_executable_code_block or in_results_section) and line.strip().startswith("```"):
                 # Finishing code block
                 # print("Exiting code block " + line)
@@ -581,7 +581,6 @@ logs throughout execution."""
                     self.ui.check_for_interactive_command()
                 self.current_command = line["text"]
                 actual_results = self.ui.simulate_command()
-                executed_code_in_this_section = True
                 self.current_description = ""
                 if not self.is_automated and not next_line["type"] == "executable":
                     self.ui.check_for_interactive_command()
