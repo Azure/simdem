@@ -218,12 +218,12 @@ need to install it manually at this time. The general format is: `python3 main.p
 The following code snippet allows you to clone the simdem repo and allow you to run the simdem script in tutorial mode.
 
 ```
-git clone https://github.com/Azure/simdem.git
-cd simdem
+git clone git@github.com:vickydelk1/simdem1.git
+cd simdem1
 
 pip3 install -r requirements.txt
 
-python3 main.py tutorial simdem
+python3 main.py tutorial simdem1
 ```
 
 # Hacking Guide
