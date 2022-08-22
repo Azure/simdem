@@ -4,9 +4,8 @@ Common use cases include: Deploying API endpoints, Hosting background processing
 
 # Prerequisites
 
-First we need to check you are logged in to the Azure in the CLI. The following command will check to see if you are logged in. If not it will open a browser and take you through the login steps. 
-
-#FIXME az login --scope https://management.core.windows.net//.default
+First we need to check you are logged in to the Azure in the CLI. The following command will check to see if you are logged in. 
+If not it will open a browser and take you through the login steps.
 
 # Step 1 - Install Azure CLI Extension
 
@@ -22,8 +21,8 @@ az extension add --name containerapp
 Resources are manageable items available through Azure like virtual machines or storage accounts. Resource providers supply Azure resources. 
 Microsoft.App is a resource provider for Contianer Apps.
 Microsoft.OperationalInsights is a resource for Azure Monitor.
-The `--wait` parameter delays the next instruction until the command is completed.
 
+The `--wait` parameter delays the next instruction until the command is completed.
 ```
 az provider register --namespace Microsoft.App --wait
 ```
@@ -53,6 +52,7 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 Individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps.
 Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. 
 This next command will create a Container App Environment in the Resource Group created in `Step 3`.
+
 Command will take ~3 minutes to complete.
 ```
 echo $CONTAINERAPPS_ENVIRONMENT
@@ -66,11 +66,14 @@ Now that you have an environment created, you can deploy your first container ap
 With the containerapp create command, deploy a container image to Azure Container Apps.
 NOTE: Make sure the value for the --image parameter is in lower case.
 By setting `--ingress` to external, you make the container app available to public requests.
+
 Command will take ~3 minutes to complete.
 ```
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
 # Step 6 - Test Container App with curl
+The `az containerapp show` command returns the fully qualified domain name of a container app.
+In the next command we are setting the domain name to the variable `CONTAINERAPP_FQDN`
 ```
 CONTAINERAPP_FQDN=$(az containerapp show --resource-group $RESOURCE_GROUP --name $CONTAINER_APP_NAME --query "properties.configuration.ingress.fqdn" --out tsv)
 ```
@@ -80,12 +83,14 @@ echo "https://$CONTAINERAPP_FQDN"
 ```
 curl "https://$CONTAINERAPP_FQDN"
 ```
+
 #Success! You now have scccessfully created a Container Apps image in Azure. 
 If you would like to delete the resources created push any button.
-If you want to keep the resources created, push `b` and CTRL + C.
+If you want to keep the resources created, push `b` and `CTRL + C` to exit the program.
 
 # Step 7 - Delete Resource Group
 The Container App and Container App Environment will be deleted with command below.
+
 ```
 az group delete --name $RESOURCE_GROUP --yes
 ```
