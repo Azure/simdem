@@ -41,7 +41,11 @@ When this command has completed it will return a JSON file. You can see what the
 
 ```
 echo $LOCATION
+```
+```
 echo $RESOURCE_GROUP
+```
+```
 az group create --name $RESOURCE_GROUP --location $LOCATION
 ```
 
@@ -52,6 +56,8 @@ This next command will create a Container App Environment in the Resource Group 
 Command will take ~3 minutes to complete.
 ```
 echo $CONTAINERAPPS_ENVIRONMENT
+```
+```
 az containerapp env create --name $CONTAINERAPPS_ENVIRONMENT --resource-group $RESOURCE_GROUP --location $LOCATION
 ```
 
@@ -65,8 +71,9 @@ Command will take ~3 minutes to complete.
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
 # Step 6 - Test Container App with curl
-
+```
 CONTAINERAPP_FQDN=$(az containerapp show --resource-group $RESOURCE_GROUP --name $CONTAINER_APP_NAME --query "properties.configuration.ingress.fqdn" --out tsv)
+```
 ```
 echo "https://$CONTAINERAPP_FQDN"
 ```
@@ -78,7 +85,7 @@ If you would like to delete the resources created push any button.
 If you want to keep the resources created, push `b` and CTRL + C.
 
 # Step 7 - Delete Resource Group
-
+The Container App and Container App Environment will be deleted with command below.
 ```
 az group delete --name $RESOURCE_GROUP --yes
 ```
