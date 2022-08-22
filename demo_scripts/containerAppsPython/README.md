@@ -66,11 +66,12 @@ az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GRO
 ```
 # Step 6 - Test Container App with curl
 
-CONTAINERAPP_FQDN=$(az containerapp show --resource-group $RESOURCE_GROUP --name $CONTAINER_APP_NAME --query 'properties.configuration.ingress.fqdn' --out tsv)
+CONTAINERAPP_FQDN=$(az containerapp show --resource-group $RESOURCE_GROUP --name $CONTAINER_APP_NAME --query "properties.configuration.ingress.fqdn" --out tsv)
 ```
-echo "https://${CONTAINERAPP_FQDN}"
-
-curl "https://${CONTAINERAPP_FQDN}"
+echo "https://$CONTAINERAPP_FQDN"
+```
+```
+curl "https://$CONTAINERAPP_FQDN"
 ```
 #Success! You now have scccessfully created a Container Apps image in Azure. 
 If you would like to delete the resources created push any button.
