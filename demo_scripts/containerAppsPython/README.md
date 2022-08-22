@@ -6,7 +6,7 @@ Common use cases include: Deploying API endpoints, Hosting background processing
 
 First we need to check you are logged in to the Azure in the CLI. The following command will check to see if you are logged in. If not it will open a browser and take you through the login steps. 
 
-FIXME az login --scope https://management.core.windows.net//.default
+#FIXME az login --scope https://management.core.windows.net//.default
 
 # Step 1 - Install Azure CLI Extension
 
@@ -19,15 +19,15 @@ az extension add --name containerapp
 ```
 
 # Step 2 - Register Resource Providers
-Resources are manageable items available through Azure like virtual machines or storage accounts.
-Resource providers supply Azure resources. 
+Resources are manageable items available through Azure like virtual machines or storage accounts. Resource providers supply Azure resources. 
 Microsoft.App is a resource provider for Contianer Apps.
 Microsoft.OperationalInsights is a resource for Azure Monitor.
 The `--wait` parameter delays the next instruction until the command is completed.
 
 ```
 az provider register --namespace Microsoft.App --wait
-
+```
+```
 az provider register --namespace Microsoft.OperationalInsights --wait
 ```
 
@@ -49,15 +49,18 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 Individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps.
 Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. 
 This next command will create a Container App Environment in the Resource Group created in `Step 3`.
-
+Command will take ~3 minutes to complete.
 ```
 echo $CONTAINERAPPS_ENVIRONMENT
 az containerapp env create --name $CONTAINERAPPS_ENVIRONMENT --resource-group $RESOURCE_GROUP --location $LOCATION
 ```
 
 # Step 5 - Create Container App with a Public Image
+Now that you have an environment created, you can deploy your first container app. 
+With the containerapp create command, deploy a container image to Azure Container Apps.
+NOTE: Make sure the value for the --image parameter is in lower case.
 By setting `--ingress` to external, you make the container app available to public requests.
-
+Command will take ~3 minutes to complete.
 ```
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
