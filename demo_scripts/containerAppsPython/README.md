@@ -7,19 +7,11 @@ First we need to check you are logged in to the Azure in the CLI. The following 
 
 FIXME az login --scope https://management.core.windows.net//.default
 
-```
-echo $LOCATION
-echo $RESOURCE_GROUP
-az group create --name $RESOURCE_GROUP --location $LOCATION
-```
-# az group delete --name $RESOURCE_GROUP --yes
-
-
 # Step 1 - Install Azure CLI Extension
 
 The Azure CLI offers the capability to load extensions. 
 Extensions allow you gain access to experimental and pre-release commands.
-Currently, Container App is in preview.
+Currently, Container App is in preview so it requries an extension.
 
 ```
 az extension add --name containerapp
@@ -30,13 +22,14 @@ Resources are manageable items available through Azure like virtual machines or 
 Resource providers supply Azure resources. 
 Microsoft.App is a resource provider for Contianer Apps.
 Microsoft.OperationalInsights is a resource for Azure Monitor.
-The `--wait` delays the next instruction until the command is completed.
+The `--wait` parameter delays the next instruction until the command is completed.
 
 ```
 az provider register --namespace Microsoft.App --wait
 
 az provider register --namespace Microsoft.OperationalInsights --wait
 ```
+
 # Step 3 - Create a resource group
 
 A resource group is a container for related resources. All resources must be placed in a resource group. We will create one for this tutorial. 
