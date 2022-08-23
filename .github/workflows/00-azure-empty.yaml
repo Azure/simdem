@@ -1,0 +1,32 @@
+name: 00-azure-empty
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource_group:
+        description: 'Resource Group to empty.'
+        default: ''
+        required: true
+
+jobs:
+  az-deployment:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: az deployment group create
+      env:
+        RESOURCE_GROUP: ${{ github.event.inputs.resource_group }}
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        GITHUB_SHA: ${{ github.sha }}
+      run: |
+        cd $GITHUB_WORKSPACE/
+        echo "emptying resource group: ${RESOURCE_GROUP}"
+        echo 'output group string = resourceGroup().id' > empty.bicep
+        az deployment group create \
+          --resource-group $RESOURCE_GROUP \
+          --mode complete \
+          --template-file ./empty.bicep
+          

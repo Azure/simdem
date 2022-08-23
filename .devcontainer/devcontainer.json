@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/azure-cli
+{
+	"name": "Azure CLI",
+	"dockerFile": "Dockerfile",
+	
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {		
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"ms-vscode.azurecli",
+				"golang.go",
+				"ms-azuretools.vscode-bicep",
+				"ms-python.python",
+				"ms-vsliveshare.vsliveshare-pack"
+			]
+		}
+	},
+	
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "az --version",
+
+	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode",
+	"build": {
+		"args": {
+			"UPGRADE_PACKAGES": "true"
+		}
+	},
+	"features": {
+		"docker-from-docker": "latest",
+		"kubectl-helm-minikube": "latest",
+		"github-cli": "latest",
+		"azure-cli": "latest",
+		"python": "latest",
+		"golang": "latest"
+	}
+}
