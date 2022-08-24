@@ -2,17 +2,28 @@
 Azure Container Apps enables you to run microservices and containerized applications on a serverless platform. 
 Common use cases include: Deploying API endpoints, Hosting background processing applications and more.
 
-# Prerequisites
-
+# Azure CLI Login
 First we need to check you are logged in to the Azure in the CLI. The following command will check to see if you are logged in. 
 If not it will open a browser and take you through the login steps.
 
-# Step 1 - Install Azure CLI Extension
+To Login to Az CLI and select a subscription 
+`az login` followed by `az account list --output table` and `az account set --subscription "name of subscription to use"`
 
+To Install Az CLI
+If you need to install Azure CLI run the following command: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Prerequisites
+
+Before you can begin you need to follow the prerequisite steps found here
+```
+echo https://github.com/Azure-Samples/azure-opensource-labs/$PREREQUISITES
+```
+
+# Step 1 - Install Azure CLI Extension
 The Azure CLI offers the capability to load extensions. 
 Extensions allow you gain access to experimental and pre-release commands.
-Currently, Container App is in preview so it requries an extension.
 
+Currently, Container App is in preview so it requries an extension.
 ```
 az extension add --name containerapp
 ```
@@ -31,13 +42,14 @@ az provider register --namespace Microsoft.OperationalInsights --wait
 ```
 
 # Step 3 - Create a resource group
-
 A resource group is a container for related resources. All resources must be placed in a resource group. We will create one for this tutorial. 
 
 This command uses two environment variables, `RESOURCE_GROUP` is the name of the resource group and will be commonly using in other commands.
 `LOCATION` is the data center that the resource group will be created in. 
-When this command has completed it will return a JSON file. You can see what the values are set at for this tutorial in that output.
+When this command has completed it will return a JSON file. 
 
+You can see what the variables are set at for this tutorial in that output.
+If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
 ```
 echo $LOCATION
 ```
@@ -54,6 +66,9 @@ Container Apps in the same environment are deployed in the same virtual network 
 This next command will create a Container App Environment in the Resource Group created in `Step 3`.
 
 Command will take ~3 minutes to complete.
+
+You can see what the variables are set at for this tutorial in that output.
+If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
 ```
 echo $CONTAINERAPPS_ENVIRONMENT
 ```
@@ -68,6 +83,15 @@ NOTE: Make sure the value for the --image parameter is in lower case.
 By setting `--ingress` to external, you make the container app available to public requests.
 
 Command will take ~3 minutes to complete.
+
+You can see what the variables are set at for this tutorial in that output.
+If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
+```
+echo $CONTAINER_APP_NAME
+```
+```
+echo $CONTAINER_IMAGE
+```
 ```
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
