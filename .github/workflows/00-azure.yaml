@@ -20,5 +20,6 @@ jobs:
         GITHUB_SHA: ${{ github.sha }}
       run: |
         cd $GITHUB_WORKSPACE/
+        pip3 install -r requirements.txt
         python3 main.py test test
         
