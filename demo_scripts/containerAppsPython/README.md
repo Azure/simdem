@@ -15,8 +15,21 @@ If you need to install Azure CLI run the following command: curl -sL https://aka
 # Prerequisites
 
 Before you can begin you need to follow the prerequisite steps found here
+
+1. Visit https://github.com/asw101/python-fastapi-pypy
+2. Click "Use this template"
+3. Name your repo "serverless-python". 
+    * **If your GitHub repository Private rather than Public in step 3, you will need to click on "Package settings" on the right hand side, scroll down and click "Change visibility" button to make your package public.**
+4. Create a new branch called release
+5. Click on the Actions tab
+6. View the output of the action
+7. Return to the main repo (Code tab)
+8. Click on "serverless-python" under "Packages" on the right hand side
+9. Copy the `docker pull` command which will include the image name
+10. Update the `GITHUB_USERNAME` environment variable below with your GitHub username or organization name.
+    * **Press `b` and run the command `GITHUB_USERNAME="username"` to set variable.**
 ```
-echo https://github.com/Azure-Samples/azure-opensource-labs/$PREREQUISITES
+echo $GITHUB_USERNAME
 ```
 
 # Step 1 - Install Azure CLI Extension
@@ -65,7 +78,7 @@ Individual container apps are deployed to a single Container Apps environment, w
 Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. 
 This next command will create a Container App Environment in the Resource Group created in `Step 3`.
 
-Command will take ~3 minutes to complete.
+**Command will take ~3 minutes to complete.**
 
 You can see what the variables are set at for this tutorial in that output.
 If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
@@ -75,29 +88,23 @@ echo $CONTAINERAPPS_ENVIRONMENT
 ```
 az containerapp env create --name $CONTAINERAPPS_ENVIRONMENT --resource-group $RESOURCE_GROUP --location $LOCATION
 ```
-# Step 5 - Input GitHub Username for an Individual or organization
-For the next step we need to use your GitHub username to connect to the Container Image.
-The current value for GITHUB_USERNAME is empty. See below.
-```
-echo $GITHUB_USERNAME
-```
-Press `b` and run the command `GITHUB_USERNAME="username"` to set variable.
+
+# Step 5 - Create Container App with a Public Image
+Now that you have an environment created, you can deploy your first container app. 
+With the containerapp create command, deploy a container image to Azure Container Apps.
+*NOTE: Make sure the value for the --image parameter is in lower case.*
+By setting `--ingress` to external, you make the container app available to public requests.
+
+**Command will take ~3 minutes to complete.**
+
+You can see what the variables are set at for this tutorial in that output.
+If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
 ```
 echo $GITHUB_USERNAME
 ```
 ```
 CONTAINER_IMAGE=ghcr.io/$GITHUB_USERNAME/serverless-python:release
 ```
-# Step 6 - Create Container App with a Public Image
-Now that you have an environment created, you can deploy your first container app. 
-With the containerapp create command, deploy a container image to Azure Container Apps.
-NOTE: Make sure the value for the --image parameter is in lower case.
-By setting `--ingress` to external, you make the container app available to public requests.
-
-Command will take ~3 minutes to complete.
-
-You can see what the variables are set at for this tutorial in that output.
-If you want to change them press `b` and run the command export `VARIABLE_NAME="new variable value"`
 ```
 echo $CONTAINER_APP_NAME
 ```
@@ -108,7 +115,7 @@ echo $CONTAINER_IMAGE
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
 
-# Step 7 - Test Container App with curl
+# Step 6 - Test Container App with curl
 The `az containerapp show` command returns the fully qualified domain name of a container app.
 In the next command we are setting the domain name to the variable `CONTAINERAPP_FQDN`
 ```
@@ -125,7 +132,7 @@ curl "https://$CONTAINERAPP_FQDN"
 If you would like to delete the resources created push any button.
 If you want to keep the resources created, push `b` and `CTRL + C` to exit the program.
 
-# Step 8 - Delete Resource Group
+# Step 7 - Delete Resource Group
 The Container App and Container App Environment will be deleted with command below.
 
 ```
