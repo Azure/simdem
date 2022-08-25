@@ -75,8 +75,20 @@ echo $CONTAINERAPPS_ENVIRONMENT
 ```
 az containerapp env create --name $CONTAINERAPPS_ENVIRONMENT --resource-group $RESOURCE_GROUP --location $LOCATION
 ```
-
-# Step 5 - Create Container App with a Public Image
+# Step 5 - Input GitHub Username for an Individual or organization
+For the next step we need to use your GitHub username to connect to the Container Image.
+The current value for GITHUB_USERNAME is empty. See below.
+```
+echo $GITHUB_USERNAME
+```
+Press `b` and run the command `GITHUB_USERNAME="username"` to set variable.
+```
+echo $GITHUB_USERNAME
+```
+```
+CONTAINER_IMAGE=ghcr.io/$GITHUB_USERNAME/serverless-python:release
+```
+# Step 6 - Create Container App with a Public Image
 Now that you have an environment created, you can deploy your first container app. 
 With the containerapp create command, deploy a container image to Azure Container Apps.
 NOTE: Make sure the value for the --image parameter is in lower case.
@@ -95,7 +107,8 @@ echo $CONTAINER_IMAGE
 ```
 az containerapp create --name $CONTAINER_APP_NAME --resource-group $RESOURCE_GROUP --environment $CONTAINERAPPS_ENVIRONMENT --image "$CONTAINER_IMAGE" --target-port 80 --ingress 'external'
 ```
-# Step 6 - Test Container App with curl
+
+# Step 7 - Test Container App with curl
 The `az containerapp show` command returns the fully qualified domain name of a container app.
 In the next command we are setting the domain name to the variable `CONTAINERAPP_FQDN`
 ```
@@ -112,7 +125,7 @@ curl "https://$CONTAINERAPP_FQDN"
 If you would like to delete the resources created push any button.
 If you want to keep the resources created, push `b` and `CTRL + C` to exit the program.
 
-# Step 7 - Delete Resource Group
+# Step 8 - Delete Resource Group
 The Container App and Container App Environment will be deleted with command below.
 
 ```
