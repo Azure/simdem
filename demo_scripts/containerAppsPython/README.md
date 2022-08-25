@@ -128,7 +128,7 @@ echo "https://$CONTAINERAPP_FQDN"
 curl "https://$CONTAINERAPP_FQDN"
 ```
 
-#Success! You now have scccessfully created a Container Apps image in Azure. 
+# Success! You now have scccessfully created a Container Apps image in Azure. 
 If you would like to delete the resources created push any button.
 If you want to keep the resources created, push `b` and `CTRL + C` to exit the program.
 
