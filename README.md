@@ -3,8 +3,6 @@
 **NOTICE**: **SimDem is a proof of concept with lots of bugs. SimDem is undergoing a complete rewrite. As such, it is still in development and features may be removed or iterated on as we refine executable docs.**
 **If you are able to contribute, we want your help!**
 
-[![CircleCI](https://circleci.com/gh/Azure/simdem.svg?style=svg)](https://circleci.com/gh/Azure/simdem)
-
 SimDem is an open source projcet that will provide tooling that empowers all people to write tutorials in markdown that then
 become interactive demo's and automated tests. You can run Simdem in four different modes:
 
