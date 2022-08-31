@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - asw101-gha
+    - main
 
 jobs:
   deploy:
