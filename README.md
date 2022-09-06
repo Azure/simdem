@@ -4,13 +4,17 @@
 **If you are able to contribute, we want your help!**
 
 SimDem is an open source project that will provide tooling that empowers all people to write tutorials in markdown that then
-become interactive demo's and automated tests. 
-
+becomes interactive documentation. Simdem works with standard markdown language and can be combined with any tutorial which run bash commands to create executable documentation which can be automatically tested for correctness through open source CI/CD tools and provides an interactive learning environment wherein individuals can truly learn best practices by **doing** rather than watching or reading
 
 # Try it Out
+## Run Executable Docs Using Azure Cloud Shell 
+Azure Cloud Shell provides an environment with all of the prerequisites installed to run Simdem. This is the recommended method for new users to try and develop tutorials for simdem. 
 
-## Executable Docs Using Azure Cloud Shell 
-The following code snippet allows you to clone the simdem repo and allow you to run the simdem script in tutorial mode.
+Open [Azure Cloud Shell](https://ms.portal.azure.com/#cloudshell/) and select Bash as the environment. 
+
+The following code snippet gets started with Simdem. 
+
+[!NOTE] This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
 
 ```
 git clone https://github.com/Azure/simdem.git
@@ -22,9 +26,31 @@ pip3 install -r requirements.txt
 python3 main.py tutorial simdem
 ```
 The general format to run an executable document is: 
-`python3 main.py <MODE OF Operation> <SCRIPT_DIR>`
+`python3 main.py <MODE_OF_OPERATION> <SCRIPT_DIRECTORY_NAME>`
 
-## Modes of Operation
+
+## Run Executable Docs Using Local Machine
+If you would like a more customizable development environment, or do not have an active Azure Subscription, Simdem can be run on a local machine with Python.
+
+In Order to run and develop executable docs you need the following prerequisites.
+* Python
+* Pip3 (installed by default with python 3.4 or greater)
+* A Linux Bash Shell
+
+Run the following in a Linux Bash Shell on your local machine:
+
+[!NOTE] This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
+```
+git clone https://github.com/Azure/simdem.git
+
+cd simdem
+
+pip3 install -r requirements.txt
+
+python3 main.py tutorial simdem
+```
+
+# Modes of Operation
 You can run executable documents in four different modes:
 
   * Tutorial: Displays the descriptive text of the tutorial and pauses
@@ -40,27 +66,6 @@ You can run executable documents in four different modes:
   `python3 main.py demo test`
   * Script: Creates an executable bash script from the document
   `python3 main.py script test`
-
-
-## Executable Docs Using Local Machine
-This mode uses Python and is generally best for developers of SimDem.
-
-In Order to run and develop executable docs you need the following prerequisites.
-* Python
-* Pip3 (installed by default with python 3.4 or greater)
-* A Linux Bash Shell
-
-Once the above prerequisites are met you can run the following on your local machine to run simdem.
-
-```
-git clone https://github.com/Azure/simdem.git
-
-cd simdem
-
-pip3 install -r requirements.txt
-
-python3 main.py tutorial simdem
-```
 
 # Writing Your Own Executable Document
 
@@ -85,8 +90,9 @@ The env.json file is a standard json file with default values for your executabl
 Once the README.md and env.json files have been successfully created, you can run your new document with the following command:
 
 ```bash
-python3 main.py <mode of operation> <folder name>
+python3 main.py <MODE_OF_OPERATION> <SCRIPT_DIRECTORY_NAME>
 ```
+## Example
 
 The following is an example of how one might create their first executable document
 ```bash
@@ -96,17 +102,18 @@ cd myCoolDocument
 touch README.md
 touch env.json
 ```
-Once you input content to the files, they can be run with the following command:
-```
+Once you add content to README.md and env.json the files, they can be run in an executable manner with the following command:
+
+```bash
 python3 main.py tutorial myCoolDocument
 ```
 
-For an interactive way to learn about simdem, run the following:
-```
-python3 main.py tutorial simdem
-```
 
-## Contributing
+# Setting up CI/CD with Github Actions
+**In Progress**
+
+
+# Contributing
 
 This is an open source project. Don't keep your code improvements,
 features and cool ideas to yourself. Please issue pull requests
