@@ -14,7 +14,7 @@ Open [Azure Cloud Shell](https://ms.portal.azure.com/#cloudshell/) and select Ba
 
 The following code snippet gets started with Simdem. 
 
->[!NOTE] This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
+>**Note** This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
 
 ```
 git clone https://github.com/Azure/simdem.git
@@ -39,7 +39,7 @@ In Order to run and develop executable docs you need the following prerequisites
 
 Run the following in a Linux Bash Shell on your local machine:
 
->[!NOTE] This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
+>**Note** This snippet clones the Simdem repo, installs necessary dependencies, and runs the interactive Simdem tutorial script.
 ```
 git clone https://github.com/Azure/simdem.git
 
