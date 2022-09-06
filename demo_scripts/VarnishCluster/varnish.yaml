@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: varnish-svc
+  namespace: ingress-basic
+spec:
+  ports:
+  - name: "http"
+    port: 80
+  selector:
+    app: varnish-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varnish-proxy
+  namespace: ingress-basic
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: varnish-proxy
+  template:
+    metadata:
+      name: varnish-proxy
+      labels:
+        app: varnish-proxy
+    spec:
+      volumes:
+        - name: varnish-config
+          configMap:
+            name: varnish-vcl
+            items:
+              - key: default.vcl
+                path: default.vcl
+        - name: varnish-secret
+          secret:
+            secretName: varnish-secret
+      containers:
+      - name: varnish
+        image: varnish:stable
+        imagePullPolicy: Always
+        env:
+        - name: CACHE_SIZE
+          value: 128m
+        - name: VCL_CONFIG
+          value: /etc/varnish/configmap/default.vcl
+        - name: SECRET_FILE
+          value: /etc/varnish/k8s-secret/secret
+        volumeMounts:
+          - name: varnish-config
+            mountPath: /etc/varnish/configmap
+          - name: varnish-secret
+            mountPath: /etc/varnish/k8s-secret
+        ports:
+        - containerPort: 80
+

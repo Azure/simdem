@@ -216,7 +216,8 @@ need to install it manually at this time. The general format is: `python3 main.p
 The following code snippet allows you to clone the simdem repo and allow you to run the simdem script in tutorial mode.
 
 ```
-git clone https://github.com/Azure/simdem.git
+https://github.com/Azure/simdem.git
+
 cd simdem
 
 pip3 install -r requirements.txt
