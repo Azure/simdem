@@ -156,7 +156,7 @@ Congratulations! You've successfully deployed a scalable Varnish cluster to Azur
 ##Clean up Resources 
 This tutorial used Helm to install the ingress components and demo voting app. When you deploy a Helm chart, many Kubernetes resources are created. 
 These resources include pods, deployments, and services. To clean up these resources, you can either delete the entire sample namespace, or the individual resources.
-
+ 
 
 To delete the entire sample namespace, use the kubectl delete command and specify your namespace name. All the resources in the namespace are deleted.
 This may take a few minutes. 
