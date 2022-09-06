@@ -25,7 +25,7 @@ export RAND=$RANDOM; export RAND=$RANDOM export MYACR="$RAND$MYACR$RAND"; echo "
 ```
 
 # Run the following line to create an Azure Container Registry 
-This may take a few minutes
+This may take approximately 1 minute
 ```
 az acr create -n $MYACR -g $RESOURCE_GROUP_NAME --sku basic
 ```
@@ -38,7 +38,7 @@ The following command configures the appropriate ACRPull role for the managed id
 
 
 The following example creates a cluster named myAKSCluster, integrated with the Azure Container Registry created in the previous step.
-Create an AKS cluster using the az aks create command. This will take a few minutes.
+Create an AKS cluster using the az aks create command. This will take approximately 5 minutes
 
 ```
 az aks create -n $AKS_CLUSTER_NAME -g  $RESOURCE_GROUP_NAME --generate-ssh-keys --attach-acr $MYACR
@@ -73,7 +73,8 @@ kubectl get nodes
 An Ingress controller is a specialized load balancer for Kubernetes (and other containerized) environments. Kubernetes ingress resources are used to configure the ingress rules and routes for individual Kubernetes services.
 
 This tutorial uses Helm 3 to install the NGINX ingress controller on a supported version of Kubernetes.
-The following commands create a basic NGINX ingress controller without customizing the defaults
+The following commands create a basic NGINX ingress controller without customizing the defaults 
+This will take approximately 1 minute
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
@@ -157,15 +158,15 @@ Congratulations! You've successfully deployed a scalable Varnish cluster to Azur
 This tutorial used Helm to install the ingress components and demo voting app. When you deploy a Helm chart, many Kubernetes resources are created. 
 These resources include pods, deployments, and services. To clean up these resources, you can either delete the entire sample namespace, or the individual resources.
  
-
+ 
 To delete the entire sample namespace, use the kubectl delete command and specify your namespace name. All the resources in the namespace are deleted.
-This may take a few minutes. 
+This will take approximately 3 minutes
 ```
 kubectl delete namespace ingress-basic
  ```
 
 Use the az group delete command to remove the resource group, cluster, and container service to avoid unnecessary charges. 
-This will take a few minutes. 
+This will take approximately 8 minutes
 ```
 az group delete --name $RESOURCE_GROUP_NAME --yes
 ```
