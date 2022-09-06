@@ -15,7 +15,7 @@ az group create --name $RESOURCE_GROUP_NAME --location $RESOURCE_LOCATION
 ```
 
 
-##Create Azure Container Registry
+## Create Azure Container Registry
 
 Azure Container Registry allows you to build, store, and manage container images and artifacts in a private registry for all types of container deployments.
 The registry name must be unique within Azure, and contain 5-50 lowercase alphanumeric characters. 
