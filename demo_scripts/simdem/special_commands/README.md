@@ -32,6 +32,13 @@ The command block below contains the `xdg-open` command, depending on
 whether you are running in the Web UI or the CLI you will see
 different behaviour, as described above.
 
-```
+```bash
 xdg-open http://bing.com
 ```
+# Next Steps
+
+  1. [Configure your scripts through variables](../variables/README.md)
+  2. [Write multi-part documents](../multipart/README.md)
+  3. [SimDem Index](../README.md) 
+  
+ 

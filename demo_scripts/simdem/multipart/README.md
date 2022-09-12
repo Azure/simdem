@@ -11,7 +11,7 @@ that the user may want to work through next.
 
 For example, this file is one part of a multi-part document.
 
-```
+```bash
 cat $SIMDEM_CWD/README.md
 ```
 
@@ -19,11 +19,6 @@ When executed using SimDem this results in the user being prompted to
 select a "next step" (or hit 'q' to quit). If the user selects one of
 the scripts it will be executed.
 
-# Prerequisites
-
-It is assumed that you have a basic understanding of the various
-SimDem execution [modes](../modes/README.md). You should also ensure
-you understand the SimDem [document syntax](../syntax).
 
 # Directory structure
 
@@ -75,7 +70,7 @@ when executing in demo or test mode.
 
 The directory structure for the SimDem demo scripts is:
 
-```
+```bash
 tree $SIMDEM_CWD/..
 ```
 
@@ -99,8 +94,6 @@ demo_scripts/
 
   1. [Configure your scripts through variables](../variables/README.md)
   2. [SimDem Index](../README.md)
-  3. [Use your documents as interactive tutorials or demos](../running/README.md)
-  4. [Use your documents as automated tests](../test/README.md)
-  5. [Build a SimDem container](../building/README.md)
+  3. [Use your documents as automated tests](../test/README.md)
   
   

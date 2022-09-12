@@ -53,4 +53,3 @@ echo "This is a dummy code block to ensure SimDem pauses in interactive mode"
   1. [Use your documents as automated tests](../test/README.md)
   2. [SimDem Index](../README.md)
   3. [Modes of operation](../modes/README.md)
-  4. [Build a SimDem container](../building/README.md)

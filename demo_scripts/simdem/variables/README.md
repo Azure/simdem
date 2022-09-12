@@ -13,7 +13,7 @@ For example, this tutorial defines an 'env.json' in the `simdem`
 parent folder and in the `variables` subdirectory that contains this
 script. Here is the content from the test subdirectory.
 
-```
+```bash
 cat $SIMDEM_CWD/env.json
 ```
 
@@ -29,7 +29,7 @@ It also defines an 'env.json' file in the `SimDem` root
 folder. Assuming you executed the `simdem` command from within that
 folder the followin command will display it's content.
 
-```
+```bash
 cat env.json
 ```
 
@@ -63,7 +63,7 @@ prompt you to give it a value and will add it to the running
 environment. If you are running in test mode the variable will be
 given a value of 'Dummy vlaue for test'.
 
-```
+```bash
 echo $NEW_VARIABLE
 ```
 
@@ -82,7 +82,7 @@ Because SimDem will interactively ask for values for undefined
 variables it is sometimes necessary to first declare a variable to
 prevent this action. For example:
 
-```
+```bash
 i=0
 for i in {0..4}; do echo "Welcome $i times"; done
 ```
@@ -112,7 +112,7 @@ and this tutorial sub-directories. Note that in this case we have
 checked them into version control as they are part of the example,
 normally they would be added to your local '.gitignore' or equivalent.
 
-```
+```bash
 cat $SIMDEM_CWD/../env.local.json
 ```
 
@@ -126,7 +126,7 @@ Results:
 
 It also defines an 'env.json' file in the tutorial folder:
 
-```
+```bash
 cat $SIMDEM_CWD/env.local.json
 ```
 
@@ -140,7 +140,7 @@ Results:
 
 The file that "wins" is the most local one, that is the one in the tutorial:
 
-```
+```bash
 echo $LOCAL_TEST
 ```
 
@@ -156,13 +156,12 @@ SimDem provides some information about itself in environment
 variables. These are all nameed `SIMDEM_*`. At present the available
 variables are:
 
-```
+```bash
 env | grep "SIMDEM_"
 ```
 
 # Next Steps
+  1. [Write multi-part documents](multipart/README.md)
+  2. [Use your documents as automated tests](../test/README.md)
+  3. [SimDem Index](../README.md)
 
-  1. [Build a SimDem container](../building/README.md)
-  2. [SimDem Index](../README.md)
-  3. [Use your documents as interactive tutorials or demos](../running/README.md)
-  4. [Use your documents as automated tests](../test/README.md)

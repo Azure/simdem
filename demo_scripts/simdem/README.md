@@ -1,20 +1,11 @@
 # Welcome to SimDem
 
-Is it:
-
-  * Documentation
-  * An interactive tutorial
-  * A live demo 
-  * An automated test script
-  * A Shell script
 To progress in tutorial mode press a key when prompted. Most keys will work, but some are special keys. So, for now, press space when prompted.
   
-## Simdem is Documentation, Tutorials, Demo's and Tests
-
-It's all of them!
+## Simdem is Documentation, Tutorials, and Tests
 
 Simdem allows you to wite a tutorial in markdown format and then run
-the commands within it as a simulated demo, interactive tutorial or
+the commands within it as an interactive tutorial or
 even a test script. You can also generate executable shell scripts.
 
 SimDem reads a script, written in the form of a human readable
@@ -33,16 +24,13 @@ a key to execute the command.
 Tutorials can branch too, for example you can choose any of the
 following paths next:
 
-  1. [Modes of operation](modes/README.md)
-  2. [Hello World Demo](demo/README.md)
-  3. [Build a Hello World script](tutorial/README.md)
-  4. [Write SimDem documents](syntax/README.md)
-  5. [Special Commands](special_commands/README.md)
-  6. [Configure your scripts through variables](variables/README.md)
-  7. [Write multi-part documents](multipart/README.md)
-  8. [Use your documents as interactive tutorials or demos](running/README.md)
-  9. [Use your documents as automated tests](test/README.md)
- 10. [Build an SimDem container](building/README.md)
+  1. [Hello World Demo](demo/README.md) 
+  2. [Modes of operation](modes/README.md)
+  3. [Write SimDem documents](syntax/README.md)
+  4. [Special Commands](special_commands/README.md)
+  5. [Configure your scripts through variables](variables/README.md)
+  6. [Write multi-part documents](multipart/README.md)
+  7. [Use your documents as automated tests](test/README.md)
 
 
   

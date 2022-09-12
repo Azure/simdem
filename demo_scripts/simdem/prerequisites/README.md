@@ -40,7 +40,7 @@ satisfied we will test the modified date of the file, if it has been
 modified in the last 5 minutes then the pre-requisite has been
 satisfied.
 
-```
+```bash
 sleep 5
 echo $SIMDEM_TEMP_DIR
 mkdir -p $SIMDEM_TEMP_DIR
@@ -74,7 +74,7 @@ this as a pre-requisite, as long as you do this in the next five
 minutes you won't come back here. You can do this by selecting
 "Understanding SimDem Syntax" in the next steps section.
 
-``` 
+```bash
 find $SIMDEM_TEMP_DIR -name "this_file_must_be_modfied_every_minute.txt" -newermt "1 minutes ago"
 ```
 
@@ -88,9 +88,7 @@ Results:
 
   1. [Understanding SimDem Syntax](../syntax/script.md)
   2. [Configure your scripts through variables](../variables/script.md)
-  3. [Build a Hello World script](../tutorial/script.md)
-  4. [SimDem Index](../script.md)
-  5. [Write multi-part documents](../multipart/script.md)
-  6. [Use your documents as interactive tutorials or demos](../running/script.md)
+  3. [SimDem Index](../script.md)
+  4. [Write multi-part documents](../multipart/script.md)
 
 

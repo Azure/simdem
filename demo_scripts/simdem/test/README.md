@@ -17,7 +17,7 @@ this technique in use.
 
 First, lets take a look at the source of this file. 
 
-```
+```bash
 cat $SIMDEM_CWD/README.md
 ```
 
@@ -26,7 +26,7 @@ cat $SIMDEM_CWD/README.md
 Running in demo mode will not check the results against
 expectations. However, running with the `test` command will do so.
 
-```
+```bash
 echo "This test is expected to fail"
 ```
 
@@ -47,7 +47,7 @@ that start a code block, for example ```expected_similarity=0.2 which
 is low enough for the test to be recorded as a pass. Note, it is
 important that you do not insert any spaces in this notation.
 
-```
+```bash
 date
 ```
 
@@ -84,6 +84,5 @@ cleanup/README.md
 # Next Steps
 
   1. [SimDem Index](../README.md)
-  2. [Build a Hello World script](../tutorial/README.md)
-  3. [Write SimDem documents](../syntax/README.md)
-  4. [Configure your scripts through variables](../variables/README.md)
+  2. [Write SimDem documents](../syntax/README.md)
+  3. [Configure your scripts through variables](../variables/README.md)

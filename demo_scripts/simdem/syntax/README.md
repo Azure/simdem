@@ -1,7 +1,19 @@
+# File Format
+In order to create and run a simdem document with the current structure you need to create a few things.
+ 1. A folder in the demo_scripts directory. The name of this folder will be the name you type to execute your document. `mkdir demo_scripts/myFolderName`
+ 2. A README.md file. This is created inside the folder you created and will contain the markdown language for the. `mkdir demo_scripts/myFolderName/README.md`
+ 3. A env.json file. This will contain environment variables necessary for automated testing and document execution which does not require user input. `mkdir demo_scripts/myFolderName/env.json` 
+    - If you don't want to use environment variables yet, this file can simply be 
+    ```json
+    {
+      Foo: "bar"
+    }
+    ```
+
 # Document syntax
 
 For the most part SimDem uses standard
-[Markdown syntx](https://daringfireball.net/projects/markdown/syntax). There
+[Markdown syntax](https://daringfireball.net/projects/markdown/syntax). There
 are a few special strings that can be used to influence how SimDem
 works, but even these are intended to be human readable, thus
 preventing the need to maintain separate documents for the different
@@ -39,7 +51,7 @@ For example:
 
 ```bash
 # This is a code block, this comment will be ignored by SimDem
-echo "This command will be 'typed' and executed."
+head -n 25 exampleCommand/README.md
 ```
 
 Code blocks can optionally be indented to make the markdown more 
@@ -73,10 +85,10 @@ it waits, silently, for input.
 
 Result blocks serve two main purposes:
 
-  1. Help readers of the markdown content understand expected behaviour
-  2. Enable SimDem documents to be used as tests
+  1. Help readers of the markdown content understand expected behavior
+  2. Enable SimDem documents to be used as tests which automatically run and validate the correctness of the document 
 
-### Including results blocks for readablity and testing
+### Including results blocks for readability and testing
 
 When using the script as a web page or printout it is likley that you
 will want to include the results. However, when you are running in a
@@ -85,17 +97,17 @@ from the current run. You can include a "Results:" section after any
 code block. The first code block after this text will be ignored when
 running in an interactive mode (such as tutorial or simulation). That
 is, in the example below, the `date -u` command will be run
-interactively but the `Sat Mar 12 10:09:12 UTC 2016` will only be
+interactively but the `Sat Mar 12 10:09:12 UTC 2022` will only be
 included in a static form of the script.
 
-```
+```bash
 date -u
 ```
 
 Results:
 
 ```expected_similarity=0.4
-Sat Mar 12 10:09:12 UTC 2016
+Sat Mar 12 10:09:12 UTC 2022
 ```
 
 ### Modifying Test Accuracy
@@ -114,14 +126,14 @@ This can be used to ensure things that have low similarity in the results will p
 
 The date command will prove this is running in real time.
 
-```
+```bash
 date
 ```
 
 Results:
 
 ```expected_similarity=0.4
-Sat Mar 12 08:59:01 UTC 2016
+Sat Mar 12 08:59:01 UTC 2022
 ```
 
 ## Defining Next Steps
@@ -136,9 +148,8 @@ For example, this document offers next steps options.
 
 # Next Steps
 
-  1. [Special Commands](special_commands/README.md)
-  2. [Configure your scripts through variables](../variables/README.md)
-  3. [Build a Hello World script](../tutorial/README.md)
+  1. [Configure your scripts through variables](../variables/README.md)
+  2. [Special Commands](special_commands/README.md)
+  3. [Write multi-part documents](../multipart/README.md)
   4. [SimDem Index](../README.md)
-  5. [Write multi-part documents](../multipart/README.md)
-  6. [Use your documents as interactive tutorials or demos](../running/README.md)
+

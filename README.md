@@ -108,6 +108,12 @@ Once you add content to README.md and env.json the files, they can be run in an 
 python3 main.py tutorial myCoolDocument
 ```
 
+## Learn More About Writing Your Own Executable Document
+To learn more about writing executable documentation use the interactive tutorial by running:
+ ```
+ python3 main.py tutorial simdem
+ ```
+
 
 # Setting up CI/CD with Github Actions
 **In Progress**
@@ -162,7 +168,7 @@ near the top of the file):
 
 # Learn more
 
-If you want to learn more before running the container then why not
+If you want to learn more before running the program then why not
 read the interactive tutorial as
 a
-[markdown page on GitHub](https://github.com/rgardler/simdem/blob/master/demo_scripts/simdem/README.md).
+[markdown page on GitHub](https://github.com/Azure/simdem/tree/main/demo_scripts/simdem).

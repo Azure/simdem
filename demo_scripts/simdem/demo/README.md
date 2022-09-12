@@ -8,19 +8,19 @@ executed. Actually you can hit almost any key but we recommend
 'spacebar' here because we've not told you about the special keys yet
 and spacebar is not one of them.
 
-```
+```bash
 echo "Hello World"
 ```
 
 That's cool, lets try again:
 
-```
+```bash
 echo "It might look like this was typed into the terminal (even more so if you ran SimDem with the '--style simulate' flag, that simulates a person typing), bit it really comes from a markdown file."
 ```
 
 The date command will show that these commands are being executed in real time.
 
-```
+```bash
 date
 ```
 
@@ -42,7 +42,7 @@ key. There are a few exceptions though:
 Hitting 'd' will print all the text since the last command, that is it
 will print the description of the next command to be executed.
 
-```
+```bash
 echo "Hitting 'd' now will display the description for this command."
 ```
 
@@ -53,7 +53,7 @@ type in commands that are not part of the script. This is particularly
 useful when running in demo mode as it alllows you to respond to
 questions by entering an unscripted command.
 
-```
+```bash
 echo "Give it a go, why not hit 'b' and type 'ls', or some other command"
 ```
 
