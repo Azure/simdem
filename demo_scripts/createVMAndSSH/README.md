@@ -5,7 +5,7 @@
 The First step in this tutorial is to define environment variables 
 
 ```bash
-export MY_RESOURCE_GROUP_NAME=myResourceGroup1
+export MY_RESOURCE_GROUP_NAME=myResourceGroup
 export MY_LOCATION=EastUS
 export MY_VM_NAME=myVM
 export MY_USERNAME=azureuser
