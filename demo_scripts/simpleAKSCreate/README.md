@@ -15,10 +15,6 @@ The first step is to define command line variables to reference in the deploymen
 export RESOURCE_GROUP_NAME=myResourceGroup
 export RESOURCE_LOCATION=eastus
 export AKS_CLUSTER_NAME=myAKSCluster
-export PUBLIC_IP_NAME=myPublicIp
-export VNET_NAME=myVnet
-export SUBNET_NAME=mySubnet
-export APPLICATION_GATEWAY_NAME=myAKSCluster
 ```
 
 ## Create A Resource Group
